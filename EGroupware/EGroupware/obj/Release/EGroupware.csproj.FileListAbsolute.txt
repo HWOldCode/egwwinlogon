@@ -1,0 +1,21 @@
+C:\Users\test\documents\visual studio 2010\Projects\EGroupware\EGroupware\bin\Release\EGroupware.pdb
+C:\Users\test\documents\visual studio 2010\Projects\EGroupware\EGroupware\obj\Release\EGroupware.pdb
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\obj\Release\EGroupware.csprojResolveAssemblyReference.cache
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Release\Abstractions.dll
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Release\log4net.dll
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Release\pGina.Shared.dll
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Release\log4net.xml
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Release\EGroupware.dll
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\obj\Release\EGroupware.dll
+C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.pdb
+C:\Users\swe\Documents\EGroupware\EGroupware\bin\Release\EGroupware.pdb
+C:\Users\swe\Documents\EGroupware\EGroupware\bin\Release\Abstractions.dll
+C:\Users\swe\Documents\EGroupware\EGroupware\bin\Release\log4net.dll
+C:\Users\swe\Documents\EGroupware\EGroupware\bin\Release\pGina.Shared.dll
+C:\Users\swe\Documents\EGroupware\EGroupware\bin\Release\log4net.xml
+C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.csprojResolveAssemblyReference.cache
+C:\Users\swe\Documents\EGroupware\EGroupware\bin\Release\jni4net.n-0.8.8.0.dll
+C:\Users\swe\Documents\EGroupware\EGroupware\bin\Release\EGroupware.dll
+C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.dll
+C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.Configuration.resources
+C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.csproj.GenerateResource.Cache

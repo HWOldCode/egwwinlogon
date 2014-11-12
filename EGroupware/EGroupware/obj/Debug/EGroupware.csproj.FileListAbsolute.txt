@@ -1,0 +1,8 @@
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Debug\EGroupware.dll
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Debug\EGroupware.pdb
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Debug\Abstractions.dll
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Debug\log4net.dll
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Debug\pGina.Shared.dll
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Debug\log4net.xml
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\obj\Debug\EGroupware.dll
+C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\obj\Debug\EGroupware.pdb
