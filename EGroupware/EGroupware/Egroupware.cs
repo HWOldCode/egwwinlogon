@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 using pGina.Shared.Interfaces;
 using pGina.Shared.Types;
@@ -12,7 +13,9 @@ using net.sf.jni4net.adaptors;
 
 using java.lang;
 using java.util;
+using net.sf.jni4net.inj;
 using net.sf.jni4net.jni;
+using net.sf.jni4net.utils;
 using Object = java.lang.Object;
 
 /**
@@ -20,7 +23,9 @@ using Object = java.lang.Object;
  **/
 namespace pGina.Plugin.EGroupware
 {
-
+    /**
+     * Class EGWWinLogin
+     */
     public class EGWWinLogin : IPluginAuthentication, IPluginAuthorization, IPluginAuthenticationGateway, IPluginConfiguration
     {
 
@@ -31,8 +36,8 @@ namespace pGina.Plugin.EGroupware
         protected Object _jEgwWinLogon;
 
         /**
-         * 
-         **/
+         * constructor
+         */
         public EGWWinLogin() {
             this._logger = LogManager.GetLogger("pGina.Plugin.EGrroupware");
 
@@ -46,7 +51,7 @@ namespace pGina.Plugin.EGroupware
 
         /**
          * initJava
-         **/
+         */
         private void initJava() {
             var setup = new BridgeSetup();
 
@@ -70,15 +75,26 @@ namespace pGina.Plugin.EGroupware
         }
 
         /**
+         * registerJava
+         */
+        private void registerJava() {
+            if( Bridge.Setup.BindNative ) {
+                //MethodInfo initializer = Registry.GetWrapperInitializer(typeof(EGWWinLogin), "__Init2");
+                //RegistryRecord record = Registry.GetCLRRecord(typeof(Bridge));
+                //Registry.RegisterNative(initializer, env, record.JVMProxy, record.JVMInterface);
+            }
+        }
+
+        /**
          * _egwAuthenticateUser
          * 
-         **/
+         */
         private bool _egwAuthenticateUser(string username, string password) {
             this._logger.InfoFormat("_egwAuthenticateUser {0}, {1}", username, password);
 
             if( this._jEgwWinLogon != null ) {
 
-                int ret = this._jEgwWinLogon.getClass().Invoke<int>(
+                int ret = this._jEgwWinLogon.Invoke<int>(
                     "egwAuthenticateUser",
                     "(Ljava/lang/String;Ljava/lang/String;)I",
                     username,
@@ -98,48 +114,186 @@ namespace pGina.Plugin.EGroupware
             return false;
         }
 
-        public string Name
-        {
-            get
-            {
-                return "EGroupware Login";
+        /**
+         * _egwGetDescription
+         * 
+         */
+        private string _egwGetDescription() {
+            try{
+                if( this._jEgwWinLogon != null ) {
+                    object ret = this._jEgwWinLogon.Invoke<object>(
+                        "egwGetDescription",
+                        "()Ljava/lang/String;");
+
+                    return ret.ToString();
+                }
+            }
+            catch( System.Exception e ) {
+                this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
+            }
+
+            return "Authenticates EGroupware users.";
+        }
+
+        /**
+         * _egwGetName
+         */
+        private string _egwGetName() {
+            try{
+                if( this._jEgwWinLogon != null ) {
+                    object ret = this._jEgwWinLogon.Invoke<object>(
+                        "egwGetName",
+                        "()Ljava/lang/String;");
+
+                    return ret.ToString();
+                }
+            }
+            catch( System.Exception e ) {
+                this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
+            }
+
+            return "EGroupware Login";
+        }
+
+        /**
+         * _egwGetVersion
+         */
+        private string _egwGetVersion() {
+            try{
+                if( this._jEgwWinLogon != null ) {
+                    object ret = this._jEgwWinLogon.Invoke<object>(
+                        "egwGetVersion",
+                        "()Ljava/lang/String;");
+
+                    return ret.ToString();
+                }
+            }
+            catch( System.Exception e ) {
+                this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
+            }
+
+            return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
+
+        /**
+         * _egwIsError
+         */
+        private bool _egwIsError() {
+            try{
+                if( this._jEgwWinLogon != null ) {
+                    int ret = this._jEgwWinLogon.Invoke<int>(
+                        "egwIsError",
+                        "()I");
+
+                    if( ret == 1 ) {
+                        return true;
+                    }
+                }
+            }
+            catch( System.Exception e ) {
+                this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
+            }
+
+            return false;
+        }
+
+        /**
+         * _egwGetError
+         */
+        private string _egwGetError() {
+            try{
+                if( this._jEgwWinLogon != null ) {
+                    object ret = this._jEgwWinLogon.Invoke<object>(
+                        "egwGetError",
+                        "()Ljava/lang/String;");
+
+                    return ret.ToString();
+                }
+
+                return "_jEgwWinLogon is Empty!";
+            }
+            catch( System.Exception e ) {
+                this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
+
+                return e.Message;
+            }
+        }
+
+        /**
+         * Name
+         */
+        public string Name {
+            get {
+                return this._egwGetName();
             }
         }
 
 
         /**
+         * Description
+         * 
          * @return string 
-         **/
-        public string Description
-        {
-            get { return "Authenticates EGroupware users."; }
+         */
+        public string Description {
+            get { return this._egwGetDescription(); }
         }
 
 
         /**
          * returns uuid of the plugin
          **/
-        public Guid Uuid
-        {
+        public Guid Uuid {
             get { return m_uuid; }
         }
 
-        public string Version
-        {
-            get
-            {
-                return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        /**
+         * Version
+         */
+        public string Version {
+            get {
+                return this._egwGetVersion();
             }
         }
 
+        /**
+         * Starting
+         */
         public void Starting() {
-
+            try{
+                if( this._jEgwWinLogon != null ) {
+                    this._jEgwWinLogon.Invoke(
+                        "egwStarting",
+                        "()V");
+                }
+            }
+            catch( System.Exception e ) {
+                this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
+            }
         }
 
-        public void Stopping() { }
+        /**
+         * Stopping
+         */
+        public void Stopping() { 
+            try{
+                if( this._jEgwWinLogon != null ) {
+                    this._jEgwWinLogon.Invoke(
+                        "egwStopping",
+                        "()V");
+                }
+            }
+            catch( System.Exception e ) {
+                this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
+            }
+        }
 
+        /**
+         * AuthenticateUser
+         */
         public BooleanResult AuthenticateUser(SessionProperties properties) {
             UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
+
+            string msg = "";
 
             this.initJava();
 
@@ -147,26 +301,37 @@ namespace pGina.Plugin.EGroupware
                 if( this._egwAuthenticateUser(userInfo.Username, userInfo.Password) ) {
                     this._logger.InfoFormat("Successfully authenticated {0}", userInfo.Username);
 
-                    return new BooleanResult() { Success = true };
+                    return new BooleanResult() { 
+                        Success = true
+                    };
+                }
+                else {
+                    if( this._egwIsError() ) {
+                        msg = this._egwGetError();
+                    }
+                    else {
+                        msg = "Incorrect username or password.";
+                    }
                 }
             }
             catch( System.Exception e ) {
                 this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
+
+                msg = e.Message;
             }
 
+            //msg = msg + " cd:" + System.IO.Directory.GetCurrentDirectory();
 
-            string msg = "_jEgwWinLogon ist nicht gesetzt";
-
-            if( this._jEgwWinLogon != null ) {
-                msg = "_jEgwWinLogon ist gesetzt";
-            }
-
-            msg = msg + " cd:" + System.IO.Directory.GetCurrentDirectory();
-
-            this._logger.ErrorFormat("Authentication failed for {0}", userInfo.Username);
-            return new BooleanResult() { Success = false, Message = "Incorrect username or password. " + msg};
+            //this._logger.ErrorFormat("Authentication failed for {0}", userInfo.Username);
+            return new BooleanResult() { 
+                Success = false, 
+                Message = msg
+            };
         }
 
+        /**
+         * AuthenticatedUserGateway
+         */
         public Shared.Types.BooleanResult AuthenticatedUserGateway(Shared.Types.SessionProperties properties) {
             UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
 
@@ -179,12 +344,18 @@ namespace pGina.Plugin.EGroupware
             return new Shared.Types.BooleanResult { Success = true };
         }
 
+        /**
+         * AuthorizeUser
+         */
         public BooleanResult AuthorizeUser(SessionProperties properties) {
             return new BooleanResult {
                 Success = true,
                 Message = string.Format("Allow")};
         }
 
+        /**
+         * Configure
+         */
         public void Configure() {
             //Configuration dialog = new Configuration();
             //dialog.ShowDialog();

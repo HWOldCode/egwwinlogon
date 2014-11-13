@@ -19,3 +19,12 @@ C:\Users\swe\Documents\EGroupware\EGroupware\bin\Release\EGroupware.dll
 C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.dll
 C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.Configuration.resources
 C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.csproj.GenerateResource.Cache
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.pdb
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\jni4net.n-0.8.8.0.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\log4net.xml
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.csprojResolveAssemblyReference.cache
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.Configuration.resources
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.csproj.GenerateResource.Cache
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.pdb
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.dll
