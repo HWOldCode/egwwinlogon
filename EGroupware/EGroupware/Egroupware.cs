@@ -17,6 +17,9 @@ using net.sf.jni4net.inj;
 using net.sf.jni4net.jni;
 using net.sf.jni4net.utils;
 using Object = java.lang.Object;
+using EGroupware;
+using pGina.CredentialProvider.Registration;
+using Abstractions.WindowsApi;
 
 /**
  * http://jni4net.googlecode.com/svn/tags/0.3.0.0/jni4net.n/src/Bridge.JVM.convertor.cs
@@ -26,10 +29,10 @@ namespace pGina.Plugin.EGroupware
     /**
      * Class EGWWinLogin
      */
-    public class EGWWinLogin : IPluginAuthentication, IPluginAuthorization, IPluginAuthenticationGateway, IPluginConfiguration
+    public class EGWWinLogin : IPluginAuthentication, IPluginAuthorization, IPluginAuthenticationGateway, IPluginConfiguration, IPluginEventNotifications
     {
 
-        private static readonly Guid m_uuid = new Guid("b094fee0-68c8-11e4-9803-0800200c9a66");
+        public static readonly Guid PluginUuid = new Guid("b094fee0-68c8-11e4-9803-0800200c9a66");
 
         private ILog _logger;
         protected JNIEnv env;
@@ -66,11 +69,49 @@ namespace pGina.Plugin.EGroupware
 
                     if( tmpClass != null ) {
                         this._jEgwWinLogon = tmpClass.newInstance();
+                        this._initEgroupware();
                     }
                 }
                 catch( System.Exception e ) {
                     this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
                 }
+            }
+        }
+
+        /**
+         * _initEgroupware
+         */
+        private void _initEgroupware() {
+            try{
+                if( this._jEgwWinLogon != null ) {
+                    string url = Settings.Store.url;
+                    string domain = Settings.Store.domain;
+
+                    this._jEgwWinLogon.Invoke(
+                        "initEgroupware",
+                        "(Ljava/lang/String;Ljava/lang/String;)V", 
+                        url, domain);
+                }
+            }
+            catch( System.Exception e ) {
+                this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
+            }
+        }
+
+        /**
+         * _egwSessionChange
+         */
+        private void _egwSessionChange(int change) {
+            try{
+                if( this._jEgwWinLogon != null ) {
+                    this._jEgwWinLogon.Invoke(
+                        "egwSessionChange",
+                        "(I)V", 
+                        change);
+                }
+            }
+            catch( System.Exception e ) {
+                this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
             }
         }
 
@@ -243,7 +284,7 @@ namespace pGina.Plugin.EGroupware
          * returns uuid of the plugin
          **/
         public Guid Uuid {
-            get { return m_uuid; }
+            get { return PluginUuid; }
         }
 
         /**
@@ -354,11 +395,37 @@ namespace pGina.Plugin.EGroupware
         }
 
         /**
+         * SessionChange
+         */
+        public void SessionChange(System.ServiceProcess.SessionChangeDescription changeDescription, SessionProperties properties) {
+            if( properties != null ) {
+                
+                this._logger.InfoFormat("SessionChange: {0}", changeDescription.Reason);
+
+                switch( changeDescription.Reason ) {
+                    case System.ServiceProcess.SessionChangeReason.SessionLogon:
+                        this._egwSessionChange(5);
+                        //LogonEvent(changeDescription.SessionId);
+                        break;
+                    case System.ServiceProcess.SessionChangeReason.SessionLogoff:
+                        //LogoffEvent(changeDescription.SessionId);
+                        this._egwSessionChange(6);
+                        break;
+                }
+
+                if( this._egwIsError() ) {
+                    this._logger.InfoFormat("Egroupware Error: {0}", this._egwGetError());
+                }
+            }
+        }
+
+
+        /**
          * Configure
          */
         public void Configure() {
-            //Configuration dialog = new Configuration();
-            //dialog.ShowDialog();
+            Configuration dialog = new Configuration();
+            dialog.ShowDialog();
         }
 
         /**
