@@ -1,8 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package egwwinlogon;
+package egwwinlogon.service;
 
 import com.jegroupware.egroupware.Egroupware;
 import com.jegroupware.egroupware.EgroupwareBrowser;
@@ -14,6 +10,9 @@ import com.jegroupware.egroupware.EgroupwareConfig;
  */
 public class EgwWinLogon {
 
+	/**
+	 * Global Error
+	 */
 	static protected  String _error = "";
 
     /**
@@ -160,14 +159,26 @@ public class EgwWinLogon {
 		return null;
 	}
 
+	/**
+	 * egwGetDescription
+	 * @return String
+	 */
 	public String egwGetDescription() {
-		return "ich bin EGW Plugin aus Java!";
+		return "Egroupware CP Connector";
 	}
 
+	/**
+	 * egwGetName
+	 * @return String
+	 */
 	public String egwGetName() {
 		return "Egroupware";
 	}
 
+	/**
+	 * egwGetVersion
+	 * @return String
+	 */
 	public String egwGetVersion() {
 		return "14.1";
 	}
