@@ -20,6 +20,7 @@ using Object = java.lang.Object;
 using EGroupware;
 using pGina.CredentialProvider.Registration;
 using Abstractions.WindowsApi;
+using System.IO;
 
 /**
  * http://jni4net.googlecode.com/svn/tags/0.3.0.0/jni4net.n/src/Bridge.JVM.convertor.cs
@@ -58,14 +59,19 @@ namespace pGina.Plugin.EGroupware
         private void initJava() {
             var setup = new BridgeSetup();
 
-            setup.AddAllJarsClassPath(".");
+            string curPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //this._logger.InfoFormat("cP: " + curPath);
+            curPath = curPath.Replace("Plugins\\Core", "");
+            //this._logger.InfoFormat("cP: " + curPath);
+
+            setup.AddAllJarsClassPath(curPath + ".");
             setup.Verbose = true;
 
             this.env = Bridge.CreateJVM(setup);
 
             if( this.env != null ) {
                 try {
-                    Class tmpClass = this.env.FindClass("egwwinlogon/EgwWinLogon");
+                    Class tmpClass = this.env.FindClass("egwwinlogon/service/EgwWinLogon");
 
                     if( tmpClass != null ) {
                         this._jEgwWinLogon = tmpClass.newInstance();
