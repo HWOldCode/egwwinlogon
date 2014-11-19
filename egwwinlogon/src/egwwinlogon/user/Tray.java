@@ -15,7 +15,7 @@ public class Tray {
     
     private SystemTray _system_tray;
     private TrayIcon _tray_icon;
-    private Image _tray_icon_image;
+    //private Image _tray_icon_image;
     
     public Tray() {
         // retrieve SystemTray instance by the factory
@@ -23,6 +23,7 @@ public class Tray {
             this._system_tray = SystemTray.getSystemTray();
         }
 
+        // load image
         
         
     }
