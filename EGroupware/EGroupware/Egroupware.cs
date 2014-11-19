@@ -54,17 +54,39 @@ namespace pGina.Plugin.EGroupware
         }
 
         /**
+         * getAppDir
+         */
+        private string getAppDir() {
+            string curPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            curPath = curPath.Replace("Plugins\\Core", "");
+
+            return curPath;
+        }
+
+        private string getJavaInstallationPath() {
+            string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+
+            using( Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey) ) {
+                string currentVersion = rk.GetValue("CurrentVersion").ToString();
+                
+                using( Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion) ) {
+                    return key.GetValue("JavaHome").ToString();
+                }
+            }
+        }
+
+        /**
          * initJava
          */
         private void initJava() {
             var setup = new BridgeSetup();
 
-            string curPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //string curPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             //this._logger.InfoFormat("cP: " + curPath);
-            curPath = curPath.Replace("Plugins\\Core", "");
+            //curPath = curPath.Replace("Plugins\\Core", "");
             //this._logger.InfoFormat("cP: " + curPath);
 
-            setup.AddAllJarsClassPath(curPath + ".");
+            setup.AddAllJarsClassPath(this.getAppDir() + ".");
             setup.Verbose = true;
 
             this.env = Bridge.CreateJVM(setup);
@@ -410,9 +432,17 @@ namespace pGina.Plugin.EGroupware
 
                 switch( changeDescription.Reason ) {
                     case System.ServiceProcess.SessionChangeReason.SessionLogon:
+                        string applicationName = "\"" + this.getJavaInstallationPath() + "\\bin\\java.exe\" -jar \"" + this.getAppDir() + "\\egwwinlogon.jar\"";
+
+                        this._logger.InfoFormat(applicationName);
+
+                        ApplicationLoader.PROCESS_INFORMATION procInfo;
+                        ApplicationLoader.StartProcessAndBypassUAC(applicationName, out procInfo);
+
                         this._egwSessionChange(5);
                         //LogonEvent(changeDescription.SessionId);
                         break;
+
                     case System.ServiceProcess.SessionChangeReason.SessionLogoff:
                         //LogoffEvent(changeDescription.SessionId);
                         this._egwSessionChange(6);

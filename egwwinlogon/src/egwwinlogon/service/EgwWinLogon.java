@@ -180,7 +180,7 @@ public class EgwWinLogon {
                                 new String("SessionLogon").getBytes());
                         }
 
-                        this.createEgroupwareUserProcess();
+                        //this.createEgroupwareUserProcess();
                     }
                     else {
                         EgwWinLogon._error = "please login in egroupware";
