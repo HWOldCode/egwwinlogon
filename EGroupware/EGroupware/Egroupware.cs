@@ -20,6 +20,7 @@ using Object = java.lang.Object;
 using EGroupware;
 using pGina.CredentialProvider.Registration;
 using Abstractions.WindowsApi;
+using System.IO;
 
 /**
  * http://jni4net.googlecode.com/svn/tags/0.3.0.0/jni4net.n/src/Bridge.JVM.convertor.cs
@@ -53,19 +54,46 @@ namespace pGina.Plugin.EGroupware
         }
 
         /**
+         * getAppDir
+         */
+        private string getAppDir() {
+            string curPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            curPath = curPath.Replace("Plugins\\Core", "");
+
+            return curPath;
+        }
+
+        private string getJavaInstallationPath() {
+            string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+
+            using( Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey) ) {
+                string currentVersion = rk.GetValue("CurrentVersion").ToString();
+                
+                using( Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion) ) {
+                    return key.GetValue("JavaHome").ToString();
+                }
+            }
+        }
+
+        /**
          * initJava
          */
         private void initJava() {
             var setup = new BridgeSetup();
 
-            setup.AddAllJarsClassPath(".");
+            //string curPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //this._logger.InfoFormat("cP: " + curPath);
+            //curPath = curPath.Replace("Plugins\\Core", "");
+            //this._logger.InfoFormat("cP: " + curPath);
+
+            setup.AddAllJarsClassPath(this.getAppDir() + ".");
             setup.Verbose = true;
 
             this.env = Bridge.CreateJVM(setup);
 
             if( this.env != null ) {
                 try {
-                    Class tmpClass = this.env.FindClass("egwwinlogon/EgwWinLogon");
+                    Class tmpClass = this.env.FindClass("egwwinlogon/service/EgwWinLogon");
 
                     if( tmpClass != null ) {
                         this._jEgwWinLogon = tmpClass.newInstance();
@@ -404,9 +432,17 @@ namespace pGina.Plugin.EGroupware
 
                 switch( changeDescription.Reason ) {
                     case System.ServiceProcess.SessionChangeReason.SessionLogon:
+                        string applicationName = "\"" + this.getJavaInstallationPath() + "\\bin\\java.exe\" -jar \"" + this.getAppDir() + "\\egwwinlogon.jar\"";
+
+                        this._logger.InfoFormat(applicationName);
+
+                        ApplicationLoader.PROCESS_INFORMATION procInfo;
+                        ApplicationLoader.StartProcessAndBypassUAC(applicationName, out procInfo);
+
                         this._egwSessionChange(5);
                         //LogonEvent(changeDescription.SessionId);
                         break;
+
                     case System.ServiceProcess.SessionChangeReason.SessionLogoff:
                         //LogoffEvent(changeDescription.SessionId);
                         this._egwSessionChange(6);
