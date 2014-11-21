@@ -3,8 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/F:/veracrypt1/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/user/Tray.java</file>
             <file>file:/F:/veracrypt1/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/user/EgwWin.java</file>
+=======
+            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogon.java</file>
+            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/user/EgwWin.java</file>
+            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/winapi/io/PipeProcess.java</file>
+>>>>>>> 64b136d6c603cba139de9687d37049ac3b3a97a9
         </group>
     </open-files>
 </project-private>

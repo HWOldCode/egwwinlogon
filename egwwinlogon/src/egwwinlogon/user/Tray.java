@@ -24,7 +24,7 @@ import javax.imageio.ImageIO;
  */
 public class Tray implements MouseListener {
     
-    static final String resource_path = "egwwinlogon/resources/";
+    static final String resource_path = "egwwinlogon/user/resources/";
     private SystemTray _system_tray;
     private TrayIcon _tray_icon;
     private Egroupware _egw;
@@ -52,7 +52,7 @@ public class Tray implements MouseListener {
             // icon
             try {
                 // load image
-                 image_icon = Tray.getImage("tileimage.png");
+                 image_icon = Tray.getImage("tileimage32.png");
                  
                  // popup menu
                  
