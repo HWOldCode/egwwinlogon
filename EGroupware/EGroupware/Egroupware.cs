@@ -21,6 +21,8 @@ using EGroupware;
 using pGina.CredentialProvider.Registration;
 using Abstractions.WindowsApi;
 using System.IO;
+using System.Diagnostics;
+using System.Threading;
 
 /**
  * http://jni4net.googlecode.com/svn/tags/0.3.0.0/jni4net.n/src/Bridge.JVM.convertor.cs
@@ -39,11 +41,16 @@ namespace pGina.Plugin.EGroupware
         protected JNIEnv env;
         protected Object _jEgwWinLogon;
 
+        Dictionary<string, Process> _plist;
+        protected bool _shouldStop = false;
+
         /**
          * constructor
          */
         public EGWWinLogin() {
             this._logger = LogManager.GetLogger("pGina.Plugin.EGrroupware");
+
+            this._plist = new Dictionary<string, Process>();
 
             try {
                 this.initJava();
@@ -328,6 +335,11 @@ namespace pGina.Plugin.EGroupware
          * Starting
          */
         public void Starting() {
+            this._shouldStop = false;
+
+            Thread thread = new Thread(new ThreadStart(this.workThreadFunction));
+            thread.Start();
+
             try{
                 if( this._jEgwWinLogon != null ) {
                     this._jEgwWinLogon.Invoke(
@@ -343,7 +355,9 @@ namespace pGina.Plugin.EGroupware
         /**
          * Stopping
          */
-        public void Stopping() { 
+        public void Stopping() {
+            this._shouldStop = true;
+
             try{
                 if( this._jEgwWinLogon != null ) {
                     this._jEgwWinLogon.Invoke(
@@ -422,32 +436,55 @@ namespace pGina.Plugin.EGroupware
                 Message = string.Format("Allow")};
         }
 
+        protected void startUserApp(string username) {
+            string applicationName = "\"" + this.getJavaInstallationPath() + "\\bin\\java.exe\" -jar \"" + this.getAppDir() + "\\egwwinlogon.jar\"";
+
+            this._logger.InfoFormat(applicationName);
+
+            ApplicationLoader.PROCESS_INFORMATION procInfo;
+
+            if( ApplicationLoader.StartProcessAndBypassUAC(applicationName, out procInfo) ) {
+                this._plist.Add(username, Process.GetProcessById((int)procInfo.dwProcessId));
+            }
+        }
+
         /**
          * SessionChange
          */
         public void SessionChange(System.ServiceProcess.SessionChangeDescription changeDescription, SessionProperties properties) {
             if( properties != null ) {
                 
-                this._logger.InfoFormat("SessionChange: {0}", changeDescription.Reason);
+                UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
+
+                this._logger.InfoFormat("SessionChange: {0}, {1}", changeDescription.Reason, userInfo.Username);
 
                 switch( changeDescription.Reason ) {
                     case System.ServiceProcess.SessionChangeReason.SessionLogon:
-                        string applicationName = "\"" + this.getJavaInstallationPath() + "\\bin\\java.exe\" -jar \"" + this.getAppDir() + "\\egwwinlogon.jar\"";
-
-                        this._logger.InfoFormat(applicationName);
-
-                        ApplicationLoader.PROCESS_INFORMATION procInfo;
-                        ApplicationLoader.StartProcessAndBypassUAC(applicationName, out procInfo);
+                        this.startUserApp(userInfo.Username);
 
                         this._egwSessionChange(5);
                         //LogonEvent(changeDescription.SessionId);
                         break;
 
                     case System.ServiceProcess.SessionChangeReason.SessionLogoff:
-                        //LogoffEvent(changeDescription.SessionId);
+                        
+                        if( this._plist.ContainsKey(userInfo.Username) ) {
+                            Process tp = this._plist[userInfo.Username];
+
+                            if( tp != null ) {
+                                if( !tp.HasExited ) {
+                                    tp.Close();
+                                }
+                            }
+
+                            this._plist.Remove(userInfo.Username);
+                        }
+
                         this._egwSessionChange(6);
                         break;
                 }
+
+                
 
                 if( this._egwIsError() ) {
                     this._logger.InfoFormat("Egroupware Error: {0}", this._egwGetError());
@@ -455,6 +492,24 @@ namespace pGina.Plugin.EGroupware
             }
         }
 
+        public void workThreadFunction() {
+            while( !this._shouldStop ) {
+                Thread.Sleep(100);
+
+                List<string> list = new List<string>(this._plist.Keys);
+
+                foreach( string k in list ) {
+                    Process tp = this._plist[k];
+
+                    if( tp != null ) {
+                        if( tp.HasExited ) {
+                            this.startUserApp(k);
+                            this._logger.InfoFormat("App is closed: {0}", k);
+                        }
+                    }
+                }
+            }
+        }
 
         /**
          * Configure
