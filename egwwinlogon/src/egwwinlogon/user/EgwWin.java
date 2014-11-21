@@ -45,7 +45,7 @@ public class EgwWin {
                     System.out.println("not isLogin");
                 }
                 //System.out.println(egw.getSession().getLastLoginId());
-                EgroupwareBrowser.open(egw);
+                //EgroupwareBrowser.open(egw);
             }
             catch( Exception e ) {
                 System.out.println("Fehler:");
@@ -55,6 +55,9 @@ public class EgwWin {
 
             System.out.println("ende");
 
+            // tray icon
+            Tray tray = new Tray(egw);
+            
             PipeProcess tmp = new PipeProcess("egroupware");
             tmp.getOutputStream().write(new String("userclient").getBytes());
         }
