@@ -7,7 +7,9 @@ package egwwinlogon.user;
 
 //import java.net.URL;
 import com.jegroupware.egroupware.Egroupware;
+import com.jegroupware.egroupware.EgroupwareConfig;
 import com.jegroupware.egroupware.EgroupwareBrowser;
+import egwwinlogon.service.EgwWinLogon;
 
 import java.io.InputStream;
 //import java.io.IOException;
@@ -16,6 +18,8 @@ import java.awt.event.MouseEvent;
 import java.awt.* ;
 //import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 //import javax.swing.*;
 
 /**
@@ -24,62 +28,90 @@ import javax.imageio.ImageIO;
  */
 public class Tray implements MouseListener {
     
+    private static final Logger logger = LoggerFactory.getLogger(EgwWinLogon.class);
+    
     static final String resource_path = "egwwinlogon/user/resources/";
-    private SystemTray _system_tray;
-    private TrayIcon _tray_icon;
-    private Egroupware _egw;
+    protected SystemTray _system_tray;
+    protected TrayIcon _tray_icon;
+    protected Egroupware _egw;
     
     
     /**
      * load icon-file by image-name & return Image
      * 
-     * @param image String
+     * @param file_name String
+     * @param system_tray SystemTray
      * @return Image
      * @throws Exception 
      */
-    public static Image getImage(String image) throws Exception {
-        InputStream input_stream = ClassLoader.getSystemClassLoader().getResourceAsStream(Tray.resource_path + image);
-        return ImageIO.read(input_stream);
+    public static Image getImage(String file_name, SystemTray system_tray) throws Exception {
+        InputStream input_stream = ClassLoader.getSystemClassLoader().getResourceAsStream(Tray.resource_path + file_name);
+        Image image = ImageIO.read(input_stream);
+        Dimension dimension = system_tray.getTrayIconSize();   
+        Image scaled_image = image.getScaledInstance(dimension.width, dimension.height, Image.SCALE_REPLICATE);
+        return scaled_image;
     }
 
     
     public Tray(Egroupware egw) {
+        this._egw = egw;
         // retrieve SystemTray instance by the factory
         if(SystemTray.isSupported()) {
             this._system_tray = SystemTray.getSystemTray();
-            String image = "tileimage.png";
-            Image image_icon;
+
             // icon
             try {
                 // load image
-                 image_icon = Tray.getImage("tileimage32.png");
+                  Image image_icon = Tray.getImage("tileimage128.png", this._system_tray);
                  
                  // popup menu
+                
+                // tooltip
+                String tooltip;
+                EgroupwareConfig egw_config = this._egw.getConfig();
+                
+                if(this._egw.isLogin()) {
+                    tooltip = "Eingeloggt als " + egw_config.getUser();
+                }
+                else {
+                    tooltip = egw_config.getUser() + " ist nicht angemeldet";
+                }
+                
+                
                  
+                this._tray_icon = new TrayIcon(image_icon, tooltip);
                  
-                 this._tray_icon = new TrayIcon(image_icon, "EGroupware");
+                //this._tray_icon.setImageAutoSize(true);
                  
-                 this._system_tray.add(this._tray_icon);
+                this._system_tray.add(this._tray_icon);
+                this._tray_icon.addMouseListener(this);
             }
             catch(Exception exception) {
-                System.err.println(exception.getMessage());
+                logger.error(exception.getMessage());
             }
-            
-            this._egw = egw;
         }   
     }
     
     
     // ************************** MouseListener interface implementation ***
     public void mouseClicked(MouseEvent e) {
-        //System.out.println(e.toString());
-        try {
-            EgroupwareBrowser.open(this._egw);
-        }
-        catch(Exception exception) {
-            System.err.println(exception.getMessage());
+        int button = e.getButton();
+        int count = e.getClickCount();
+        
+        if((button == MouseEvent.BUTTON1) && (count == 2)) {
+       
+            try {
+                EgroupwareBrowser.open(this._egw);
+            }
+            catch(Exception exception) {
+                logger.error(exception.getMessage());
+            }
         }
     }
+    
+    
+    
+    
     
     
     

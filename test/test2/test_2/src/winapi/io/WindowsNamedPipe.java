@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package egwwinlogon.winapi.io;
+package winapi.io;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.IntByReference;
@@ -78,11 +78,11 @@ public class WindowsNamedPipe extends Thread implements ProcessWrapper {
 
 		public static class LPOVERLAPPED extends Structure {
 
-            @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[]{});
-            }
-        }
+                    @Override
+                    protected List getFieldOrder() {
+                        return Arrays.asList(new String[]{});
+                    }
+                }
 
 		Pointer CreateNamedPipeA(String lpName, int dwOpenMode, int dwPipeMode,
 			int nMaxInstances, int nOutBufferSize, int nInBufferSize,
@@ -224,7 +224,7 @@ public class WindowsNamedPipe extends Thread implements ProcessWrapper {
 	}
 
 	public void run() {
-		//logger.debug("Waiting for pipe connection " + this.path);
+		logger.debug("Waiting for pipe connection " + this.path);
 
 		boolean b1 = Kernel32.INSTANCE.ConnectNamedPipe(handle1, null);
 
