@@ -7,7 +7,6 @@ package egwwinlogon.user;
 import com.jegroupware.egroupware.Egroupware;
 import com.jegroupware.egroupware.EgroupwareBrowser;
 import com.jegroupware.egroupware.EgroupwareConfig;
-import egwwinlogon.winapi.io.PipeProcess;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
-package egwwinlogon.winapi.io;
+package winapi.io;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.IntByReference;
@@ -117,40 +117,32 @@ public class WindowsNamedPipe extends Thread implements ProcessWrapper {
 		return readable;
 	}
 
-	@Override
 	public InputStream getInputStream(long seek) throws IOException {
 		return null;
 	}
 
-	@Override
 	public ArrayList<String> getResults() {
 		return null;
 	}
 
-	@Override
 	public boolean isDestroyed() {
 		return !isAlive();
 	}
 
-	@Override
 	public void runInNewThread() {
 		// Constructor already called start(), do nothing
 	}
 
-	@Override
 	public void runInSameThread() {
 		// Constructor already called start(), do nothing
 	}
 
-	@Override
 	public boolean isReadyToStop() {
 		return false;
 	}
 
-	@Override
 	public void setReadyToStop(boolean nullable) { }
 
-	@Override
 	public void stopProcess() {
 		interrupt();
 	}
