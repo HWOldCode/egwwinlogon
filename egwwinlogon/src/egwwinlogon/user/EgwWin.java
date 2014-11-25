@@ -79,7 +79,7 @@ public class EgwWin {
         // request user's current task through Dialog
         EgroupwareConfig egw_config = egw.getConfig();
         TaskReportUi task_report_ui = new TaskReportUi(egw_config.getUser());
-        task_report_ui.setVisible(true);
+        //task_report_ui.setVisible(true);
 
 
         //PipeProcess tmp = new PipeProcess("egroupware");
