@@ -7,7 +7,6 @@ package egwwinlogon.user;
 import com.jegroupware.egroupware.Egroupware;
 //import com.jegroupware.egroupware.EgroupwareBrowser;
 import com.jegroupware.egroupware.EgroupwareConfig;
-import egwwinlogon.winapi.io.PipeProcess;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,22 +16,12 @@ import java.util.logging.Logger;
  * @author swe
  */
 public class EgwWin {
-    /**
-     * communication with service by pipe
-     * 
-     * @var PipePricess
-     */
-    protected PipeProcess _pipe_user = null;
-
 
     public EgwWin() {
 
-        if(this._pipe_user == null) {
-            this._pipe_user = new PipeProcess("egroupware");
-        }
     }
-    
-    
+
+
     /**
      * main
      * @param args String[]
@@ -88,5 +77,5 @@ public class EgwWin {
     //catch( IOException ex ) {
     //    Logger.getLogger(EgwWin.class.getName()).log(Level.SEVERE, null, ex);
     //}
-    
+
 }
