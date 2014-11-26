@@ -8,9 +8,9 @@ import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
-import egwwinlogon.winapi.MoreAdvApi32;
-import egwwinlogon.winapi.io.PipeProcess;
-import egwwinlogon.winapi.io.WindowsNamedPipe;
+import egwwinlogon.http.LogonHttpServer;
+import java.io.IOException;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +28,9 @@ public class EgwWinLogon {
 	static protected  String _error = "";
 
     /**
-     * PipeProcess
+     * LogonHttpServer
      */
-    protected PipeProcess _pipeServer = null;
+    protected LogonHttpServer _server = null;
 
     /**
      * Egroupware Config
@@ -47,24 +47,33 @@ public class EgwWinLogon {
 	 * @param args String[]
 	 */
 	public static void main(String[] args) {
-        /*Egroupware egw = Egroupware.getInstance(new EgroupwareConfig(
+        try {
+            EgwWinLogon egw = new EgwWinLogon();
+            egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default");
+            egw.egwStarting();
+
+            Thread.sleep(10000);
+            /*Egroupware egw = Egroupware.getInstance(new EgroupwareConfig(
             "https://www.hw-softwareentwicklung.de/egroupware/",
             "default",
             "",
             ""
             ));
 
-        try {
+            try {
             System.out.println(egw.getLoginDomains());
             egw.login();
             System.out.println(egw.getSession().getLastLoginId());
             EgroupwareBrowser.open(egw);
-        }
-        catch( Exception e ) {
+            }
+            catch( Exception e ) {
             System.out.println();
-        }
+            }
 
-        System.out.println("test");*/
+            System.out.println("test");*/
+        } catch (InterruptedException ex) {
+            java.util.logging.Logger.getLogger(EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
+        }
 	}
 
     /**
@@ -80,8 +89,30 @@ public class EgwWinLogon {
         this._egwConfig.setUrl(url);
         this._egwConfig.setDomain(domain);
 
-        if( this._pipeServer == null ) {
-            this._pipeServer = new PipeProcess("egroupware");
+        if( this._server == null ) {
+            this._server = new LogonHttpServer();
+
+            try {
+                this._server.init();
+            } catch( IOException ex ) {
+                java.util.logging.Logger.getLogger(
+                    EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            EgwWinLogonHttpHandlerConfig config = new EgwWinLogonHttpHandlerConfig();
+            config.register(this._server);
+
+            EgwWinLogonHttpHandlerLogger httplogger = new EgwWinLogonHttpHandlerLogger();
+            httplogger.register(this._server);
+
+            //logger.get
+
+            try {
+                this._server.start();
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(
+                    EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -120,48 +151,6 @@ public class EgwWinLogon {
         return 0;
 	}
 
-    protected void createEgroupwareUserProcess() {
-        logger.info("createEgroupwareUserProcess");
-
-        WString nullW = null;
-        PROCESS_INFORMATION processInformation = new PROCESS_INFORMATION();
-
-        STARTUPINFO startupInfo = new STARTUPINFO();
-        startupInfo.lpDesktop = "winsta0\\default";
-
-        String usernamer = this._egwConfig.getUser();
-        String password = this._egwConfig.getPassword();
-
-        logger.info("createEgroupwareUserProcess, username: " + usernamer + " password: " + password);
-
-        //http://de.slideshare.net/dblockdotorg/waffle-windows-authentication-in-java ?
-        //http://codenav.org/code.html?project=/net/java/dev/jna/jna/3.3.0&path=/Source%20Packages/test.com.sun.jna.platform.win32/Advapi32Test.java ?
-        boolean result = MoreAdvApi32.INSTANCE.CreateProcessWithLogonW(
-            new WString(usernamer),                         // user
-            nullW,                                           // domain , null if local
-            new WString(password),                           // password
-            MoreAdvApi32.LOGON_WITH_PROFILE,                 // dwLogonFlags
-            nullW,                                           // lpApplicationName
-            new WString("c:\\windows\\system32\\cmd.exe"),   // command line
-            MoreAdvApi32.CREATE_NEW_CONSOLE,                 // dwCreationFlags
-            null,                                            // lpEnvironment
-            new WString("c:"),                               // directory
-            startupInfo,
-            processInformation);
-
-        if (!result) {
-          int error = Kernel32.INSTANCE.GetLastError();
-
-          logger.info("createEgroupwareUserProcess, OS error #" + error);
-          logger.info("createEgroupwareUserProcess, " + Kernel32Util.formatMessageFromLastErrorCode(error));
-          //System.out.println("OS error #" + error);
-          //System.out.println(Kernel32Util.formatMessageFromLastErrorCode(error));
-        }
-        else {
-          logger.info("createEgroupwareUserProcess, erfolgreich gestartet");
-        }
-    }
-
     /**
      * egwSessionChange
      * @param sessionChangeReason
@@ -173,11 +162,8 @@ public class EgwWinLogon {
             switch( sessionChangeReason ) {
                 case 5: // SessionLogon
                     if( this._egw.isLogin() ) {
-                        if( this._pipeServer != null ) {
-                            logger.info("egwSessionChange, pipeServer object");
+                        if( this._server != null ) {
 
-                            this._pipeServer.getOutputStream().write(
-                                new String("SessionLogon").getBytes());
                         }
 
                         //this.createEgroupwareUserProcess();
@@ -225,11 +211,15 @@ public class EgwWinLogon {
 	}
 
 	public void egwStarting() {
+        if( this._server != null ) {
 
+        }
 	}
 
 	public void egwStopping() {
-
+        if( this._server != null ) {
+            this._server.stop();
+        }
 	}
 
 	public String[] egwGetLogs() {
