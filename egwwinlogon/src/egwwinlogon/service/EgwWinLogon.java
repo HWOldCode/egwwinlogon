@@ -47,12 +47,12 @@ public class EgwWinLogon {
 	 * @param args String[]
 	 */
 	public static void main(String[] args) {
-        //try {
-            //EgwWinLogon egw = new EgwWinLogon();
-            //egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default");
-            //egw.egwStarting();
+        try {
+            EgwWinLogon egw = new EgwWinLogon();
+            egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default");
+            egw.egwStarting();
 
-            //Thread.sleep(10000);
+            Thread.sleep(10000);
             /*Egroupware egw = Egroupware.getInstance(new EgroupwareConfig(
             "https://www.hw-softwareentwicklung.de/egroupware/",
             "default",
@@ -71,9 +71,9 @@ public class EgwWinLogon {
             }
 
             System.out.println("test");*/
-        //} catch (InterruptedException ex) {
-            //java.util.logging.Logger.getLogger(EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
-        //}
+        } catch (InterruptedException ex) {
+            java.util.logging.Logger.getLogger(EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
+        }
 	}
 
     /**
