@@ -48,6 +48,15 @@ public class EgwWinLogon {
 	 */
 	public static void main(String[] args) {
         try {
+            Egroupware tegw = Egroupware.getInstance(new EgroupwareConfig(
+                "http://dev.hw-softwareentwicklung.de/egroupware/",
+                "default",
+                "admin2",
+                "test"
+                ));
+
+            tegw.login();
+
             EgwWinLogon egw = new EgwWinLogon();
             egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default");
             egw.egwStarting();
@@ -71,7 +80,7 @@ public class EgwWinLogon {
             }
 
             System.out.println("test");*/
-        } catch (InterruptedException ex) {
+        } catch (Exception ex) {
             java.util.logging.Logger.getLogger(EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
         }
 	}
@@ -105,6 +114,8 @@ public class EgwWinLogon {
             EgwWinLogonHttpHandlerLogger httplogger = new EgwWinLogonHttpHandlerLogger();
             httplogger.register(this._server);
 
+            EgwWinLogonHttpHandlerSession session = new EgwWinLogonHttpHandlerSession();
+            session.register(this._server);
             //logger.get
 
             try {
