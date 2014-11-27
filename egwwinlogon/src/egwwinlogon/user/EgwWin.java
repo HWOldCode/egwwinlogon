@@ -7,9 +7,9 @@ package egwwinlogon.user;
 import com.jegroupware.egroupware.Egroupware;
 //import com.jegroupware.egroupware.EgroupwareBrowser;
 import com.jegroupware.egroupware.EgroupwareConfig;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 
 /**
  *
@@ -17,19 +17,19 @@ import java.util.logging.Logger;
  */
 public class EgwWin {
 
+
+
     public EgwWin() {
 
+        
     }
-
-
+    
+    
     /**
      * main
      * @param args String[]
      */
     public static void main(String[] args) {
-
-
-    //try {
         Egroupware egw = Egroupware.getInstance(new EgroupwareConfig(
                 "http://dev.hw-softwareentwicklung.de/egroupware/",
                 "default",
@@ -68,14 +68,5 @@ public class EgwWin {
         // request user's current task through Dialog
         EgroupwareConfig egw_config = egw.getConfig();
         TaskReportUi task_report_ui = new TaskReportUi(egw_config.getUser());
-        //task_report_ui.setVisible(true);
-
-
-        //PipeProcess tmp = new PipeProcess("egroupware");
-        //tmp.getOutputStream().write(new String("userclient").getBytes());
     }
-    //catch( IOException ex ) {
-    //    Logger.getLogger(EgwWin.class.getName()).log(Level.SEVERE, null, ex);
-    //}
-
 }

@@ -1,14 +1,16 @@
 package egwwinlogon.user;
 
 import com.sun.jna.platform.win32.Netapi32Util.Group;
-import java.awt.Dimension;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
+import java.awt.GridBagLayout;
+//simport java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.TextArea;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
+
 
 
 
@@ -19,13 +21,20 @@ public class TaskReportUi extends JFrame {
     // login name
     protected String _login;
     // panel
-    //protected JPanel _panel;
+    protected JPanel _ui_panel;
     // select box element for project-options
     protected JComboBox _ui_select;
+    // informations to selected projects
+    protected JPanel _ui_panel_info;
+    protected JButton _ui_button_link;
+    //protected JPanel _ui_panel_description;
+    protected TextArea _ui_textarea_description;
     
     
     /**
      * create a TaskReportUi-Instance
+     * 
+     * @param login String
      */
     public TaskReportUi(String login) {
         this._login = login;
@@ -34,40 +43,46 @@ public class TaskReportUi extends JFrame {
         this.setTitle(title);
         
         // create the ui elements
-        JPanel panel = new JPanel();
-        GroupLayout layout = new GroupLayout(panel);
-        panel.setLayout(layout);
-        
-        GroupLayout.SequentialGroup sequential_horizontal_group = layout.createSequentialGroup();
-        GroupLayout.SequentialGroup sequential_vertical_group = layout.createSequentialGroup();
-        //Group vertical_group = new Group();
+        this._ui_panel = new JPanel();
+        this._ui_panel.setLayout(new BoxLayout(this._ui_panel, BoxLayout.Y_AXIS));
         
         // ComboBox
+        JPanel ui_panel_select = new JPanel();
+        ui_panel_select.setLayout(new GridBagLayout());
+        
+        ui_panel_select.add(new Label("Auftrag:"));
         this._ui_select = new JComboBox();
+        this._addSelectionOptions();
+        ui_panel_select.add(this._ui_select);
+        this._ui_panel.add(ui_panel_select);
         
-        this.addSelectionOptions();
-        //panel.add(this._ui_select);
-        sequential_horizontal_group.addGroup(layout.createParallelGroup().addComponent(this._ui_select));
-        layout.setHorizontalGroup(sequential_horizontal_group);
-        sequential_vertical_group.addGroup(layout.createParallelGroup(Alignment.BASELINE).addComponent(this._ui_select));     
-        layout.setVerticalGroup(sequential_vertical_group);
+        // info
+        this._ui_panel_info = new JPanel();
+        this._ui_panel_info.setLayout(new GridBagLayout());
+        this._ui_panel_info.add(new Label("Link:"));
+        this._ui_panel_info.add(new JButton("click me"));
         
+        this._ui_panel.add(this._ui_panel_info);
+        //this._ui_panel.remove(this._ui_panel_info);
+        this._ui_panel.add(new Label("Beschreibung:"));
+        //this._ui_panel_description = new JPanel();
+        //this._ui_panel_description.setLayout(new GridBagLayout());
+        this._ui_textarea_description = new TextArea();
+        //this._ui_panel_description.add(this._ui_textarea_description);
+        //this._ui_panel.add(this._ui_panel_description);
+        this._ui_panel.add(this._ui_textarea_description);
         
-        //this.getContentPane().add(panel);
+        this.getContentPane().add(this._ui_panel);
         //this.setMinimumSize(new Dimension(700,300));
-        //this.pack();
+        this.pack();
         this.setVisible(true);
     }
     
     
-    public void addSelectionOptions() {
+    private void _addSelectionOptions() {
         
         this._ui_select.addItem("transwrarp-Antrieb");
         this._ui_select.addItem("Ki-Gehirn-Implantat");
         this._ui_select.addItem("holografische Konstruktion");
-        
-        
-        
     }
-    
 }
