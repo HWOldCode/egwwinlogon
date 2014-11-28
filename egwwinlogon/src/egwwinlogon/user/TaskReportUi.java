@@ -27,8 +27,13 @@ public class TaskReportUi extends JFrame {
     // informations to selected projects
     protected JPanel _ui_panel_info;
     protected JButton _ui_button_link;
-    //protected JPanel _ui_panel_description;
     protected TextArea _ui_textarea_description;
+    // notes by user
+    protected TextArea _ui_textarea_notes;
+    // terminate dialog
+    protected JPanel _ui_panel_terminate;
+    protected JButton _ui_button_submit;
+    protected JButton _ui_button_cancel;
     
     
     /**
@@ -49,33 +54,62 @@ public class TaskReportUi extends JFrame {
         // ComboBox
         JPanel ui_panel_select = new JPanel();
         ui_panel_select.setLayout(new GridBagLayout());
-        
         ui_panel_select.add(new Label("Auftrag:"));
         this._ui_select = new JComboBox();
         this._addSelectionOptions();
         ui_panel_select.add(this._ui_select);
         this._ui_panel.add(ui_panel_select);
         
-        // info
-        this._ui_panel_info = new JPanel();
-        this._ui_panel_info.setLayout(new GridBagLayout());
-        this._ui_panel_info.add(new Label("Link:"));
-        this._ui_panel_info.add(new JButton("click me"));
+        // dialog termination button
+        this._ui_panel_terminate = new JPanel();
+        this._ui_panel_terminate.setLayout(new GridBagLayout());
+        this._ui_button_cancel = new JButton("Rechner sperren");
+        this._ui_panel_terminate.add(this._ui_button_cancel);
+        this._ui_panel.add(this._ui_panel_terminate);
         
-        this._ui_panel.add(this._ui_panel_info);
-        //this._ui_panel.remove(this._ui_panel_info);
-        this._ui_panel.add(new Label("Beschreibung:"));
-        //this._ui_panel_description = new JPanel();
-        //this._ui_panel_description.setLayout(new GridBagLayout());
-        this._ui_textarea_description = new TextArea();
-        //this._ui_panel_description.add(this._ui_textarea_description);
-        //this._ui_panel.add(this._ui_panel_description);
-        this._ui_panel.add(this._ui_textarea_description);
+        this._setSelected(); // call for test
         
         this.getContentPane().add(this._ui_panel);
         //this.setMinimumSize(new Dimension(700,300));
         this.pack();
         this.setVisible(true);
+    }
+    
+    
+    private void _setSelected() {
+        // the main panel only contains the combo box with project-list 
+        // & cancel button before first selection remaining ui-components have 
+        // to be inserted now
+        if(this._ui_panel.getComponentCount() == 2) {
+            this._ui_panel.remove(this._ui_panel_terminate);
+            this._ui_panel_terminate.remove(this._ui_button_cancel);
+            // hyperlink-link
+            this._ui_panel_info = new JPanel();
+            this._ui_panel_info.setLayout(new GridBagLayout());
+            this._ui_panel_info.add(new Label("Link:"));
+            this._ui_button_link = new JButton();
+            this._ui_panel_info.add(this._ui_button_link);
+            this._ui_panel.add(this._ui_panel_info);
+            // description
+            this._ui_panel.add(new Label("Beschreibung:"));
+            this._ui_textarea_description = new TextArea();
+            this._ui_textarea_description.setEnabled(false);
+            this._ui_panel.add(this._ui_textarea_description);
+            // user notes
+            this._ui_panel.add(new Label("Notizen:"));
+            this._ui_textarea_notes = new TextArea();
+            this._ui_panel.add(this._ui_textarea_notes);
+            // dialog termination buttons
+            this._ui_button_submit = new JButton("Report abschicken");
+            this._ui_panel_terminate.add(this._ui_button_submit);
+            this._ui_panel_terminate.add(this._ui_button_cancel);
+            this._ui_panel.add(this._ui_panel_terminate);
+        }
+        
+        this._ui_button_link.setText("neuer text 1");
+        this._ui_textarea_description.setText("Ich bin die Projectbeschreibung...");
+        
+        System.out.println(this._ui_panel.getComponentCount());
     }
     
     

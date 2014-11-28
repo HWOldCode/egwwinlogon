@@ -32,7 +32,7 @@ public class EgwWin {
      */
     public static void main(String[] args) {
         try {
-            LogonHttpClient client = new LogonHttpClient();
+            /*LogonHttpClient client = new LogonHttpClient();
             String buffer = client.sendGET("http://127.0.0.1:8101/session?user=" +
                 System.getProperty("user.name"));
 
@@ -65,8 +65,9 @@ public class EgwWin {
             Tray tray = new Tray(egw);
 
             // request user's current task through Dialog
-            EgroupwareConfig egw_config = egw.getConfig();
-            TaskReportUi task_report_ui = new TaskReportUi(egw_config.getUser());
+            EgroupwareConfig egw_config = egw.getConfig();*/
+            //TaskReportUi task_report_ui = new TaskReportUi(egw_config.getUser());
+            TaskReportUi task_report_ui = new TaskReportUi("kwa");
         }
         catch( Exception e ) {
             System.out.println("Fehler:");
