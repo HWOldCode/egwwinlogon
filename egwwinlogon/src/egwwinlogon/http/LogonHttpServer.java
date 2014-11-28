@@ -9,6 +9,8 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 /**
@@ -46,7 +48,9 @@ public class LogonHttpServer {
      * @throws IOException
      */
     public void init() throws IOException {
-        this._server = HttpServer.create(new InetSocketAddress(this._port), 0);
+        this._server = HttpServer.create(new InetSocketAddress(
+            Inet4Address.getByName("127.0.0.1"), this._port), 0);
+        
         this._server.setExecutor(null);
     }
 
