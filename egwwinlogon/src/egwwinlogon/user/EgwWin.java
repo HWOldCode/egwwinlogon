@@ -8,6 +8,8 @@ import com.jegroupware.egroupware.Egroupware;
 //import com.jegroupware.egroupware.EgroupwareBrowser;
 import com.jegroupware.egroupware.EgroupwareConfig;
 import egwwinlogon.http.LogonHttpClient;
+import java.util.HashMap;
+import java.util.Map;
 
 //import java.util.logging.Level;
 //import java.util.logging.Logger;
@@ -68,6 +70,12 @@ public class EgwWin {
             EgroupwareConfig egw_config = egw.getConfig();*/
             //TaskReportUi task_report_ui = new TaskReportUi(egw_config.getUser());
             TaskReportUi task_report_ui = new TaskReportUi("kwa");
+            
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("1", "transwarp Antrieb");
+            map.put("2", "holografische Konstruktion");
+            map.put("3", "ki-Gehirn-implanatat");
+            task_report_ui.addSelectOptions(map);
         }
         catch( Exception e ) {
             System.out.println("Fehler:");

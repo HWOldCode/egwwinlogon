@@ -5,6 +5,11 @@ import java.awt.GridBagLayout;
 //simport java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -17,9 +22,11 @@ import javax.swing.JPanel;
 /**
  * dialog to request current task from user
  */
-public class TaskReportUi extends JFrame {
+public class TaskReportUi extends JFrame implements ActionListener {
     // login name
     protected String _login;
+    // selection options map
+    protected Map<String, String> _options;
     // panel
     protected JPanel _ui_panel;
     // select box element for project-options
@@ -56,7 +63,7 @@ public class TaskReportUi extends JFrame {
         ui_panel_select.setLayout(new GridBagLayout());
         ui_panel_select.add(new Label("Auftrag:"));
         this._ui_select = new JComboBox();
-        this._addSelectionOptions();
+        
         ui_panel_select.add(this._ui_select);
         this._ui_panel.add(ui_panel_select);
         
@@ -67,7 +74,8 @@ public class TaskReportUi extends JFrame {
         this._ui_panel_terminate.add(this._ui_button_cancel);
         this._ui_panel.add(this._ui_panel_terminate);
         
-        this._setSelected(); // call for test
+        
+        //this._addSelectionOptions(); // test
         
         this.getContentPane().add(this._ui_panel);
         //this.setMinimumSize(new Dimension(700,300));
@@ -81,6 +89,7 @@ public class TaskReportUi extends JFrame {
         // & cancel button before first selection remaining ui-components have 
         // to be inserted now
         if(this._ui_panel.getComponentCount() == 2) {
+            this._ui_select.removeItemAt(0);
             this._ui_panel.remove(this._ui_panel_terminate);
             this._ui_panel_terminate.remove(this._ui_button_cancel);
             // hyperlink-link
@@ -108,15 +117,52 @@ public class TaskReportUi extends JFrame {
         
         this._ui_button_link.setText("neuer text 1");
         this._ui_textarea_description.setText("Ich bin die Projectbeschreibung...");
-        
-        System.out.println(this._ui_panel.getComponentCount());
+        //this.repaint();
+        this.pack();
     }
     
     
     private void _addSelectionOptions() {
-        
+        this._ui_select.addItem("Bitte auswählen");
         this._ui_select.addItem("transwrarp-Antrieb");
         this._ui_select.addItem("Ki-Gehirn-Implantat");
         this._ui_select.addItem("holografische Konstruktion");
+        this._ui_select.addActionListener(this);
+    }
+    
+    
+    /**
+     * fill options to combo box
+     * 
+     * @param options Map<String, String>
+     */
+    public void addSelectOptions(Map<String, String> options) {
+        this._ui_select.removeAllItems();
+        
+        if(!options.isEmpty()) {
+            this._options = options;
+            
+            if(this._options.size() > 1) {
+                this._ui_select.addItem("Bitte auswählen");
+            }
+       
+            Set set = this._options.entrySet();
+            Iterator iterator = set.iterator();
+
+            while(iterator.hasNext()) {
+                Map.Entry entry = (Map.Entry)iterator.next();
+                String option = (String) entry.getValue();
+                this._ui_select.addItem(option);
+            }
+
+            this._ui_select.addActionListener(this);
+            this.pack();
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        //System.out.println(e.getSource());
+        this._setSelected();
     }
 }
