@@ -437,13 +437,17 @@ namespace pGina.Plugin.EGroupware
         }
 
         protected void startUserApp(string username) {
-            string applicationName = "\"" + this.getJavaInstallationPath() + "\\bin\\java.exe\" -jar \"" + this.getAppDir() + "\\egwwinlogon.jar\"";
+            string applicationName = "\"" + this.getJavaInstallationPath() + "\\bin\\java.exe\" -jar \"" + this.getAppDir() + "\\egwwinlogon.jar\" " + username;
 
             this._logger.InfoFormat(applicationName);
 
             ApplicationLoader.PROCESS_INFORMATION procInfo;
 
             if( ApplicationLoader.StartProcessAndBypassUAC(applicationName, out procInfo) ) {
+                if( this._plist.ContainsKey(username) ) {
+                    this._plist.Remove(username);
+                }
+
                 this._plist.Add(username, Process.GetProcessById((int)procInfo.dwProcessId));
             }
         }

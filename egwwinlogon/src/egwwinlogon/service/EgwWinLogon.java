@@ -9,6 +9,7 @@ import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
 import egwwinlogon.http.LogonHttpServer;
+import egwwinlogon.user.EgwWinLogonClient;
 import java.io.IOException;
 import java.util.logging.Level;
 import org.slf4j.Logger;
@@ -60,6 +61,9 @@ public class EgwWinLogon {
             EgwWinLogon egw = new EgwWinLogon();
             egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default");
             egw.egwStarting();
+
+            EgwWinLogonClient tclient = new EgwWinLogonClient();
+            tclient.getEgroupwareInstance("admin2");
 
             Thread.sleep(10000);
             /*Egroupware egw = Egroupware.getInstance(new EgroupwareConfig(

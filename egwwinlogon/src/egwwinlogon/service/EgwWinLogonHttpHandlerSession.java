@@ -58,6 +58,14 @@ public class EgwWinLogonHttpHandlerSession extends LogonHttpServerHandler {
                     os.write(response.getBytes());
                     os.close();
                 }
+                else {
+                    String msg = "error";
+                    
+                    t.sendResponseHeaders(200, msg.length());
+                    OutputStream os = t.getResponseBody();
+                    os.write(msg.getBytes());
+                    os.close();
+                }
             }
 
         } catch( Exception ex) {

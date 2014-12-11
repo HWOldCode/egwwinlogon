@@ -5,6 +5,7 @@
 package egwwinlogon.user;
 
 import com.jegroupware.egroupware.Egroupware;
+import com.jegroupware.egroupware.EgroupwareBrowser;
 //import com.jegroupware.egroupware.EgroupwareBrowser;
 import com.jegroupware.egroupware.EgroupwareConfig;
 import egwwinlogon.http.LogonHttpClient;
@@ -33,6 +34,10 @@ public class EgwWin {
      * @param args String[]
      */
     public static void main(String[] args) {
+        for( String s: args ) {
+            System.out.println(s);
+        }
+
         try {
             /*LogonHttpClient client = new LogonHttpClient();
             String buffer = client.sendGET("http://127.0.0.1:8101/session?user=" +
@@ -59,18 +64,27 @@ public class EgwWin {
             }
             else {
                 System.out.println("not isLogin");
-            }
+            }*/
             //System.out.println(egw.getSession().getLastLoginId());
             //EgroupwareBrowser.open(egw);
+            EgwWinLogonClient client = new EgwWinLogonClient();
+            Egroupware egw = client.getEgroupwareInstance(args[0]);
 
-            // tray icon
-            Tray tray = new Tray(egw);
+            if( egw != null ) {
+                EgroupwareBrowser.open(egw);
+
+                // tray icon
+                Tray tray = new Tray(egw);
+            }
+            else {
+                System.out.println("egw empty");
+            }
 
             // request user's current task through Dialog
-            EgroupwareConfig egw_config = egw.getConfig();*/
+            /*EgroupwareConfig egw_config = egw.getConfig();*/
             //TaskReportUi task_report_ui = new TaskReportUi(egw_config.getUser());
             TaskReportUi task_report_ui = new TaskReportUi("kwa");
-            
+
             Map<String, String> map = new HashMap<String, String>();
             map.put("1", "transwarp Antrieb");
             map.put("2", "holografische Konstruktion");
