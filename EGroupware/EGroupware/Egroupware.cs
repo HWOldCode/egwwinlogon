@@ -155,6 +155,10 @@ namespace pGina.Plugin.EGroupware
          */
         private void registerJava() {
             if( Bridge.Setup.BindNative ) {
+                global::System.Collections.Generic.List<global::net.sf.jni4net.jni.JNINativeMethod> methods = new global::System.Collections.Generic.List<global::net.sf.jni4net.jni.JNINativeMethod>();
+                global::System.Type @__type = typeof(EGWWinLogin);
+                //methods.Add(global::net.sf.jni4net.jni.JNINativeMethod.Create(@__type, "getDirectoryMap", "getDirectoryMap2", "()Ljava/util/Map;"));
+
                 //MethodInfo initializer = Registry.GetWrapperInitializer(typeof(EGWWinLogin), "__Init2");
                 //RegistryRecord record = Registry.GetCLRRecord(typeof(Bridge));
                 //Registry.RegisterNative(initializer, env, record.JVMProxy, record.JVMInterface);
