@@ -1,5 +1,6 @@
 package egwwinlogon.service;
 
+import egwwinlogon.service.db.EgwWinLogonDb;
 import com.jegroupware.egroupware.Egroupware;
 import com.jegroupware.egroupware.EgroupwareBrowser;
 import com.jegroupware.egroupware.EgroupwareConfig;
@@ -10,6 +11,7 @@ import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.http.LogonHttpServer;
+import egwwinlogon.service.db.EgwWinLogonDbConnection;
 import egwwinlogon.user.EgwWinLogonClient;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -53,7 +55,7 @@ public class EgwWinLogon {
      * EgwWinLogonDb
      */
     protected EgwWinLogonDb _db = null;
-    
+
 	/**
 	 * main
 	 * @param args String[]
@@ -128,12 +130,12 @@ public class EgwWinLogon {
 
         this._db = new EgwWinLogonDb();
         this._db.start();
-        
+
         this._egwConfig = new EgroupwareConfig();
         this._egwConfig.setUrl(url);
         this._egwConfig.setDomain(domain);
 
-        this._eLoginCache = EgroupwareELoginCache.loadByFile("elogin.cache");
+        //this._eLoginCache = EgroupwareELoginCache.loadByFile("elogin.cache");
 
         if( this._eLoginCache == null ) {
             this._eLoginCache = new EgroupwareELoginCache();
@@ -194,7 +196,12 @@ public class EgwWinLogon {
                 this._egw.request(this._eLoginCache);
 
                 if( this._eLoginCache.countAccounts() > 0 ) {
-                    EgroupwareELoginCache.saveToFile(this._eLoginCache, "elogin.cache");
+                    EgwWinLogonDbConnection _con = this._db.getNewConnection();
+
+                    //_con.query("drop table barcodes if exists;");
+                    _con.query("create table barcodes (id integer, barcode varchar(20) not null);");
+                    _con.query("insert into barcodes (id, barcode) values (1, '12345566');");
+                    //EgroupwareELoginCache.saveToFile(this._eLoginCache, "elogin.cache");
                 }
 
                 return 1;
