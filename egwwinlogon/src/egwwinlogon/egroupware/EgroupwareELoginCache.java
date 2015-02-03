@@ -6,21 +6,25 @@
 package egwwinlogon.egroupware;
 
 import com.jegroupware.egroupware.EgroupwareJson;
-import com.jegroupware.egroupware.EgroupwareNotifications;
 import com.jegroupware.egroupware.core.EgroupwareAuth;
 import egwwinlogon.service.EgwWinLogon;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ContainerFactory;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * EgroupwareELogin
@@ -110,6 +114,46 @@ public class EgroupwareELoginCache extends EgroupwareJson {
     }
 
     /**
+     * getAccount
+     * @param i
+     * @return 
+     */
+    public LinkedHashMap getAccount(int i) {
+        if( this._accounts != null ) {
+            if( i < this._accounts.size() ) {
+                return this._accounts.get(i);
+            }
+        }
+        
+        return null;
+    }
+    
+    /**
+     * setAccounts
+     * @param accounts 
+     */
+    public void setAccounts(LinkedList<LinkedHashMap> accounts) {
+        this._accounts = accounts;
+    }
+    
+    /**
+     * getEncryptionType
+     * @return 
+     */
+    public String getEncryptionType() {
+        return this._encryption_type;
+    }
+    
+    /**
+     * setEncryptionType
+     * @param type
+     * @return 
+     */
+    public void setEncryptionType(String type) {
+        this._encryption_type = type;
+    }
+    
+    /**
      * existUsername
      * @param username
      * @return
@@ -177,13 +221,36 @@ public class EgroupwareELoginCache extends EgroupwareJson {
 	 * @throws IOException
 	 */
 	static public String toSerializableString(EgroupwareELoginCache cache) throws IOException {
-		ByteArrayOutputStream _baos = new ByteArrayOutputStream();
-		ObjectOutputStream _oos = new ObjectOutputStream(_baos);
+		JSONObject serializable = new JSONObject();
+        JSONArray jsonList = new JSONArray();
+        
+        if( cache.countAccounts() == 0 ) {
+            return null;
+        }
 
-		_oos.writeObject(cache);
-		_oos.flush();
-
-		return _baos.toString("ISO-8859-1");
+        for( int i=0; i<cache.countAccounts(); i++ ) {
+            LinkedHashMap account = cache.getAccount(i);
+            JSONArray jsonAccountDataList = new JSONArray();
+            
+            Set<String> keys = account.keySet();
+            
+            for( String k :keys ) {
+                JSONObject data = new JSONObject();
+                data.put(k, account.get(k));
+                jsonAccountDataList.add(data);
+            }
+            
+            jsonList.add(jsonAccountDataList);
+        }
+        
+        serializable.put("accounts", jsonList);
+        serializable.put("encryption_type", cache.getEncryptionType());
+        
+        // save time for later (check max cache access)
+        Timestamp stamp = new Timestamp(System.currentTimeMillis());
+        serializable.put("save_time", stamp.getTime());
+        
+        return serializable.toJSONString();
 	}
 
     /**
@@ -195,11 +262,60 @@ public class EgroupwareELoginCache extends EgroupwareJson {
 	 * @throws ClassNotFoundException
 	 */
 	static public EgroupwareELoginCache fromSerializableString(String serialize) throws IOException, ClassNotFoundException {
-		ObjectInputStream _ois = new ObjectInputStream(new ByteArrayInputStream(serialize.getBytes("ISO-8859-1")));
-		Object _o = _ois.readObject();
-		_ois.close();
+		EgroupwareELoginCache cache = new EgroupwareELoginCache();
 
-		return (EgroupwareELoginCache) _o;
+        JSONParser parser = new JSONParser();
+        ContainerFactory containerFactory = new ContainerFactory(){
+                public List creatArrayContainer() {
+                    return new LinkedList();
+                }
+
+                public Map createObjectContainer() {
+                    return new LinkedHashMap();
+                }
+            };
+        
+        Map data = null;
+        
+        try {
+            data = (Map)parser.parse(serialize.trim(), containerFactory);
+        } catch( ParseException ex ) {
+            Logger.getLogger(
+                EgroupwareELoginCache.class.getName()).log(
+                    Level.SEVERE,
+                    null,
+                    ex);
+            
+            return null;
+        }
+        
+        LinkedList<LinkedHashMap> accounts = new LinkedList();
+        
+        LinkedList taccounts = (LinkedList) data.get("accounts");
+        
+        for( int i=0; i<taccounts.size(); i++ ) {
+            LinkedList taccount = (LinkedList) taccounts.get(i);
+            LinkedHashMap naccount = new LinkedHashMap();
+            
+            for( int e=0; e<taccount.size(); e++ ) {
+                LinkedHashMap tdata = (LinkedHashMap) taccount.get(e);
+                
+                Set<String> keys = tdata.keySet();
+            
+                for( String k :keys ) {
+                    naccount.put(k, tdata.get(k));
+                }
+            }
+            
+            accounts.add(naccount);
+        }
+        
+        cache.setEncryptionType((String) data.get("encryption_type"));
+        cache.setAccounts(accounts);
+        
+        //System.out.println(data);
+        
+		return cache;
 	}
 
     /**

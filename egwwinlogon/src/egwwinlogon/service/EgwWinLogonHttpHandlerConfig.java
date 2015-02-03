@@ -6,7 +6,6 @@
 package egwwinlogon.service;
 
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import egwwinlogon.http.LogonHttpServerHandler;
 import egwwinlogon.winapi.PlatformInfo;
 import java.io.IOException;
@@ -15,7 +14,6 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.misc.IOUtils;
 
 /**
  * EgwWinLogonHttpHandlerConfig

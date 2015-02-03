@@ -68,13 +68,17 @@ public class EgwWin {
             //System.out.println(egw.getSession().getLastLoginId());
             //EgroupwareBrowser.open(egw);
             EgwWinLogonClient client = new EgwWinLogonClient();
-            Egroupware egw = client.getEgroupwareInstance(args[0]);
+            Egroupware egw = null;
+            
+            if( (args.length > 0) && (args[0] != "") ) {
+                egw = client.getEgroupwareInstance(args[0]);
+            }
 
+            // tray icon
+            Tray tray = new Tray(egw);
+            
             if( egw != null ) {
                 EgroupwareBrowser.open(egw);
-
-                // tray icon
-                Tray tray = new Tray(egw);
             }
             else {
                 System.out.println("egw empty");
@@ -83,13 +87,13 @@ public class EgwWin {
             // request user's current task through Dialog
             /*EgroupwareConfig egw_config = egw.getConfig();*/
             //TaskReportUi task_report_ui = new TaskReportUi(egw_config.getUser());
-            TaskReportUi task_report_ui = new TaskReportUi("kwa");
+            /*TaskReportUi task_report_ui = new TaskReportUi("kwa");
 
             Map<String, String> map = new HashMap<String, String>();
             map.put("1", "transwarp Antrieb");
             map.put("2", "holografische Konstruktion");
             map.put("3", "ki-Gehirn-implanatat");
-            task_report_ui.addSelectOptions(map);
+            task_report_ui.addSelectOptions(map);*/
         }
         catch( Exception e ) {
             System.out.println("Fehler:");

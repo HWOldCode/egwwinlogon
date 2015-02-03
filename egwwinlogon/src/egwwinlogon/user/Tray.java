@@ -67,14 +67,20 @@ public class Tray implements MouseListener {
                  // popup menu
                 
                 // tooltip
-                String tooltip;
-                EgroupwareConfig egw_config = this._egw.getConfig();
+                String tooltip = "";
                 
-                if(this._egw.isLogin()) {
-                    tooltip = "Eingeloggt als " + egw_config.getUser();
+                if( this._egw != null ) {
+                    EgroupwareConfig egw_config = this._egw.getConfig();
+
+                    if( this._egw.isLogin() ) {
+                        tooltip = "Eingeloggt als " + egw_config.getUser();
+                    }
+                    else {
+                        tooltip = egw_config.getUser() + " ist nicht angemeldet";
+                    }
                 }
                 else {
-                    tooltip = egw_config.getUser() + " ist nicht angemeldet";
+                    tooltip = "Offline modus!";
                 }
                 
                 

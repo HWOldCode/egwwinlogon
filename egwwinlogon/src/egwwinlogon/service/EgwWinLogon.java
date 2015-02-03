@@ -11,6 +11,7 @@ import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.http.LogonHttpServer;
+import egwwinlogon.service.crypt.EgwWinLogonCrypt;
 import egwwinlogon.service.db.EgwWinLogonDbConnection;
 import egwwinlogon.user.EgwWinLogonClient;
 import java.io.IOException;
@@ -128,14 +129,16 @@ public class EgwWinLogon {
     public void initEgroupware(String url, String domain) {
         logger.info("initEgroupware, init egroupware by url: " + url + " domain: " + domain);
 
-        this._db = new EgwWinLogonDb();
-        this._db.start();
+        //EgwWinLogonCrypt crypt = new EgwWinLogonCrypt();
+        
+        //this._db = new EgwWinLogonDb();
+        //this._db.start();
 
         this._egwConfig = new EgroupwareConfig();
         this._egwConfig.setUrl(url);
         this._egwConfig.setDomain(domain);
 
-        //this._eLoginCache = EgroupwareELoginCache.loadByFile("elogin.cache");
+        this._eLoginCache = EgroupwareELoginCache.loadByFile("elogin.cache");
 
         if( this._eLoginCache == null ) {
             this._eLoginCache = new EgroupwareELoginCache();
@@ -196,18 +199,18 @@ public class EgwWinLogon {
                 this._egw.request(this._eLoginCache);
 
                 if( this._eLoginCache.countAccounts() > 0 ) {
-                    EgwWinLogonDbConnection _con = this._db.getNewConnection();
+                    //EgwWinLogonDbConnection _con = this._db.getNewConnection();
 
                     //_con.query("drop table barcodes if exists;");
-                    _con.query("create table barcodes (id integer, barcode varchar(20) not null);");
-                    _con.query("insert into barcodes (id, barcode) values (1, '12345566');");
-                    //EgroupwareELoginCache.saveToFile(this._eLoginCache, "elogin.cache");
+                    //_con.query("create table barcodes (id integer, barcode varchar(20) not null);");
+                    //_con.query("insert into barcodes (id, barcode) values (1, '12345566');");
+                    EgroupwareELoginCache.saveToFile(this._eLoginCache, "elogin.cache");
                 }
 
                 return 1;
             }
         }
-        catch( java.net.SocketTimeoutException e ) {
+        catch( java.net.SocketTimeoutException | java.net.UnknownHostException  e ) {
             // login by offline mode, username + password check by cachelist
             if( this._eLoginCache.countAccounts() > 0 ) {
                 if( this._eLoginCache.compareUsernamePassword(username, password) ) {
