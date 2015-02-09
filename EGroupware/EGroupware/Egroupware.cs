@@ -87,7 +87,6 @@ namespace pGina.Plugin.EGroupware
          */
         private void initJava() {
             var setup = new BridgeSetup();
-
             //string curPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             //this._logger.InfoFormat("cP: " + curPath);
             //curPath = curPath.Replace("Plugins\\Core", "");
@@ -121,11 +120,12 @@ namespace pGina.Plugin.EGroupware
                 if( this._jEgwWinLogon != null ) {
                     string url = Settings.Store.url;
                     string domain = Settings.Store.domain;
+                    string machinename = System.Environment.MachineName;
 
                     this._jEgwWinLogon.Invoke(
                         "initEgroupware",
-                        "(Ljava/lang/String;Ljava/lang/String;)V", 
-                        url, domain);
+                        "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
+                        url, domain, machinename);
                 }
             }
             catch( System.Exception e ) {
@@ -176,9 +176,10 @@ namespace pGina.Plugin.EGroupware
 
                 int ret = this._jEgwWinLogon.Invoke<int>(
                     "egwAuthenticateUser",
-                    "(Ljava/lang/String;Ljava/lang/String;)I",
+                    "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
                     username,
-                    password
+                    password,
+                    SysFingerPrint.Value()
                     );
 
                 this._logger.InfoFormat("return: {0}", ret);
@@ -441,7 +442,8 @@ namespace pGina.Plugin.EGroupware
         }
 
         protected void startUserApp(string username) {
-            string applicationName = "\"" + this.getJavaInstallationPath() + "\\bin\\java.exe\" -jar \"" + this.getAppDir() + "\\egwwinlogon.jar\" " + username;
+            string applicationName = "\"" + this.getJavaInstallationPath() + 
+                "\\bin\\java.exe\" -jar \"" + this.getAppDir() + "\\egwwinlogon.jar\" " + username;
 
             this._logger.InfoFormat(applicationName);
 

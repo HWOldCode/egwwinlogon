@@ -116,7 +116,7 @@ public class EgroupwareELoginCache extends EgroupwareJson {
     /**
      * getAccount
      * @param i
-     * @return 
+     * @return
      */
     public LinkedHashMap getAccount(int i) {
         if( this._accounts != null ) {
@@ -124,35 +124,35 @@ public class EgroupwareELoginCache extends EgroupwareJson {
                 return this._accounts.get(i);
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * setAccounts
-     * @param accounts 
+     * @param accounts
      */
     public void setAccounts(LinkedList<LinkedHashMap> accounts) {
         this._accounts = accounts;
     }
-    
+
     /**
      * getEncryptionType
-     * @return 
+     * @return
      */
     public String getEncryptionType() {
         return this._encryption_type;
     }
-    
+
     /**
      * setEncryptionType
      * @param type
-     * @return 
+     * @return
      */
     public void setEncryptionType(String type) {
         this._encryption_type = type;
     }
-    
+
     /**
      * existUsername
      * @param username
@@ -169,6 +169,70 @@ public class EgroupwareELoginCache extends EgroupwareJson {
 
             if( account_lid.compareTo(username) == 0 ) {
                 return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * isStatusA
+     *
+     * @param username
+     * @return
+     */
+    public Boolean isStatusA(String username) {
+        if( this._accounts == null ) {
+            return false;
+        }
+
+        for( int i=0; i<this._accounts.size(); i++ ) {
+            LinkedHashMap account = (LinkedHashMap) this._accounts.get(i);
+            String account_lid = (String) account.get("account_lid");
+
+            if( account_lid.compareTo(username) == 0 ) {
+                String account_status = (String) account.get("account_status");
+
+                if( account_status.compareTo("A") == 0 ) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * isAccountExpires
+     *
+     * @param username
+     * @return 
+     */
+    public Boolean isAccountExpires(String username) {
+        if( this._accounts == null ) {
+            return false;
+        }
+
+        for( int i=0; i<this._accounts.size(); i++ ) {
+            LinkedHashMap account = (LinkedHashMap) this._accounts.get(i);
+            String account_lid = (String) account.get("account_lid");
+
+            if( account_lid.compareTo(username) == 0 ) {
+                Integer account_expires = Integer.parseInt((String) account.get("account_expires"));
+                Timestamp stamp = new Timestamp(System.currentTimeMillis());
+
+                if( account_expires == -1 ) {
+                    return true;
+                }
+                else if( account_expires >= stamp.getTime() ) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
             }
         }
 
@@ -223,7 +287,7 @@ public class EgroupwareELoginCache extends EgroupwareJson {
 	static public String toSerializableString(EgroupwareELoginCache cache) throws IOException {
 		JSONObject serializable = new JSONObject();
         JSONArray jsonList = new JSONArray();
-        
+
         if( cache.countAccounts() == 0 ) {
             return null;
         }
@@ -231,25 +295,25 @@ public class EgroupwareELoginCache extends EgroupwareJson {
         for( int i=0; i<cache.countAccounts(); i++ ) {
             LinkedHashMap account = cache.getAccount(i);
             JSONArray jsonAccountDataList = new JSONArray();
-            
+
             Set<String> keys = account.keySet();
-            
+
             for( String k :keys ) {
                 JSONObject data = new JSONObject();
                 data.put(k, account.get(k));
                 jsonAccountDataList.add(data);
             }
-            
+
             jsonList.add(jsonAccountDataList);
         }
-        
+
         serializable.put("accounts", jsonList);
         serializable.put("encryption_type", cache.getEncryptionType());
-        
+
         // save time for later (check max cache access)
         Timestamp stamp = new Timestamp(System.currentTimeMillis());
         serializable.put("save_time", stamp.getTime());
-        
+
         return serializable.toJSONString();
 	}
 
@@ -274,9 +338,9 @@ public class EgroupwareELoginCache extends EgroupwareJson {
                     return new LinkedHashMap();
                 }
             };
-        
+
         Map data = null;
-        
+
         try {
             data = (Map)parser.parse(serialize.trim(), containerFactory);
         } catch( ParseException ex ) {
@@ -285,36 +349,36 @@ public class EgroupwareELoginCache extends EgroupwareJson {
                     Level.SEVERE,
                     null,
                     ex);
-            
+
             return null;
         }
-        
+
         LinkedList<LinkedHashMap> accounts = new LinkedList();
-        
+
         LinkedList taccounts = (LinkedList) data.get("accounts");
-        
+
         for( int i=0; i<taccounts.size(); i++ ) {
             LinkedList taccount = (LinkedList) taccounts.get(i);
             LinkedHashMap naccount = new LinkedHashMap();
-            
+
             for( int e=0; e<taccount.size(); e++ ) {
                 LinkedHashMap tdata = (LinkedHashMap) taccount.get(e);
-                
+
                 Set<String> keys = tdata.keySet();
-            
+
                 for( String k :keys ) {
                     naccount.put(k, tdata.get(k));
                 }
             }
-            
+
             accounts.add(naccount);
         }
-        
+
         cache.setEncryptionType((String) data.get("encryption_type"));
         cache.setAccounts(accounts);
-        
+
         //System.out.println(data);
-        
+
 		return cache;
 	}
 

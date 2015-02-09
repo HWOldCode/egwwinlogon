@@ -22,9 +22,7 @@ C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.csproj.Gener
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.pdb
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\jni4net.n-0.8.8.0.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\log4net.xml
-X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.csprojResolveAssemblyReference.cache
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.Configuration.resources
-X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.csproj.GenerateResource.Cache
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.pdb
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.dll
@@ -37,3 +35,6 @@ F:\veracrypt1\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.Co
 F:\veracrypt1\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.csproj.GenerateResource.Cache
 F:\veracrypt1\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.dll
 F:\veracrypt1\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.pdb
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\ResolveAssemblyReference.cache
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\GenerateResource.read.1.tlog
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\GenerateResource.write.1.tlog

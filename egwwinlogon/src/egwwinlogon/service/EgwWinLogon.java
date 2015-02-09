@@ -9,9 +9,11 @@ import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
+import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.http.LogonHttpServer;
 import egwwinlogon.service.crypt.EgwWinLogonCrypt;
+import egwwinlogon.service.crypt.Test;
 import egwwinlogon.service.db.EgwWinLogonDbConnection;
 import egwwinlogon.user.EgwWinLogonClient;
 import java.io.IOException;
@@ -57,6 +59,11 @@ public class EgwWinLogon {
      */
     protected EgwWinLogonDb _db = null;
 
+    /**
+     * MachineName
+     */
+    protected String _machineName = "";
+    
 	/**
 	 * main
 	 * @param args String[]
@@ -90,9 +97,9 @@ public class EgwWinLogon {
                 System.out.println("Passwort falsch");
             }*/
             EgwWinLogon egw = new EgwWinLogon();
-            egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default");
+            egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default", "test");
             egw.egwStarting();
-            egw.egwAuthenticateUser("admin2", "test");
+            egw.egwAuthenticateUser("admin2", "test", "99");
             //EgwWinLogonClient tclient = new EgwWinLogonClient();
             //tclient.getEgroupwareInstance("admin2");
 
@@ -125,12 +132,22 @@ public class EgwWinLogon {
      *
      * @param url
      * @param domain
+     * @param machineName
      */
-    public void initEgroupware(String url, String domain) {
-        logger.info("initEgroupware, init egroupware by url: " + url + " domain: " + domain);
+    public void initEgroupware(String url, String domain, String machineName) {
+        logger.info("initEgroupware, init egroupware by url: " + url + 
+            " domain: " + domain + " machineName: " + machineName);
 
+        this._machineName = machineName;
+        /*try {
+            Test test = new Test();
+        }
+        catch( Exception ex ) {
+            java.util.logging.Logger.getLogger(
+                    EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
         //EgwWinLogonCrypt crypt = new EgwWinLogonCrypt();
-        
+
         //this._db = new EgwWinLogonDb();
         //this._db.start();
 
@@ -178,9 +195,10 @@ public class EgwWinLogon {
      *
      * @param username
      * @param password
+     * @param sysFingerPrint
      * @return
      */
-	public int egwAuthenticateUser(String username, String password) {
+	public int egwAuthenticateUser(String username, String password, String sysFingerPrint) {
         logger.info("egwAuthenticateUser, username: " + username);
 
         if( this._egwConfig == null ) {
@@ -196,6 +214,14 @@ public class EgwWinLogon {
             this._egw.login();
 
             if( this._egw.isLogin() ) {
+                
+                // send login command
+                this._egw.request(new EgroupwareCommand(
+                    EgroupwareCommand.EGW_CMD_LOGIN, 
+                    this._machineName + ";" + sysFingerPrint
+                    ));
+                
+                // request login cache list
                 this._egw.request(this._eLoginCache);
 
                 if( this._eLoginCache.countAccounts() > 0 ) {
@@ -213,8 +239,12 @@ public class EgwWinLogon {
         catch( java.net.SocketTimeoutException | java.net.UnknownHostException  e ) {
             // login by offline mode, username + password check by cachelist
             if( this._eLoginCache.countAccounts() > 0 ) {
-                if( this._eLoginCache.compareUsernamePassword(username, password) ) {
-                    return 1;
+                // is activ and expries
+                if( this._eLoginCache.isStatusA(username) && this._eLoginCache.isAccountExpires(username) ) {
+                    // check password
+                    if( this._eLoginCache.compareUsernamePassword(username, password) ) {
+                        return 1;
+                    }
                 }
             }
         }
