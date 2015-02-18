@@ -96,13 +96,27 @@ public class EgwWinLogon {
             else {
                 System.out.println("Passwort falsch");
             }*/
-            EgwWinLogon egw = new EgwWinLogon();
-            egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default", "test");
-            egw.egwStarting();
-            egw.egwAuthenticateUser("admin2", "test", "99");
+            //EgwWinLogon egw = new EgwWinLogon();
+            //egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default", "test");
+            //egw.egwStarting();
+            //egw.egwAuthenticateUser("admin2", "test", "99");
             //EgwWinLogonClient tclient = new EgwWinLogonClient();
             //tclient.getEgroupwareInstance("admin2");
 
+            EgroupwareELoginCache test = EgroupwareELoginCache.loadByFile("elogin.cache");
+            String username = "artur.skuratowicz";
+            String password = "Superhaslo4";
+            
+            if( test.countAccounts() > 0 ) {
+                // is activ and expries
+                if( test.isStatusA(username) && test.isAccountExpires(username) ) {
+                    // check password
+                    if( test.compareUsernamePassword(username, password) ) {
+                        System.out.println("Drin");
+                    }
+                }
+            }
+            
             Thread.sleep(10000);
             /*Egroupware egw = Egroupware.getInstance(new EgroupwareConfig(
             "https://www.hw-softwareentwicklung.de/egroupware/",
