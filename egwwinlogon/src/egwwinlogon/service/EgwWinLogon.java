@@ -199,10 +199,10 @@ public class EgwWinLogon {
         }
         else {
             config = new EgroupwareConfig();
-            config.setUrl((String) this._settings.get("url"));
-            config.setDomain((String) this._settings.get("domain"));
         }
 
+        config.setUrl((String) this._settings.get("url"));
+        config.setDomain((String) this._settings.get("domain"));
         config.setUser(username);
         config.setPassword(password);
 

@@ -120,10 +120,15 @@ namespace pGina.Plugin.EGroupware
                 if( this._jEgwWinLogon != null ) {
 
                     // set base settings
-                    this._egwSetSetting("url", Settings.Store.url);
-                    this._egwSetSetting("domain", Settings.Store.domain);
-                    this._egwSetSetting("machinename", System.Environment.MachineName);
-                    this._egwSetSetting("sysfingerprint", SysFingerPrint.Value());
+                    string url = Settings.Store.url;
+                    string domain = Settings.Store.domain;
+                    string mname = System.Environment.MachineName;
+                    string fingerprint = SysFingerPrint.Value();
+
+                    this._egwSetSetting("url", url);
+                    this._egwSetSetting("domain", domain);
+                    this._egwSetSetting("machinename", mname);
+                    this._egwSetSetting("sysfingerprint", fingerprint);
                     
                     this._jEgwWinLogon.Invoke(
                         "initEgroupware",
@@ -237,12 +242,20 @@ namespace pGina.Plugin.EGroupware
 
             if (this._jEgwWinLogon != null)
             {
-                this._jEgwWinLogon.Invoke(
-                    "setSetting",
-                    "(Ljava/lang/String;Ljava/lang/String;)V",
-                    name,
-                    value
-                    );
+                try
+                {
+                    this._jEgwWinLogon.Invoke(
+                        "setSetting",
+                        "(Ljava/lang/String;Ljava/lang/String;)V",
+                        name,
+                        value
+                        );
+                }
+                catch (System.Exception e)
+                {
+                    this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
+                    this._logger.InfoFormat("Exception: {0}: {1}", name, value);
+                }
             }
             else
             {
