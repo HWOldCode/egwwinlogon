@@ -2,21 +2,12 @@ package egwwinlogon.service;
 
 import egwwinlogon.service.db.EgwWinLogonDb;
 import com.jegroupware.egroupware.Egroupware;
-import com.jegroupware.egroupware.EgroupwareBrowser;
 import com.jegroupware.egroupware.EgroupwareConfig;
-import com.sun.jna.WString;
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.Kernel32Util;
-import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
-import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
 import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.http.LogonHttpServer;
-import egwwinlogon.service.crypt.EgwWinLogonCrypt;
-import egwwinlogon.service.crypt.Test;
-import egwwinlogon.service.db.EgwWinLogonDbConnection;
-import egwwinlogon.user.EgwWinLogonClient;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +18,9 @@ import org.slf4j.LoggerFactory;
  */
 public class EgwWinLogon {
 
+    /**
+     * logger
+     */
     private static final Logger logger = LoggerFactory.getLogger(EgwWinLogon.class);
 
 	/**
@@ -40,14 +34,14 @@ public class EgwWinLogon {
     protected LogonHttpServer _server = null;
 
     /**
-     * Egroupware Config
+     * _settings
      */
-    protected EgroupwareConfig _egwConfig = null;
-
+    protected LinkedHashMap _settings = new LinkedHashMap();
+    
     /**
-     * Egroupware
+     * Egroupware Configs
      */
-    protected Egroupware _egw = null;
+    protected LinkedHashMap _egwConfigs = new LinkedHashMap();
 
     /**
      * EgroupwareELoginCache
@@ -58,11 +52,6 @@ public class EgwWinLogon {
      * EgwWinLogonDb
      */
     protected EgwWinLogonDb _db = null;
-
-    /**
-     * MachineName
-     */
-    protected String _machineName = "";
     
 	/**
 	 * main
@@ -103,9 +92,9 @@ public class EgwWinLogon {
             //EgwWinLogonClient tclient = new EgwWinLogonClient();
             //tclient.getEgroupwareInstance("admin2");
 
-            EgroupwareELoginCache test = EgroupwareELoginCache.loadByFile("elogin.cache");
+            /*EgroupwareELoginCache test = EgroupwareELoginCache.loadByFile("elogin.cache");
             String username = "artur.skuratowicz";
-            String password = "Superhaslo4";
+            String password = "";
             
             if( test.countAccounts() > 0 ) {
                 // is activ and expries
@@ -117,7 +106,7 @@ public class EgwWinLogon {
                 }
             }
             
-            Thread.sleep(10000);
+            Thread.sleep(10000);*/
             /*Egroupware egw = Egroupware.getInstance(new EgroupwareConfig(
             "https://www.hw-softwareentwicklung.de/egroupware/",
             "default",
@@ -144,31 +133,12 @@ public class EgwWinLogon {
     /**
      * initEgroupware
      *
-     * @param url
-     * @param domain
-     * @param machineName
      */
-    public void initEgroupware(String url, String domain, String machineName) {
-        logger.info("initEgroupware, init egroupware by url: " + url + 
-            " domain: " + domain + " machineName: " + machineName);
+    public void initEgroupware() {
+        logger.info("initEgroupware, init egroupware objects");
 
-        this._machineName = machineName;
-        /*try {
-            Test test = new Test();
-        }
-        catch( Exception ex ) {
-            java.util.logging.Logger.getLogger(
-                    EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        //EgwWinLogonCrypt crypt = new EgwWinLogonCrypt();
-
-        //this._db = new EgwWinLogonDb();
-        //this._db.start();
-
-        this._egwConfig = new EgroupwareConfig();
-        this._egwConfig.setUrl(url);
-        this._egwConfig.setDomain(domain);
-
+        // ---------------------------------------------------------------------
+        
         this._eLoginCache = EgroupwareELoginCache.loadByFile("elogin.cache");
 
         if( this._eLoginCache == null ) {
@@ -209,34 +179,47 @@ public class EgwWinLogon {
      *
      * @param username
      * @param password
-     * @param sysFingerPrint
      * @return
      */
-	public int egwAuthenticateUser(String username, String password, String sysFingerPrint) {
+	public int egwAuthenticateUser(String username, String password) {
         logger.info("egwAuthenticateUser, username: " + username);
 
-        if( this._egwConfig == null ) {
-            return 0;
+        EgroupwareConfig config = null;
+        
+        if( this._egwConfigs.containsKey(username) ) {
+            config = (EgroupwareConfig) _egwConfigs.get(username);
+            
+            this._egwConfigs.remove(username);
+        }
+        else {
+            config = new EgroupwareConfig();
+            config.setUrl((String) this._settings.get("url"));
+            config.setDomain((String) this._settings.get("domain"));
         }
 
-        this._egwConfig.setUser(username);
-        this._egwConfig.setPassword(password);
+        config.setUser(username);
+        config.setPassword(password);
 
-        this._egw = Egroupware.getInstance(this._egwConfig);
+        this._egwConfigs.put(username, config);
+        
+        // ---------------------------------------------------------------------
+        
+        Egroupware _egw = Egroupware.getInstance(config);
 
         try {
-            this._egw.login();
+            _egw.login();
 
-            if( this._egw.isLogin() ) {
+            if( _egw.isLogin() ) {
                 
                 // send login command
-                this._egw.request(new EgroupwareCommand(
+                _egw.request(new EgroupwareCommand(
                     EgroupwareCommand.EGW_CMD_LOGIN, 
-                    this._machineName + ";" + sysFingerPrint
+                    this._settings.get("machinename") + ";" + 
+                        this._settings.get("sysfingerprint")
                     ));
                 
                 // request login cache list
-                this._egw.request(this._eLoginCache);
+                _egw.request(this._eLoginCache);
 
                 if( this._eLoginCache.countAccounts() > 0 ) {
                     //EgwWinLogonDbConnection _con = this._db.getNewConnection();
@@ -273,14 +256,17 @@ public class EgwWinLogon {
     /**
      * egwSessionChange
      * @param sessionChangeReason
+     * @param username
      */
-    public void egwSessionChange(int sessionChangeReason) {
+    public void egwSessionChange(int sessionChangeReason, String username) {
         logger.info("egwSessionChange, sessionChangeReason: " + Integer.toString(sessionChangeReason));
 
+        Egroupware _egw = Egroupware.findInstance(username);
+        
         try {
             switch( sessionChangeReason ) {
                 case 5: // SessionLogon
-                    if( this._egw.isLogin() ) {
+                    if( (_egw != null) && _egw.isLogin() ) {
                         if( this._server != null ) {
 
                         }
@@ -366,14 +352,66 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetVersion() {
-		return "14.1";
+		return "14.2";
 	}
 
 	public int egwAuthenticatedUserGateway() {
 		return 0;
 	}
-
-	public int egwSessionChange() {
-		return 0;
-	}
+    
+    /**
+     * isEgwLogin
+     * 
+     * @param username
+     * @return 
+     */
+    public int isEgwLogin(String username) {
+        int lreturn = 0;
+        
+        Egroupware _egw = Egroupware.findInstance(username);
+        
+        if( (_egw != null) && _egw.isLogin() ) {
+            lreturn = 1;
+        }
+        
+        return lreturn;
+    }
+    
+    /**
+     * logoutEgw
+     * 
+     * @param username
+     * @return
+     * @throws Exception 
+     */
+    public int logoutEgw(String username) throws Exception {
+        int lreturn = 0;
+        Egroupware _egw = Egroupware.findInstance(username);
+        
+        if( (_egw != null) && _egw.isLogin() ) {
+            try {
+                _egw.logout();
+                lreturn = 1;
+            }
+            catch( Exception e ) {
+                
+            }
+        }
+        
+        return lreturn;
+    }
+    
+    /**
+     * setSetting
+     * 
+     * @param key
+     * @param value 
+     */
+    public void setSetting(String key, String value) {
+        if( this._settings.containsKey(key) ) {
+            this._settings.remove(key);
+        }
+        
+        this._settings.put(key, value);
+    }
 }

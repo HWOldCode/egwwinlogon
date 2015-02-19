@@ -118,14 +118,16 @@ namespace pGina.Plugin.EGroupware
         private void _initEgroupware() {
             try{
                 if( this._jEgwWinLogon != null ) {
-                    string url = Settings.Store.url;
-                    string domain = Settings.Store.domain;
-                    string machinename = System.Environment.MachineName;
 
+                    // set base settings
+                    this._egwSetSetting("url", Settings.Store.url);
+                    this._egwSetSetting("domain", Settings.Store.domain);
+                    this._egwSetSetting("machinename", System.Environment.MachineName);
+                    this._egwSetSetting("sysfingerprint", SysFingerPrint.Value());
+                    
                     this._jEgwWinLogon.Invoke(
                         "initEgroupware",
-                        "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
-                        url, domain, machinename);
+                        "()V");
                 }
             }
             catch( System.Exception e ) {
@@ -136,13 +138,15 @@ namespace pGina.Plugin.EGroupware
         /**
          * _egwSessionChange
          */
-        private void _egwSessionChange(int change) {
+        private void _egwSessionChange(int change, string username) {
             try{
                 if( this._jEgwWinLogon != null ) {
                     this._jEgwWinLogon.Invoke(
                         "egwSessionChange",
-                        "(I)V", 
-                        change);
+                        "(I;Ljava/lang/String;)V", 
+                        change,
+                        username
+                        );
                 }
             }
             catch( System.Exception e ) {
@@ -170,16 +174,15 @@ namespace pGina.Plugin.EGroupware
          * 
          */
         private bool _egwAuthenticateUser(string username, string password) {
-            this._logger.InfoFormat("_egwAuthenticateUser {0}, {1}", username, password);
+            this._logger.InfoFormat("_egwAuthenticateUser {0}", username);
 
             if( this._jEgwWinLogon != null ) {
 
                 int ret = this._jEgwWinLogon.Invoke<int>(
                     "egwAuthenticateUser",
-                    "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
+                    "(Ljava/lang/String;Ljava/lang/String;)I",
                     username,
-                    password,
-                    SysFingerPrint.Value()
+                    password
                     );
 
                 this._logger.InfoFormat("return: {0}", ret);
@@ -193,6 +196,58 @@ namespace pGina.Plugin.EGroupware
             }
 
             return false;
+        }
+
+        /**
+         * _egwIsLogin
+         */
+        private bool _egwIsLogin(string username)
+        {
+            this._logger.InfoFormat("_egwIsLogin {0}", username);
+
+            if (this._jEgwWinLogon != null)
+            {
+                int ret = this._jEgwWinLogon.Invoke<int>(
+                    "isEgwLogin",
+                    "(Ljava/lang/String;)I",
+                    username
+                    );
+
+                this._logger.InfoFormat("return: {0}", ret);
+
+                if (ret == 1)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                this._logger.InfoFormat("_jEgwWinLogon is empty in _egwIsLogin");
+            }
+
+            return false;
+        }
+
+        /**
+         * _egwSetSetting
+         */
+        private void _egwSetSetting(string name, string value)
+        {
+            this._logger.InfoFormat("_egwSetSetting {0} {1}", name, value);
+
+            if (this._jEgwWinLogon != null)
+            {
+                this._jEgwWinLogon.Invoke(
+                    "setSetting",
+                    "(Ljava/lang/String;;Ljava/lang/String;)V",
+                    name,
+                    value
+                    );
+            }
+            else
+            {
+                this._logger.InfoFormat("_jEgwWinLogon is empty in _egwSetSetting");
+            }
         }
 
         /**
@@ -470,9 +525,17 @@ namespace pGina.Plugin.EGroupware
 
                 switch( changeDescription.Reason ) {
                     case System.ServiceProcess.SessionChangeReason.SessionLogon:
-                        this.startUserApp(userInfo.Username);
 
-                        this._egwSessionChange(5);
+                        if (Settings.Store.startapp == "1")
+                        {
+                            this.startUserApp(userInfo.Username);
+                        }
+                        else
+                        {
+                            this._plist.Add(userInfo.Username, null);
+                        }
+
+                        this._egwSessionChange(5, userInfo.Username);
                         //LogonEvent(changeDescription.SessionId);
                         break;
 
@@ -490,7 +553,7 @@ namespace pGina.Plugin.EGroupware
                             this._plist.Remove(userInfo.Username);
                         }
 
-                        this._egwSessionChange(6);
+                        this._egwSessionChange(6, userInfo.Username);
                         break;
                 }
 
@@ -502,6 +565,9 @@ namespace pGina.Plugin.EGroupware
             }
         }
 
+        /**
+         * workThreadFunction 
+         */
         public void workThreadFunction() {
             while( !this._shouldStop ) {
                 Thread.Sleep(100);
@@ -512,10 +578,22 @@ namespace pGina.Plugin.EGroupware
                     Process tp = this._plist[k];
 
                     if( tp != null ) {
-                        if( tp.HasExited ) {
-                            this.startUserApp(k);
-                            this._logger.InfoFormat("App is closed: {0}", k);
+                        if (Settings.Store.startapp == "1")
+                        {
+                            // is app activ
+                            if (tp.HasExited)
+                            {
+                                this.startUserApp(k);
+                                this._logger.InfoFormat("App is closed: {0}", k);
+                            }
                         }
+                    }
+
+                    // is logged in
+                    if( !this._egwIsLogin(k) )
+                    {
+                        // logout user
+
                     }
                 }
             }

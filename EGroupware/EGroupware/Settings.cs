@@ -17,6 +17,7 @@ namespace pGina.Plugin.EGroupware
         static Settings() {
             m_settings.SetDefault("url", "https://localhost/egroupware/");
             m_settings.SetDefault("domain", "default");
+            m_settings.SetDefault("startapp", "1");
         }
     }
 }

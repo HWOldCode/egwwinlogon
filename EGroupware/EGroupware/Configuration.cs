@@ -23,15 +23,30 @@ namespace EGroupware
         public void SettingsToUi() {
             string url = Settings.Store.url;
             string domain = Settings.Store.domain;
+            string startApp = Settings.Store.startapp;
 
             this.textEgroupwareUrl.Text = url;
             this.textEgroupwareDomain.Text = domain;
+
+            if (startApp == "1")
+            {
+                this.checkBoxStartApp.Checked = true;
+            }
         }
 
         public void UiToSettings()
         {
             Settings.Store.url = this.textEgroupwareUrl.Text;
             Settings.Store.domain = this.textEgroupwareDomain.Text;
+
+            if (this.checkBoxStartApp.Checked)
+            {
+                Settings.Store.startapp = "1";
+            }
+            else
+            {
+                Settings.Store.startapp = "0";
+            }
         }
 
         private void button2_Click(object sender, EventArgs e) {
