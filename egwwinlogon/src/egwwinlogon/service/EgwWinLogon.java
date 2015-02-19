@@ -86,6 +86,12 @@ public class EgwWinLogon {
                 System.out.println("Passwort falsch");
             }*/
             //EgwWinLogon egw = new EgwWinLogon();
+            //egw.setSetting("url", "http://dev.hw-softwareentwicklung.de/egroupware/");
+            //egw.setSetting("domain", "default");
+            //egw.initEgroupware();
+            //egw.egwStarting();
+            //egw.egwAuthenticateUser("admin2", "test");
+            
             //egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default", "test");
             //egw.egwStarting();
             //egw.egwAuthenticateUser("admin2", "test", "99");

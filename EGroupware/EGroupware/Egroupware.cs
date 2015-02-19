@@ -239,7 +239,7 @@ namespace pGina.Plugin.EGroupware
             {
                 this._jEgwWinLogon.Invoke(
                     "setSetting",
-                    "(Ljava/lang/String;;Ljava/lang/String;)V",
+                    "(Ljava/lang/String;Ljava/lang/String;)V",
                     name,
                     value
                     );
