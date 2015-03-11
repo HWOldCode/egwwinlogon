@@ -1,0 +1,8 @@
+http://www.codeproject.com/Questions/389599/code-for-USB-Blocking-in-csharp 
+http://www.codeproject.com/Forums/1649/Csharp.aspx
+
+http://stackoverflow.com/questions/2266797/how-to-apply-windows-group-policy-using-net
+
+https://msdn.microsoft.com/en-us/library/windows/hardware/jj649944%28v=vs.85%29.aspx
+
+http://stackoverflow.com/questions/14466373/log-off-a-windows-user-locally-using-c-sharp

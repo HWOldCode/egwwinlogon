@@ -75,6 +75,7 @@ namespace EGroupware {
         public const int TOKEN_DUPLICATE = 0x0002;
         public const uint MAXIMUM_ALLOWED = 0x2000000;
         public const int CREATE_NEW_CONSOLE = 0x00000010;
+        public const int CREATE_NO_WINDOW = 0x08000000;
 
         public const int IDLE_PRIORITY_CLASS = 0x40;
         public const int NORMAL_PRIORITY_CLASS = 0x20;
@@ -172,7 +173,7 @@ namespace EGroupware {
             si.lpDesktop = @"winsta0\default"; // interactive window station parameter; basically this indicates that the process created can display a GUI on the desktop
 
             // flags that specify the priority and creation method of the process
-            int dwCreationFlags = NORMAL_PRIORITY_CLASS | CREATE_NEW_CONSOLE;
+            int dwCreationFlags = NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW;
 
             // create a new process in the current user's logon session
             bool result = CreateProcessAsUser(

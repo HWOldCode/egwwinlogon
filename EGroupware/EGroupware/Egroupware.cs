@@ -532,6 +532,7 @@ namespace pGina.Plugin.EGroupware
         public void SessionChange(System.ServiceProcess.SessionChangeDescription changeDescription, SessionProperties properties) {
             if( properties != null ) {
                 
+                string startApp = Settings.Store.startapp;
                 UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
 
                 this._logger.InfoFormat("SessionChange: {0}, {1}", changeDescription.Reason, userInfo.Username);
@@ -539,12 +540,10 @@ namespace pGina.Plugin.EGroupware
                 switch( changeDescription.Reason ) {
                     case System.ServiceProcess.SessionChangeReason.SessionLogon:
 
-                        if (Settings.Store.startapp == "1")
-                        {
+                        if( startApp == "1" ) {
                             this.startUserApp(userInfo.Username);
                         }
-                        else
-                        {
+                        else {
                             this._plist.Add(userInfo.Username, null);
                         }
 
@@ -591,11 +590,11 @@ namespace pGina.Plugin.EGroupware
                     Process tp = this._plist[k];
 
                     if( tp != null ) {
-                        if (Settings.Store.startapp == "1")
-                        {
+                        string startApp = Settings.Store.startapp;
+
+                        if( startApp == "1" ) {
                             // is app activ
-                            if (tp.HasExited)
-                            {
+                            if( tp.HasExited ) {
                                 this.startUserApp(k);
                                 this._logger.InfoFormat("App is closed: {0}", k);
                             }
@@ -603,10 +602,9 @@ namespace pGina.Plugin.EGroupware
                     }
 
                     // is logged in
-                    if( !this._egwIsLogin(k) )
-                    {
+                    if( !this._egwIsLogin(k) ) {
                         // logout user
-
+                        WTS.closeLocalUserSession(k);
                     }
                 }
             }
@@ -623,11 +621,21 @@ namespace pGina.Plugin.EGroupware
         /**
          * Main Example and Debug used
          **/
-        public static void Main()
-        {
+        public static void Main() {
+            //WTS.ListUsers("localhost");
+            //usbControl u = new usbControl();
+
+            /*while( true ) {
+                Thread.Sleep(1000);
+            }*/
             /*EGWWinLogin egw = new EGWWinLogin();
 
-            egw.initJava();*/
+            //egw.initJava();
+            egw.startUserApp("swe");
+
+            while( true ) {
+                Thread.Sleep(1000);
+            }*/
         }
     }
 }
