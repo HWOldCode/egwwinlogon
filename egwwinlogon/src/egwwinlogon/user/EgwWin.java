@@ -10,6 +10,7 @@ import com.jegroupware.egroupware.EgroupwareBrowser;
 import com.jegroupware.egroupware.EgroupwareConfig;
 import egwwinlogon.http.LogonHttpClient;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 //import java.util.logging.Level;
@@ -39,6 +40,8 @@ public class EgwWin {
         }
 
         try {
+            List tmp = EgroupwareBrowser.getSupportedBrowsers();
+
             /*LogonHttpClient client = new LogonHttpClient();
             String buffer = client.sendGET("http://127.0.0.1:8101/session?user=" +
                 System.getProperty("user.name"));
@@ -69,14 +72,14 @@ public class EgwWin {
             //EgroupwareBrowser.open(egw);
             EgwWinLogonClient client = new EgwWinLogonClient();
             Egroupware egw = null;
-            
+
             if( (args.length > 0) && (args[0] != "") ) {
                 egw = client.getEgroupwareInstance(args[0]);
             }
 
             // tray icon
             Tray tray = new Tray(egw);
-            
+
             if( egw != null ) {
                 EgroupwareBrowser.open(egw);
             }
