@@ -12,15 +12,21 @@
 	 */
 
     /**
-     * elogin_bo
+     * elogin_machine_bo
      */
-    class elogin_bo {
+    class elogin_machine_bo {
 
-        const EVENT_WINDOWS_SESSION_CHANGE_LOGON    = 5;
-        const EVENT_WINDOWS_SESSION_CHANGE_LOGOFF   = 6;
+        /**
+         * id
+         * @var string
+         */
+        protected $_id = null;
 
-        const RECEIVER_WINDOWS_SERVICE_SYSTEM   = 0;
-        const RECEIVER_WINDOWS_SERVICE_USER     = 1;
-        const RECEIVER_WINDOWS_APP              = 2;
-        
+        /**
+         * constructor
+         * @param string $id
+         */
+        public function __construct($id) {
+            $this->_id = $id;
+        }
     }

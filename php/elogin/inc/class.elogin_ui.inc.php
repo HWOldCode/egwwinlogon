@@ -22,6 +22,7 @@
          */
         public $public_functions = array(
             'ajax_cache' => true,
+            'ajax_cmd' => true,
             );
 
         /**
@@ -63,5 +64,15 @@
                 );
 
             return egw_json_response::get()->data($cacheData);
+        }
+
+        /**
+         * ajax_cmd
+         *
+         * @param array $content
+         * @return mixed
+         */
+        public function ajax_cmd($content=array()) {
+
         }
     }

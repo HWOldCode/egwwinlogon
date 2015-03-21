@@ -221,12 +221,17 @@ public class EgwWinLogon {
 
             if( _egw.isLogin() ) {
 
-                // send login command
-                _egw.request(new EgroupwareCommand(
-                    EgroupwareCommand.EGW_CMD_LOGIN,
-                    this._settings.get("machinename") + ";" +
-                        this._settings.get("sysfingerprint")
-                    ));
+                try {
+                    // send login command
+                    _egw.request(new EgroupwareCommand(
+                        EgroupwareCommand.EGW_CMD_LOGIN,
+                        this._settings.get("machinename") + ";" +
+                            this._settings.get("sysfingerprint")
+                        ));
+                }
+                catch( Exception ec ) {
+                    // nothing
+                }
 
                 // request login cache list
                 _egw.request(this._eLoginCache);
@@ -296,8 +301,9 @@ public class EgwWinLogon {
             }
         }
         catch( Exception e ) {
-            logger.info("egwSessionChange, Exception: " + e.getMessage());
-            EgwWinLogon._error = e.getMessage();
+            String msg = "egwSessionChange, Exception: " + e.getMessage();
+            logger.info(msg);
+            EgwWinLogon._error = msg;
         }
     }
 

@@ -7,6 +7,7 @@ package egwwinlogon.egroupware;
 
 import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.core.EgroupwareAuth;
+import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
 import egwwinlogon.service.EgwWinLogon;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -79,7 +80,7 @@ public class EgroupwareELoginCache extends EgroupwareJson {
      * @param content
      */
     @Override
-    public void setRawContent(String content) {
+    public void setRawContent(String content) throws EGroupwareExceptionRedirect {
         super.setRawContent(content);
 
         if( this._json != null ) {
@@ -209,7 +210,7 @@ public class EgroupwareELoginCache extends EgroupwareJson {
      * isAccountExpires
      *
      * @param username
-     * @return 
+     * @return
      */
     public Boolean isAccountExpires(String username) {
         if( this._accounts == null ) {
