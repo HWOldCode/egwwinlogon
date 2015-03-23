@@ -21,8 +21,10 @@
          * @var array
          */
         public $public_functions = array(
-            'ajax_cache' => true,
-            'ajax_cmd' => true,
+            'ajax_cache'        => true,
+            'ajax_machine_info' => true,
+            'ajax_cmd'          => true,
+            'ajax_loggin'       => true,
             );
 
         /**
@@ -67,12 +69,29 @@
         }
 
         /**
+         * ajax_machine_info
+         * @param array $content
+         */
+        public function ajax_machine_info($content=array()) {
+            
+            return egw_json_response::get()->data(array('status' => 'ok'));
+        }
+
+        /**
          * ajax_cmd
          *
          * @param array $content
          * @return mixed
          */
         public function ajax_cmd($content=array()) {
+
+        }
+
+        /**
+         * ajax_loggin
+         * @param array $content
+         */
+        public function ajax_loggin($content=array()) {
 
         }
     }

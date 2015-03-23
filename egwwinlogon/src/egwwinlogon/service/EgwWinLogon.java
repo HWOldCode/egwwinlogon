@@ -5,6 +5,7 @@ import com.jegroupware.egroupware.Egroupware;
 import com.jegroupware.egroupware.EgroupwareConfig;
 import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
+import egwwinlogon.egroupware.EgroupwareMachineInfo;
 import egwwinlogon.http.LogonHttpServer;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -222,6 +223,15 @@ public class EgwWinLogon {
             if( _egw.isLogin() ) {
 
                 try {
+                    // ---------------------------------------------------------
+                    // machine info send
+                    EgroupwareMachineInfo mi = new EgroupwareMachineInfo(
+                        (String) this._settings.get("sysfingerprint"));
+
+                    mi.setMachineName((String) this._settings.get("machinename"));
+                    _egw.request(mi);
+                    // ---------------------------------------------------------
+
                     // send login command
                     _egw.request(new EgroupwareCommand(
                         EgroupwareCommand.EGW_CMD_LOGIN,
