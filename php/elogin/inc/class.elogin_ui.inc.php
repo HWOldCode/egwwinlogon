@@ -21,11 +21,21 @@
          * @var array
          */
         public $public_functions = array(
+            'index'             => true,
+            'ajax_treelist'     => true,
             'ajax_cache'        => true,
             'ajax_machine_info' => true,
             'ajax_cmd'          => true,
-            'ajax_loggin'       => true,
+            'ajax_logging'      => true,
             );
+
+        public function index($content=array()) {
+            
+        }
+
+        public function ajax_treelist($content=array()) {
+
+        }
 
         /**
 		 * ajax_cache
@@ -34,30 +44,11 @@
 		 * @return mixed
 		 */
 		public function ajax_cache($content=array()) {
-            $db = $GLOBALS['egw']->db;
+            $elbo = new elogin_bo();
+            $accountlist = $elbo->getEgroupwareAccounts();
+
             $type = @$GLOBALS['egw_info']['server']['sql_encryption_type'] ?
                 strtolower($GLOBALS['egw_info']['server']['sql_encryption_type']) : 'md5';
-
-            $accountlist = $GLOBALS['egw']->accounts->get_list(
-                'accounts',
-                null,
-                '',
-                '',
-                '',
-                null,
-                'all');
-
-            foreach( $accountlist as &$account ) {
-                $where = array(
-                    'account_id' => $account['account_id'],
-                    );
-
-                if( ($row = $db->select('egw_accounts',
-                    'account_pwd', $where,__LINE__,__FILE__)->fetch() ) )
-                {
-                    $account['account_pwd'] = $row['account_pwd'];
-                }
-            }
 
             // return data for cache
             $cacheData = array(
@@ -73,7 +64,7 @@
          * @param array $content
          */
         public function ajax_machine_info($content=array()) {
-            
+
             return egw_json_response::get()->data(array('status' => 'ok'));
         }
 
@@ -88,10 +79,10 @@
         }
 
         /**
-         * ajax_loggin
+         * ajax_logging
          * @param array $content
          */
-        public function ajax_loggin($content=array()) {
+        public function ajax_logging($content=array()) {
 
         }
     }

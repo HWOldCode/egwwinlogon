@@ -22,5 +22,35 @@
         const RECEIVER_WINDOWS_SERVICE_SYSTEM   = 0;
         const RECEIVER_WINDOWS_SERVICE_USER     = 1;
         const RECEIVER_WINDOWS_APP              = 2;
-        
+
+        /**
+         * getEgroupwareAccounts
+         * @return array of egroupware accounts
+         */
+        public function getEgroupwareAccounts() {
+            $db = $GLOBALS['egw']->db;
+
+            $accountlist = $GLOBALS['egw']->accounts->get_list(
+                'accounts',
+                null,
+                '',
+                '',
+                '',
+                null,
+                'all');
+
+            foreach( $accountlist as &$account ) {
+                $where = array(
+                    'account_id' => $account['account_id'],
+                    );
+
+                if( ($row = $db->select('egw_accounts',
+                    'account_pwd', $where,__LINE__,__FILE__)->fetch() ) )
+                {
+                    $account['account_pwd'] = $row['account_pwd'];
+                }
+            }
+
+            return $accountlist;
+        }
     }
