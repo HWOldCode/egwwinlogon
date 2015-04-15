@@ -38,6 +38,20 @@
         }
 
         /**
+         * index
+         * @param array $content
+         */
+        public function index($content=array()) {
+            require_once('plugins/syndms/lib/syndms.client.php');
+
+            $syn = new SyndmsClient('192.168.11.4');
+            if( $syn->login('admin', '1234') ) {
+                $syn->getUsers();
+            }
+            echo "Hello World";
+        }
+
+        /**
 		 * ajax_cache
 		 *
 		 * @param array $content
