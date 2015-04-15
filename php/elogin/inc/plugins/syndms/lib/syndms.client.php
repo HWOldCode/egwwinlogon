@@ -236,8 +236,6 @@
                         'method'    => 'list',
                         'version'   => '1'
                     ));
-
-                
             }
         }
     }
