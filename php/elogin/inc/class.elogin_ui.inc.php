@@ -21,11 +21,26 @@
          * @var array
          */
         public $public_functions = array(
+            'index'             => true,
             'ajax_cache'        => true,
             'ajax_machine_info' => true,
             'ajax_cmd'          => true,
             'ajax_loggin'       => true,
             );
+
+        /**
+         * index
+         * @param array $content
+         */
+        public function index($content=array()) {
+            require_once('plugins/syndms/lib/syndms.client.php');
+
+            $syn = new SyndmsClient('192.168.11.4');
+            if( $syn->login('admin', '1234') ) {
+                $syn->getUsers();
+            }
+            echo "Hello World";
+        }
 
         /**
 		 * ajax_cache
@@ -73,7 +88,7 @@
          * @param array $content
          */
         public function ajax_machine_info($content=array()) {
-            
+
             return egw_json_response::get()->data(array('status' => 'ok'));
         }
 
