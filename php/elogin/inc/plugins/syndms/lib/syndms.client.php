@@ -47,6 +47,12 @@
         protected $_isLogin = false;
 
         /**
+         * services
+         * @var array
+         */
+        protected $_services = array();
+
+        /**
          * __construct
          *
          * @param string $ip
@@ -109,6 +115,48 @@
         }
 
         /**
+         * _queryByService
+         *
+         * @param string $serviceName
+         * @param array $query
+         * @return array|null
+         */
+        protected function _queryByService($serviceName, $query) {
+            if( isset($this->_services[$serviceName]) ) {
+                $service = $this->_services[$serviceName];
+
+                if( !is_array($query) ) {
+                    $query = array();
+                }
+
+                $query['api'] = $serviceName;
+
+                $response = $this->_request(
+                    'webapi/' . $service['path'],
+                    $query);
+
+                if( $service['requestFormat'] == 'JSON' ) {
+                    $data = json_decode($response['body']);
+
+                    if( $data ) {
+                        $data = (array) $data;
+
+                        if( isset($data['success']) && ($data['success']) ) {
+                            $rdata = (array) $data['data'];
+
+                            return $rdata;
+                        }
+                    }
+                }
+                else {
+                    return $response;
+                }
+            }
+
+            return null;
+        }
+
+        /**
          * _query
          *
          * @param array $query
@@ -165,6 +213,7 @@
          */
         public function _initServices() {
             if( $this->_sds_session ) {
+                $this->_services = array();
 
                 $query = array(
                     'query'     => 'all',
@@ -175,7 +224,17 @@
 
                 $response = $this->_query($query);
 
-                //var_dump($response);
+                if( $response && is_array($response) && isset($response['data']) ) {
+                    $data = $response['data'];
+
+                    if( $data ) {
+                        $data = (array) $data;
+
+                        foreach( $data as $servicename => $tservice ) {
+                            $this->_services[$servicename] = (array) $tservice;
+                        }
+                    }
+                }
             }
         }
 
@@ -224,18 +283,134 @@
          */
         public function getUsers() {
             if( $this->_isLogin ) {
-                $response = $this->_request(
-                    'webapi/_______________________________________________________entry.cgi',
-                    array(
+                $data = $this->_queryByService('SYNO.Core.User', array(
                         'action'    => 'list',
                         'type'      => 'local',
                         'offset'    => 0,
                         'limit'     => 50,
                         'additional' => '["email","description","expired"]',
-                        'api'       => 'SYNO.Core.User',
                         'method'    => 'list',
                         'version'   => '1'
                     ));
+
+                if( $data ) {
+                    if( isset($data['users']) ) {
+                        $users = array();
+
+                        foreach( $data['users'] as $tuser ) {
+                            $tuser = (array)$tuser;
+                            $users[$tuser['uid']] = $tuser;
+                        }
+
+                        return $users;
+                    }
+                }
             }
+
+            return null;
+        }
+
+        /**
+         * getUserGroups
+         *
+         * @param string $username
+         * @return array|null
+         */
+        public function getUserGroups($username) {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.Group', array(
+                        'name_only' => 'false',
+                        'user'      => $username,
+                        'type'      => 'local',
+                        'method'    => 'list',
+                        'version'   => '1'
+                    ));
+
+                if( $data ) {
+                    if( isset($data['groups']) ) {
+                        $groups = array();
+
+                        foreach( $data['groups'] as $tgroup ) {
+                            $tgroup = (array) $tgroup;
+
+                            $groups[$tgroup['gid']] = $tgroup;
+                        }
+
+                        return $groups;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /**
+         * getGroups
+         *
+         * @return array|null
+         */
+        public function getGroups() {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.Group', array(
+                        'name_only' => 'false',
+                        'action'    => 'enum',
+                        'offset'    => 0,
+                        'limit'     => 50,
+                        'type'      => 'local',
+                        'method'    => 'list',
+                        'version'   => '1'
+                    ));
+
+                if( $data ) {
+                    if( isset($data['groups']) ) {
+                        $groups = array();
+
+                        foreach( $data['groups'] as $tgroup ) {
+                            $tgroup = (array) $tgroup;
+
+                            $groups[$tgroup['gid']] = $tgroup;
+                        }
+
+                        return $groups;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /**
+         * getShares
+         * 
+         * @return array|null
+         */
+        public function getShares() {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.Share', array(
+                        'additional' => '["hidden","encryption","is_aclmode","migrate","unite_permission","is_support_acl","is_sync_share"]',
+                        'action'    => 'enum',
+                        'shareType' => 'all',
+                        'offset'    => 0,
+                        'limit'     => 50,
+                        'type'      => 'local',
+                        'method'    => 'list',
+                        'version'   => '1'
+                    ));
+
+                if( $data ) {
+                    if( isset($data['shares']) ) {
+                        $shares = array();
+
+                        foreach( $data['shares'] as $tshare ) {
+                            $tshare = (array) $tshare;
+                            $shares[] = $tshare;
+                        }
+
+                        return $shares;
+                    }
+                }
+            }
+
+            return null;
         }
     }

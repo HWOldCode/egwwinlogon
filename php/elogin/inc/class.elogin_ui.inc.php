@@ -29,10 +29,6 @@
             'ajax_logging'      => true,
             );
 
-        public function index($content=array()) {
-            
-        }
-
         public function ajax_treelist($content=array()) {
 
         }
@@ -46,7 +42,10 @@
 
             $syn = new SyndmsClient('192.168.11.4');
             if( $syn->login('admin', '1234') ) {
-                $syn->getUsers();
+                var_dump($syn->getUsers());
+                var_dump($syn->getUserGroups('test'));
+                var_dump($syn->getGroups());
+                var_dump($syn->getShares());
             }
             echo "Hello World";
         }
