@@ -142,9 +142,18 @@
                         $data = (array) $data;
 
                         if( isset($data['success']) && ($data['success']) ) {
-                            $rdata = (array) $data['data'];
+                            if( isset($data['data']) ) {
+                                $rdata = (array) $data['data'];
 
-                            return $rdata;
+                                if( count($rdata) == 0 ) {
+                                    return $data['success'];
+                                }
+
+                                return $rdata;
+                            }
+                            else {
+                                return $data['success'];
+                            }
                         }
                     }
                 }
@@ -381,7 +390,7 @@
 
         /**
          * getShares
-         * 
+         *
          * @return array|null
          */
         public function getShares() {
@@ -412,5 +421,112 @@
             }
 
             return null;
+        }
+
+        /**
+         * createUser
+         *
+         * @param string $name
+         * @param string $password
+         * @param boolean $cannot_chg_passwd
+         * @param string $expired
+         * @param string $description
+         * @param string $email
+         * @return boolean|string
+         */
+        public function createUser($name, $password, $cannot_chg_passwd=false, $expired='normal', $description='', $email='') {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.User', array(
+                    'method'            => 'create',
+                    'version'           => '1',
+                    'name'              => $name,
+                    'passowrd'          => $password,
+                    'description'       => $description,
+                    'email'             => $email,
+                    'cannot_chg_passwd' => ($cannot_chg_passwd ? 'true' : 'false'),
+                    'expired'           => $expired,
+                    'notify_by_email'   => 'false',
+                    'send_password'     => 'false',
+                    ));
+
+                if( $data ) {
+                    if( isset($data['name']) && isset($data['uid']) ) {
+                        return $data['uid'];
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * addUserToGroup
+         *
+         * @param string $groupname
+         * @param string $username
+         * @return boolean
+         */
+        public function addUserToGroup($groupname, $username) {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.Group.Member', array(
+                    'method'            => 'add',
+                    'version'           => '1',
+                    'name'              => $username,
+                    'group'             => $groupname
+                    ));
+
+                if( $data ) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * removeUserByGroup
+         *
+         * @param string $groupname
+         * @param string $username
+         * @return boolean
+         */
+        public function removeUserByGroup($groupname, $username) {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.Group.Member', array(
+                    'method'            => 'remove',
+                    'version'           => '1',
+                    'name'              => $username,
+                    'group'             => $groupname
+                    ));
+
+                if( $data ) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public function createShare($name, $vol_path, $desc='', $hide_unreadable=true) {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.Share', array(
+                    'method'            => 'create',
+                    'version'           => '1',
+                    'name'              => $name,
+                    'shareinfo'         => json_encode(array(
+                        'name'              => $name,
+                        'vol_path'          => $vol_path,
+                        'desc'              => $desc,
+                        'hide_unreadable'   => $hide_unreadable,
+                        'name_org'          => ''
+                        ))
+                    ));
+
+                if( $data ) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }

@@ -46,6 +46,10 @@
                 var_dump($syn->getUserGroups('test'));
                 var_dump($syn->getGroups());
                 var_dump($syn->getShares());
+                var_dump($syn->createUser('test3', '1234'));
+                var_dump($syn->removeUserByGroup('administrators', 'test3'));
+                var_dump($syn->addUserToGroup('administrators', 'test3'));
+                var_dump($syn->createShare('test3435', '/volume1'));
             }
             echo "Hello World";
         }
