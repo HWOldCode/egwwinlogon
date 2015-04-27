@@ -24,7 +24,7 @@
         /**
          * TABLE
          */
-        const USERSHARES_TABLE = 'egw_elogin_usershares';
+        const TABLE = 'egw_elogin_usershares';
 
         /**
          * Reference to global db object
@@ -40,6 +40,12 @@
         protected $_id = null;
 
         /**
+         * provider id
+         * @var string
+         */
+        protected $_providerid = null;
+
+        /**
          * egroupware account id
          * @var int
          */
@@ -51,6 +57,12 @@
          * @var string
          */
         protected $_sharepassword = null;
+
+        /**
+         * share infos
+         * @var array
+         */
+        protected $_shareinfos = array();
 
         /**
          * Init our static properties
@@ -67,18 +79,58 @@
          */
         public function __construct($id=null) {
             if( $id != null ) {
+                $data = self::read($id);
+
+                if( $data ) {
+                    $this->_providerid = $data['el_provider_id'];
+                    $this->_egwaccountid = $data['el_egw_account'];
+                    $this->_sharepassword = $data['el_sharepassword'];
+
+                    if( $data['el_shareinfo'] != '' ) {
+                        $this->_shareinfos = json_decode($data['el_shareinfo']);
+                    }
+                }
+
                 $this->_id = $id;
             }
-
-            $this->_read();
         }
 
-        protected function _read() {
-            /*$rs = self::$db->select(
-                self::USERSHARES_TABLE,
-                array(),
+        /**
+         * getId
+         *
+         * @return string
+         */
+        public function getId() {
+            return $this->_id;
+        }
 
-                );*/
+        /**
+         * setProviderId
+         *
+         * @param string $id
+         */
+        public function setProviderId($id) {
+            $this->_providerid =  $id;
+        }
+
+        /**
+         * getProviderId
+         *
+         * @return string
+         */
+        public function getProviderId() {
+            return $this->_providerid;
+        }
+
+        /**
+         * getProvider
+         *
+         * @return elogin_shareprovider_bo|null
+         */
+        public function getProvider() {
+            $tporvider = elogin_shareprovider_bo::i($this->_providerid);
+            $tporvider->setUsername($this->getUsername());
+            return $tporvider;
         }
 
         /**
@@ -113,17 +165,46 @@
         }
 
         /**
+         * _getRandomPassword
+         * @param int $len
+         * @return string
+         */
+        protected function _getRandomPassword($len=12) {
+            $alphabet       = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
+            $pass           = array();
+            $alphaLength    = strlen($alphabet) - 1;
+
+            for( $i=0; $i<$len; $i++) {
+                $n = rand(0, $alphaLength);
+                $pass[] = $alphabet[$n];
+            }
+
+            return implode($pass);
+        }
+
+        /**
+         * setSharePassword
+         *
+         * @param string $password
+         */
+        public function setSharePassword($password=null) {
+            if( $password == null ) {
+                $password = $this->_getRandomPassword();
+            }
+
+            $this->_sharepassword = $password;
+        }
+
+        /**
          * getShares
          *
          * @return array
          */
         public function getShares() {
-            //$shareprovider = elogin_shareprovider_bo::getShareProviderByName();
+            $shareprovider = $this->getProvider();
             $shares = array();
 
             if( $shareprovider instanceof elogin_shareprovider_bo ) {
-                $shareprovider->setUsername($this->getUsername());
-
                 $shares = $shareprovider->getShares();
 
                 // TODO Share Info and Setting
@@ -159,8 +240,8 @@
                 foreach( $shares as $tshare ) {
                     $cmd = $replace_str;
 
-                    $cmd = str_replace('<drivename>', '', $cmd);
-                    $cmd = str_replace('<server>', '', $cmd);
+                    $cmd = str_replace('<drivename>', $tshare['drivename'], $cmd);
+                    $cmd = str_replace('<server>', $this->getProvider()->getAccountServer(), $cmd);
                     $cmd = str_replace('<share>', $tshare['name'], $cmd);
                     $cmd = str_replace('<username>', $username, $cmd);
                     $cmd = str_replace('<password>', $sharepassword, $cmd);
@@ -170,6 +251,55 @@
             }
 
             return $cmds;
+        }
+
+        /**
+         * read
+         *
+         * @param string $id
+         * @return boolean|array
+         */
+        static public function read($id=null) {
+            $where = array(self::TABLE . '.el_unid=' . "'" . (string)$id . "'");
+            $cols = array(self::TABLE . '.*');
+            $join = array();
+
+            if (!($data = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+                '', '', 0, $join)->fetch()))
+            {
+                return false;
+            }
+
+            return $data;
+        }
+
+        /**
+         * get_rows
+         *
+         * @param type $query
+         * @param type $rows
+         * @param type $readonlys
+         * @return type
+         */
+        static public function get_rows(&$query, &$rows, &$readonlys) {
+            $where = array();
+            $cols = array(self::TABLE . '.*');
+            $join = array();
+
+            if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+                '', '', 0, $join)))
+            {
+                return array();
+            }
+
+            $rows = array();
+
+            foreach( $rs as $row ) {
+				$row = (array) $row;
+                $rows[] = $row;
+            }
+
+            return count($rows);
         }
     }
 

@@ -107,6 +107,13 @@
         }
 
         /**
+         * _construct2
+         */
+        protected function _construct2() {
+
+        }
+
+        /**
          * _initcast
          *
          * @return elogin_shareprovider_bo
@@ -122,6 +129,8 @@
                 $provider->_account_user        = $this->_account_user;
                 $provider->_account_password    = $this->_account_password;
                 $provider->_username            = $this->_username;
+
+                $provider->_construct2();
 
                 return $provider;
             }
@@ -155,11 +164,20 @@
 
         /**
          * getProviderName
-         * 
+         *
          * @return string
          */
         public function getProviderName() {
             return $this->_provider_name;
+        }
+
+        /**
+         * getAccountServer
+         * 
+         * @return string
+         */
+        public function getAccountServer() {
+            return $this->_account_server;
         }
 
         /**
@@ -208,7 +226,7 @@
          * read
          *
          * @param string $id
-         * @return boolean
+         * @return boolean|array
          */
         static public function read($id=null) {
             $where = array(self::TABLE . '.el_unid=' . "'" . (string)$id . "'");
@@ -222,6 +240,34 @@
             }
 
             return $data;
+        }
+
+        /**
+         *
+         * @param type $query
+         * @param type $rows
+         * @param type $readonlys
+         * @return type
+         */
+        static public function get_rows(&$query, &$rows, &$readonlys) {
+            $where = array();
+            $cols = array(self::TABLE . '.*');
+            $join = array();
+
+            if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+                '', '', 0, $join)))
+            {
+                return array();
+            }
+
+            $rows = array();
+
+            foreach( $rs as $row ) {
+				$row = (array) $row;
+                $rows[] = $row;
+            }
+
+            return count($rows);
         }
     }
 

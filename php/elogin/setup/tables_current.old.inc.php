@@ -25,18 +25,5 @@ $phpgw_baseline = array(
 		'fk' => array(),
 		'ix' => array('el_unid','el_provider_name','el_account_server','el_account_user'),
 		'uc' => array()
-	),
-	'egw_elogin_usershares' => array(
-		'fd' => array(
-			'el_unid' => array('type' => 'varchar','precision' => '64'),
-			'el_provider_id' => array('type' => 'varchar','precision' => '64'),
-			'el_egw_account' => array('type' => 'int','precision' => '4'),
-			'el_sharepassword' => array('type' => 'varchar','precision' => '128'),
-			'el_shareinfo' => array('type' => 'text')
-		),
-		'pk' => array('el_unid'),
-		'fk' => array(),
-		'ix' => array('el_unid','el_provider_id','el_egw_account'),
-		'uc' => array()
 	)
 );

@@ -665,6 +665,41 @@
             return false;
         }
 
+        /**
+         * getUserShares
+         *
+         * @param string $username
+         * @param string $user_group_type
+         * @return boolean|array
+         */
+        public function getUserShares($username, $user_group_type='local_user') {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.Share.Permission', array(
+                    'method'            => 'list_by_user',
+                    'version'           => '1',
+                    'name'              => $username,
+                    'user_group_type'   => $user_group_type,
+                    'share_type'        => '["dec","local","usb","sata"]',
+                    'additional'        => '["hidden","encryption","is_aclmode"]'
+                    ));
+
+                if( $data ) {
+                    if( isset($data['shares']) ) {
+                        $shares = array();
+
+                        foreach( $data['shares'] as $tshare ) {
+                            $tshare = (array) $tshare;
+                            $shares[] = $tshare;
+                        }
+
+                        return $shares;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public function updateShare() {
 
         }

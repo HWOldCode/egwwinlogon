@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+    <template id="elogin.shareuser_list.header_right" template="" lang="" group="0" version="1.9.001">
+		<hbox>
+			<description value="Add:" class="infolog_headertext"/>
+			<button statustext="Add a new Share User" label="Add" id="add" onclick="window.open(egw::link('/index.php','menuaction=elogin.share_user_edit.share_user_edit'),'_blank','dependent=yes,width=800,height=600,scrollbars=yes,status=yes'); return false;" image="task"/>
+		</hbox>
+	</template>
+    <template id="elogin.shareuser_list.rows" template="" lang="" group="0" version="1.9.005">
+		<grid width="100%">
+			<columns>
+				<column width="54"/>
+				<column width="100%"/>
+				<column width="224"/>
+				<column width="288"/>
+				<column width="163"/>
+			</columns>
+			<rows>
+				<row class="th">
+					<description label=""/>
+					<nextmatch-sortheader label="Provider" id="provider_sort"/>
+					<nextmatch-sortheader label="Username" id="username_sort"/>
+					<nextmatch-sortheader label="Password" id="password_sort"/>
+					<nextmatch-sortheader label="Shares" id="shares_sort"/>
+				</row>
+				<row class="$row_cont[cat_id] $row_cont[class]" valign="top">
+                    <vbox align="center">
+                        <image src="${row}[icon]" no_lang="1"/>
+                    </vbox>
+                    <vbox>
+                        <description id="${row}[provider_name]" options="b"/>
+                    </vbox>
+                    <vbox>
+                        <description id="${row}[username]" options="b"/>
+                    </vbox>
+					<vbox>
+						<description id="${row}[password]" readonly="true" font_style="b"/>
+					</vbox>
+                    <vbox>
+                        <description id="${row}[shares]"/>
+                    </vbox>
+				</row>
+			</rows>
+		</grid>
+	</template>
+	<template id="elogin.shareuser_list" template="" lang="" group="0" version="1.9.001">
+		<grid width="100%" border="0" spacing="0" padding="0">
+			<columns>
+				<column/>
+			</columns>
+			<rows>
+                <row>
+					<description align="center" id="msg" no_lang="1" span="all" class="message"/>
+				</row>
+				<row>
+					<nextmatch id="nm" template="elogin.shareuser_list.rows" />
+				</row>
+			</rows>
+		</grid>
+	</template>
+</overlay>

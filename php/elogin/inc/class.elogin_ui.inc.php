@@ -21,12 +21,12 @@
          * @var array
          */
         public $public_functions = array(
-            'index'             => true,
-            'ajax_treelist'     => true,
-            'ajax_cache'        => true,
-            'ajax_machine_info' => true,
-            'ajax_cmd'          => true,
-            'ajax_logging'      => true,
+            'index'                 => true,
+            'ajax_treelist'         => true,
+            'ajax_cache'            => true,
+            'ajax_machine_info'     => true,
+            'ajax_cmd'              => true,
+            'ajax_logging'          => true,
             );
 
         public function ajax_treelist($content=array()) {
@@ -56,8 +56,16 @@
             }
             echo "Hello World";*/
 
-            $test = elogin_shareprovider_bo::i('test');
-            var_dump($test);
+            $t = new elogin_usershares_bo('test');
+            var_dump($t->getCmds());
+
+
+            $tpl = new etemplate_new('elogin.index');
+			$tpl->exec(
+                'elogin.elogin_ui.index',
+                $content,
+                array(),
+                array());
         }
 
         /**

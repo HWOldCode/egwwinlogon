@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+	<template id="elogin.index" template="" lang="" group="0" version="">
+        <grid width="100%">
+            <columns>
+                <column width="25%"/>
+                <column/>
+            </columns>
+            <rows>
+                <row>
+                    <description/>
+                    <grid>
+                        <columns>
+                            <column/>
+                            <column/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row height="20">
+                                <description/>
+                                <description/>
+                                <description/>
+                            </row>
+                        </rows>
+                    </grid>
+                </row>
+            </rows>
+        </grid>
+	</template>
+</overlay>

@@ -10,23 +10,9 @@
  * @version $Id$
  */
 
-
-$phpgw_baseline = array(
-	'egw_elogin_shareproviders' => array(
-		'fd' => array(
-			'el_unid' => array('type' => 'varchar','precision' => '64'),
-			'el_provider_name' => array('type' => 'varchar','precision' => '256'),
-			'el_account_server' => array('type' => 'varchar','precision' => '128'),
-			'el_account_port' => array('type' => 'int','precision' => '4'),
-			'el_account_user' => array('type' => 'varchar','precision' => '128'),
-			'el_account_password' => array('type' => 'varchar','precision' => '128')
-		),
-		'pk' => array('el_unid'),
-		'fk' => array(),
-		'ix' => array('el_unid','el_provider_name','el_account_server','el_account_user'),
-		'uc' => array()
-	),
-	'egw_elogin_usershares' => array(
+function elogin_upgrade1_9_068()
+{
+	$GLOBALS['egw_setup']->oProc->CreateTable('egw_elogin_usershares',array(
 		'fd' => array(
 			'el_unid' => array('type' => 'varchar','precision' => '64'),
 			'el_provider_id' => array('type' => 'varchar','precision' => '64'),
@@ -38,5 +24,8 @@ $phpgw_baseline = array(
 		'fk' => array(),
 		'ix' => array('el_unid','el_provider_id','el_egw_account'),
 		'uc' => array()
-	)
-);
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.069';
+}
+
