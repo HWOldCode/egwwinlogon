@@ -507,6 +507,15 @@
             return false;
         }
 
+        /**
+         * createShare
+         *
+         * @param string $name
+         * @param string $vol_path
+         * @param string $desc
+         * @param boolean $hide_unreadable
+         * @return boolean
+         */
         public function createShare($name, $vol_path, $desc='', $hide_unreadable=true) {
             if( $this->_isLogin ) {
                 $data = $this->_queryByService('SYNO.Core.Share', array(
@@ -528,5 +537,143 @@
             }
 
             return false;
+        }
+
+        /**
+         * getUser
+         *
+         * @param string $username
+         * @return boolean
+         */
+        public function getUser($username) {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.User', array(
+                    'method'            => 'get',
+                    'version'           => '1',
+                    'name'              => $username,
+                    'additional'        => '["description","email","expired","cannot_chg_passwd"]'
+                    ));
+
+                if( $data ) {
+                    if( isset($data['users']) ) {
+                        $users = array();
+
+                        foreach( $data['users'] as $tuser ) {
+                            return (array)$tuser;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * setUser
+         *
+         * @param type $username
+         * @param type $newusername
+         * @param type $description
+         * @param type $email
+         * @param type $cannot_chg_passwd
+         * @param type $expired
+         * @return boolean
+         */
+        public function setUser($username, $newusername=null, $description, $email, $cannot_chg_passwd=false, $expired='normal') {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.User', array(
+                    'method'            => 'set',
+                    'version'           => '1',
+                    'name'              => $username,
+                    'description'       => $description,
+                    'email'             => $email,
+                    'cannot_chg_passwd' => ($cannot_chg_passwd ? 'true' : 'false'),
+                    'expired'           => $expired,
+                    'new_name'          => ($newusername != null ? $newusername : $username )
+                    ));
+
+                if( $data ) {
+                    if( isset($data['name']) && isset($data['uid']) ) {
+                        return $data['uid'];
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * disableUser
+         *
+         * @param string $username
+         * @return boolean
+         */
+        public function disableUser($username) {
+            if( $this->_isLogin ) {
+                $userdata = $this->getUser($username);
+
+                if( is_array($userdata) ) {
+                    $treturn = $this->setUser(
+                        $username,
+                        null,
+                        $userdata['description'],
+                        $userdata['email'],
+                        false,
+                        'now'
+                        );
+
+                    if( $treturn !== false ) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * setSharePermission
+         * @param string $sharename
+         * @param string $forUsername
+         * @param string $access
+         * @param string $user_group_type
+         * @return boolean
+         */
+        public function setSharePermission($sharename, $forUsername, $access='r', $user_group_type='local_user') {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.Share.Permission', array(
+                    'method'            => 'set',
+                    'version'           => '1',
+                    'name'              => $sharename,
+                    'user_group_type'   => $user_group_type,
+                    'permissions'       => json_encode(array(
+                        array(
+                            "name"          => $forUsername,
+                            "is_readonly"   => ( $access == 'r' ? true : false),
+                            "is_writable"   => ( $access == 'rw' ? true : false),
+                            "is_deny"       => ( $access == 'd' ? true : false),
+                            "is_custom"     => false
+                            )
+                        ))
+                    ));
+
+                if( $data ) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public function updateShare() {
+
+        }
+
+        public function updateUser() {
+
+        }
+
+        public function updateGroup() {
+
         }
     }

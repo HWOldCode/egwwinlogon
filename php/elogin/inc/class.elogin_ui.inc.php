@@ -38,20 +38,26 @@
          * @param array $content
          */
         public function index($content=array()) {
-            require_once('plugins/syndms/lib/syndms.client.php');
+            /*require_once('plugins/syndms/lib/syndms.client.php');
 
             $syn = new SyndmsClient('192.168.11.4');
             if( $syn->login('admin', '1234') ) {
-                var_dump($syn->getUsers());
-                var_dump($syn->getUserGroups('test'));
-                var_dump($syn->getGroups());
-                var_dump($syn->getShares());
-                var_dump($syn->createUser('test3', '1234'));
-                var_dump($syn->removeUserByGroup('administrators', 'test3'));
-                var_dump($syn->addUserToGroup('administrators', 'test3'));
-                var_dump($syn->createShare('test3435', '/volume1'));
+                //var_dump($syn->getUsers());
+                //var_dump($syn->getUserGroups('test'));
+                //var_dump($syn->getGroups());
+                //var_dump($syn->getShares());
+                //var_dump($syn->createUser('test3', '1234'));
+                //var_dump($syn->removeUserByGroup('administrators', 'test3'));
+                //var_dump($syn->addUserToGroup('administrators', 'test3'));
+                //var_dump($syn->createShare('test3435', '/volume1'));
+                var_dump($syn->getUser('test3'));
+                var_dump($syn->disableUser('test3'));
+                var_dump($syn->setSharePermission('test3435', 'test2', 'rw'));
             }
-            echo "Hello World";
+            echo "Hello World";*/
+
+            $test = elogin_shareprovider_bo::i('test');
+            var_dump($test);
         }
 
         /**

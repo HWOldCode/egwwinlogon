@@ -16,6 +16,8 @@
      */
     class elogin_bo {
 
+        const SYSTEM_WIN    = 'win';
+
         const EVENT_WINDOWS_SESSION_CHANGE_LOGON    = 5;
         const EVENT_WINDOWS_SESSION_CHANGE_LOGOFF   = 6;
 

@@ -31,4 +31,4 @@
 	$setup_info['elogin']['maintainer'] = array(
 		'name' 	=> 'HW-Softwareentwicklung GbR',
 		'email' => 'info@hw-softwareentwicklung.de'
-        );	$setup_info['elogin']['tables'] = array('egw_elogin_shareproviders');
+        );

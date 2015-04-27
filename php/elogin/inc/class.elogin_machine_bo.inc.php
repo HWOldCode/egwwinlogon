@@ -17,10 +17,24 @@
     class elogin_machine_bo {
 
         /**
+         * Reference to global db object
+         *
+         * @var egw_db
+         */
+        static protected $_db;
+
+        /**
          * id
          * @var string
          */
         protected $_id = null;
+
+        /**
+         * Init our static properties
+         */
+        static public function init_static() {
+            self::$_db = $GLOBALS['egw']->db;
+        }
 
         /**
          * constructor
@@ -29,4 +43,13 @@
         public function __construct($id) {
             $this->_id = $id;
         }
+
+        public function save() {
+            
+        }
     }
+
+    /**
+     * init_static
+     */
+    elogin_machine_bo::init_static();
