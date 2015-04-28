@@ -32,6 +32,10 @@
          * @param array $content
          */
         public function share_provider_list($content) {
+            if( !$GLOBALS['egw_info']['user']['apps']['admin'] ) {
+                die("Only for Admins!");
+            }
+            
             $readonlys = array();
 
             if( !is_array($content) ) {
@@ -42,8 +46,8 @@
 						'no_filter2'    => true,// I  disable the 2. filter (params are the same as for filter)
 						'no_cat'        => false,// I  disable the cat-selectbox
 						//'never_hide'    => true,// I  never hide the nextmatch-line if less then maxmatch entrie
-						'row_id'        => 'unid',
-						'actions'       => array(),
+						'row_id'        => 'el_unid',
+						'actions'       => self::index_get_actions(),
                         'header_row'    => 'elogin.shareprovider_list.header_right',
                         'favorites'     => false
 						);
@@ -58,6 +62,31 @@
                 $readonlys,
                 array(),
                 0);
+        }
+
+        /**
+         * index_get_actions
+         *
+         * @param array $query
+         * @return array
+         */
+        static public function index_get_actions($query=array()) {
+            $group = 1;
+
+            $actions = array(
+                'edit' => array(
+                    'caption'	=> 'Edit',
+                    'group'		=> $group,
+                    'default'	=> false,
+                    'icon'		=> 'edit',
+                    'hint'		=> 'Edit ShareProvider',
+                    'enabled'	=> true,
+                    'url'       => 'menuaction=elogin.elogin_shareprovider_ui.share_provider_edit&uid=$id',
+                    'popup'     => '600x425',//egw_link::get_registry('elogin', 'add_popup'),
+                    ),
+                );
+
+            return $actions;
         }
 
         /**
@@ -80,6 +109,10 @@
          * @param array $content
          */
         public function share_provider_edit($content=null) {
+            if( !$GLOBALS['egw_info']['user']['apps']['admin'] ) {
+                die("Only for Admins!");
+            }
+
             if( $content == null ) {
                 $content = array();
             }
@@ -91,10 +124,60 @@
             $option_sel = array();
             $readonlys  = array();
 
+            $provider = null;
+
             if( $uid ) {
-                $data = elogin_shareprovider_bo::read($uid);
+                $provider = new elogin_shareprovider_bo($uid);
+
+                $preserv['uid'] = $uid;
+            }
+
+            if( isset($content['button']) && isset($content['button']['apply']) ) {
+                $content['button']['save'] = "pressed";
+            }
+
+             // save
+            if( isset($content['button']) && isset($content['button']['save']) ) {
+                if( !($provider instanceof elogin_shareprovider_bo) ) {
+                    $provider = new elogin_shareprovider_bo();
+                }
+
+                $provider->setProviderName($content['provider']);
+                $provider->setAccount(
+                    $content['account_server'],
+                    intval($content['account_port']),
+                    $content['account_user'],
+                    $content['account_password']
+                    );
+
+                $provider->save();
+
+
+                /*egw_framework::refresh_opener(
+                    'ShareProvider Save',
+                    'elogin',
+                    $provider->getId(),
+                    'save'
+                    );*/
+
+                egw::redirect_link(egw::link('/index.php', array(
+                    'menuaction' => 'elogin.elogin_shareprovider_ui.share_provider_edit',
+                    'uid' => $provider->getId()
+                    )));
+            }
+            elseif( isset($content['button']) && isset($content['button']['delete']) ) {
 
             }
+
+            if( $provider ) {
+                $content['provider']            = $provider->getProviderName();
+                $content['account_server']      = $provider->getAccountServer();
+                $content['account_port']        = $provider->getAccountPort();
+                $content['account_user']        = $provider->getAccountUser();
+                $content['account_password']    = $provider->getAccountPassword();
+            }
+
+            $option_sel['provider'] = elogin_shareprovider_bo::getShareProviderNames();
 
             $etemplate = new etemplate_new('elogin.share_provider.dialog');
             $etemplate->exec(

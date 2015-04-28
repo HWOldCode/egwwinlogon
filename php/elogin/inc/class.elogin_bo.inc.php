@@ -29,17 +29,19 @@
          * getEgroupwareAccounts
          * @return array of egroupware accounts
          */
-        public function getEgroupwareAccounts() {
+        static public function getEgroupwareAccounts() {
             $db = $GLOBALS['egw']->db;
 
-            $accountlist = $GLOBALS['egw']->accounts->get_list(
-                'accounts',
-                null,
-                '',
-                '',
-                '',
-                null,
-                'all');
+            $accountlist = array_values($GLOBALS['egw']->accounts->search(array(
+                'type' => 'accounts',
+                'start' => null,
+                'order' => '',
+                'sort' => '',
+                'query' => '',
+                'offset' => null,
+                'query_type' => 'all',
+                'active' => false
+                )));
 
             foreach( $accountlist as &$account ) {
                 $where = array(
@@ -55,4 +57,31 @@
 
             return $accountlist;
         }
+
+        /**
+         * getEgroupwareAccountGroups
+         *
+         * @param int $accountid
+         * @return array
+         */
+        static public function getEgroupwareAccountGroups($accountid) {
+            $list = $GLOBALS['egw']->accounts->memberships($accountid);
+            return $list;
+        }
+
+        /**
+		 * getPHPUuid
+		 * return a unid
+		 *
+		 * @return string UUID aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
+		 */
+		static public function getPHPUuid() {
+			$randstr = md5(uniqid(mt_rand(), true));
+			$uuid = substr($randstr,0,8) . '-';
+			$uuid .= substr($randstr,8,4) . '-';
+			$uuid .= substr($randstr,12,4) . '-';
+			$uuid .= substr($randstr,16,4) . '-';
+			$uuid .= substr($randstr,20,12);
+			return $uuid;
+		}
     }

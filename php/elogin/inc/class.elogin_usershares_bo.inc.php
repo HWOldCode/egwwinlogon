@@ -127,10 +127,21 @@
          *
          * @return elogin_shareprovider_bo|null
          */
-        public function getProvider() {
+        public function getProvider($getRaw=false) {
+            if( $getRaw ) {
+                $tporvider = new elogin_shareprovider_bo($this->_providerid);
+
+                return $tporvider;
+            }
+
             $tporvider = elogin_shareprovider_bo::i($this->_providerid);
-            $tporvider->setUsername($this->getUsername());
-            return $tporvider;
+
+            if( $tporvider ) {
+                $tporvider->setUsername($this->getUsername());
+                return $tporvider;
+            }
+
+            return null;
         }
 
         /**
@@ -183,6 +194,24 @@
         }
 
         /**
+         * _getRandomChar
+         * @return string
+         */
+        protected function _getRandomChar() {
+            $len            = 1;
+            $alphabet       = "ABCDEFGHIJKLMNOPQRSTUWXYZ";
+            $pass           = array();
+            $alphaLength    = strlen($alphabet) - 1;
+
+            for( $i=0; $i<$len; $i++) {
+                $n = rand(0, $alphaLength);
+                $pass[] = $alphabet[$n];
+            }
+
+            return implode($pass);
+        }
+
+        /**
          * setSharePassword
          *
          * @param string $password
@@ -196,21 +225,63 @@
         }
 
         /**
+         * getDefaultShares
+         *
+         * @return string
+         */
+        public function getDefaultShares() {
+            $shares = array();
+
+            // add privat folder
+            $shares[] = array(
+                'name' => $this->getUsername()
+                );
+
+            // add group folder
+            $groups = elogin_bo::getEgroupwareAccountGroups($this->_egwaccountid);
+
+            foreach( $groups as $groupname ) {
+                $shares[] = array(
+                    'name' => 'group ' . $groupname
+                    );
+            }
+
+            return $shares;
+        }
+
+        /**
          * getShares
          *
          * @return array
          */
         public function getShares() {
             $shareprovider = $this->getProvider();
-            $shares = array();
+            $rshares = array();
 
             if( $shareprovider instanceof elogin_shareprovider_bo ) {
-                $shares = $shareprovider->getShares();
+                $shares = $shareprovider->getSharesByUser($this);
 
-                // TODO Share Info and Setting
+                foreach( $shares as $tshare ) {
+                    $add = false;
+
+                    if( isset($tshare['is_readonly']) && $tshare['is_readonly'] ) {
+                        $add = true;
+                    }
+
+                    if( isset($tshare['is_writable']) && $tshare['is_writable'] ) {
+                        $add = true;
+                    }
+
+                    if( $add ) {
+                        $rshares[] = $tshare;
+                    }
+                }
+
+                // add drivename or mountpoint
+                // TODO
             }
 
-            return $shares;
+            return $rshares;
         }
 
         /**
@@ -227,7 +298,7 @@
 
             switch( $system ) {
                 case elogin_bo::SYSTEM_WIN:
-                    $replace_str = "net use <drivename>: \\<server>\<share> /user:<username> <password>";
+                    $replace_str = 'net use <drivename>: "\\\\<server>\<share>" /user:<username> <password>';
                     break;
             }
 
@@ -237,8 +308,24 @@
                 $username = $this->getUsername();
                 $sharepassword = $this->getSharePassword();
 
+                $_randdrivename = array(
+                    'A', 'B', 'C', 'D', 'E', 'F'
+                    );
+
                 foreach( $shares as $tshare ) {
                     $cmd = $replace_str;
+
+                    if( !isset($tshare['drivename']) ) {
+                        while( $trand=$this->_getRandomChar() ) {
+                            if( in_array($trand, $_randdrivename) ) {
+                                continue;
+                            }
+
+                            $_randdrivename[] = $trand;
+                            $tshare['drivename'] = $trand;
+                            break;
+                        }
+                    }
 
                     $cmd = str_replace('<drivename>', $tshare['drivename'], $cmd);
                     $cmd = str_replace('<server>', $this->getProvider()->getAccountServer(), $cmd);
@@ -251,6 +338,30 @@
             }
 
             return $cmds;
+        }
+
+        /**
+         * save
+         */
+        public function save() {
+            $data = array();
+
+            if( $this->_id ) {
+                $data['el_unid'] = $this->_id;
+            }
+
+            $data['el_provider_id']     = $this->_providerid;
+            $data['el_egw_account']     = $this->_egwaccountid;
+            $data['el_sharepassword']   = $this->_sharepassword;
+            $data['el_shareinfo']       = $this->_shareinfos;
+
+            $return = self::_write($data);
+
+            if( $return ) {
+                if( !($this->_id) ) {
+                    $this->_id = $return;
+                }
+            }
         }
 
         /**
@@ -274,6 +385,43 @@
         }
 
         /**
+         * _write
+         *
+         * @param array $data
+         */
+        static protected function _write(array $data) {
+            if( isset($data['el_unid']) ) {
+                $unid = $data['el_unid'];
+                unset($data['el_unid']);
+
+                self::$_db->update(
+                    self::TABLE,
+                    $data,
+                    array(
+                        'el_unid' => $unid,
+                        ),
+                    __LINE__,
+                    __FILE__,
+                    'elogin'
+                    );
+            }
+            else {
+                $data['el_unid'] = elogin_bo::getPHPUuid();
+
+                self::$_db->insert(
+                    self::TABLE,
+                    $data,
+                    false,
+                    __LINE__,
+                    __FILE__,
+                    'elogin'
+                    );
+            }
+
+            return $data['el_unid'];
+        }
+
+        /**
          * get_rows
          *
          * @param type $query
@@ -285,6 +433,16 @@
             $where = array();
             $cols = array(self::TABLE . '.*');
             $join = array();
+
+            if( key_exists('col_filter', $query) ) {
+                if( isset($query['col_filter']['provider_id']) ) {
+                    $where['el_provider_id'] = $query['col_filter']['provider_id'];
+                }
+
+                if( isset($query['col_filter']['account_id']) ) {
+                    $where['el_egw_account'] = $query['col_filter']['account_id'];
+                }
+            }
 
             if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
                 '', '', 0, $join)))
@@ -300,6 +458,32 @@
             }
 
             return count($rows);
+        }
+
+        /**
+         * existByAccountAndProvider
+         *
+         * @param int $accountid
+         * @param string $providerid
+         * @return boolean
+         */
+        static public function existByAccountAndProvider($accountid, $providerid) {
+            $query = array(
+                'col_filter' => array(
+                    'provider_id' => $providerid,
+                    'account_id' => $accountid
+                    )
+                );
+            $rows = array();
+            $readonlys = array();
+
+            self::get_rows($query, $rows, $readonlys);
+
+            if( count($rows) > 0 ) {
+                return $rows[0]['el_unid'];
+            }
+
+            return false;
         }
     }
 

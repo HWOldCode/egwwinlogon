@@ -92,7 +92,7 @@
         /**
          * constructor
          */
-        public function __construct($id) {
+        public function __construct($id=null) {
             $this->_id = $id;
 
             $data = self::read($id);
@@ -110,7 +110,7 @@
          * _construct2
          */
         protected function _construct2() {
-
+            // overriding
         }
 
         /**
@@ -136,6 +136,15 @@
             }
 
             return null;
+        }
+
+        /**
+         * getId
+         *
+         * @return string
+         */
+        public function getId() {
+            return $this->_id;
         }
 
         /**
@@ -172,12 +181,48 @@
         }
 
         /**
+         * setProviderName
+         *
+         * @param string $name
+         */
+        public function setProviderName($name) {
+            $this->_provider_name = $name;
+        }
+
+        /**
          * getAccountServer
-         * 
+         *
          * @return string
          */
         public function getAccountServer() {
             return $this->_account_server;
+        }
+
+        /**
+         * getAccountPort
+         *
+         * @return int
+         */
+        public function getAccountPort() {
+            return intval($this->_account_port);
+        }
+
+        /**
+         * getAccountUser
+         *
+         * @return string
+         */
+        public function getAccountUser() {
+            return $this->_account_user;
+        }
+
+        /**
+         * getAccountPassword
+         *
+         * @return string
+         */
+        public function getAccountPassword() {
+            return $this->_account_password;
         }
 
         /**
@@ -187,6 +232,142 @@
          */
         public function getShares() {
             return array();
+        }
+
+        /**
+         * getSharesByUser
+         *
+         * @param string|elogin_usershares_bo $account
+         * @return array
+         */
+        public function getSharesByUser($account) {
+            return array();
+        }
+
+        /**
+         * isUsernameExist
+         *
+         * @param string $username
+         * @return boolean
+         */
+        public function isUsernameExist($username=null) {
+            return false;
+        }
+
+        /**
+         * createUserShares
+         *
+         * @param int|elogin_usershares_bo $accountid
+         */
+        public function createUserShares($account) {
+            if( is_int($account) ) {
+                $usershares = new elogin_usershares_bo();
+                $usershares->setUser($account);
+                $usershares->setSharePassword();
+                $usershares->setProviderId($this->_id);
+
+                $usershares->save();
+
+                return $usershares;
+            }
+            elseif( $account instanceof elogin_usershares_bo ) {
+                return $account;
+            }
+
+            return null;
+        }
+
+        /**
+         * disableUserShares
+         *
+         * @param string|elogin_usershares_bo $account
+         */
+        public function disableUserShares($account) {
+            return false;
+        }
+
+        /**
+         * enableUserShares
+         *
+         * @param string|elogin_usershares_bo $account
+         */
+        public function enableUserShares($account) {
+            return false;
+        }
+
+        /**
+         * disableUserShares
+         *
+         * @param string|elogin_usershares_bo $account
+         */
+        public function isUserSharesDisabled($account) {
+            return false;
+        }
+
+        /**
+         * updatePassword
+         *
+         * @param elogin_usershares_bo $account
+         */
+        public function updatePassword($account) {
+            return false;
+        }
+
+        /**
+         * getAllShares
+         *
+         * @param elogin_usershares_bo $account
+         * @return array
+         */
+        public function getAllShares($account) {
+            return array();
+        }
+
+        /**
+         * createShare
+         *
+         * @param elogin_usershares_bo $account
+         * @param string $sharename
+         * @return boolean
+         */
+        public function createShare($account, $sharename) {
+            return false;
+        }
+
+        /**
+         * setSharePermission
+         *
+         * @param elogin_usershares_bo $account
+         * @param string $sharename
+         * @param string $premission
+         */
+        public function setSharePermission($account, $sharename, $premission="rw") {
+            return false;
+        }
+
+        /**
+         * save
+         */
+        public function save() {
+            $data = array();
+
+            if( $this->_id ) {
+                $data['el_unid'] = $this->_id;
+            }
+
+            $data['el_provider_name']       = $this->_provider_name;
+            $data['el_account_server']      = $this->_account_server;
+            $data['el_account_port']        = $this->_account_port;
+            $data['el_account_user']        = $this->_account_user;
+            $data['el_account_password']    = $this->_account_password;
+
+            $return = self::_write($data);
+
+            if( $return ) {
+                if( !($this->_id) ) {
+                    $this->_id = $return;
+                }
+            }
         }
 
         /**
@@ -223,6 +404,17 @@
         }
 
         /**
+         * getShareProviderNames
+         *
+         * @return array
+         */
+        static public function getShareProviderNames() {
+            return array(
+                'syno' => 'Synology DSM 5.1'
+            );
+        }
+
+        /**
          * read
          *
          * @param string $id
@@ -240,6 +432,43 @@
             }
 
             return $data;
+        }
+
+        /**
+         * _write
+         *
+         * @param array $data
+         */
+        static protected function _write(array $data) {
+            if( isset($data['el_unid']) ) {
+                $unid = $data['el_unid'];
+                unset($data['el_unid']);
+
+                self::$_db->update(
+                    self::TABLE,
+                    $data,
+                    array(
+                        'el_unid' => $unid,
+                        ),
+                    __LINE__,
+                    __FILE__,
+                    'elogin'
+                    );
+            }
+            else {
+                $data['el_unid'] = elogin_bo::getPHPUuid();
+
+                self::$_db->insert(
+                    self::TABLE,
+                    $data,
+                    false,
+                    __LINE__,
+                    __FILE__,
+                    'elogin'
+                    );
+            }
+
+            return $data['el_unid'];
         }
 
         /**

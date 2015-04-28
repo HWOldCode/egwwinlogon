@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
 <overlay>
-	<template id="elogin.share_provider.dialog" template="" lang="" group="0" version="">
+	<template id="elogin.share_user.dialog" template="" lang="" group="0" version="">
         <grid width="100%">
 			<columns>
 				<column/>
@@ -20,8 +20,8 @@
                         <rows>
                             <row class="dialogHeader">
                                 <appicon src="elogin"/>
-                                <description value="Server"/>
-                                <textbox id="account_server" span="4" class="et2_fullWidth et2_required"/>
+                                <description value="Provider"/>
+                                <textbox id="provider" span="4" class="et2_fullWidth et2_required"/>
                             </row>
                         </rows>
 					</grid>
@@ -34,22 +34,12 @@
                         </columns>
                         <rows>
                             <row>
-                                <description value="Provider"/>
-                                <menulist>
-                                    <menupopup id="provider"/>
-                                </menulist>
+                                <description value="User"/>
+                                <textbox id="user" />
                             </row>
                             <row>
-                                <description value="Port"/>
-                                <textbox id="account_port" />
-                            </row>
-                            <row>
-                                <description value="Username"/>
-                                <textbox id="account_user" />
-                            </row>
-                            <row>
-                                <description value="Password"/>
-                                <textbox id="account_password" />
+                                <description value="Sharepassword"/>
+                                <textbox id="sharepassword" />
                             </row>
                         </rows>
                     </grid>

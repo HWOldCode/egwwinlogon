@@ -56,9 +56,13 @@
             }
             echo "Hello World";*/
 
-            $t = new elogin_usershares_bo('test');
-            var_dump($t->getCmds());
+            //$t = new elogin_usershares_bo('test');
+            //var_dump($t->getCmds());
 
+            //elogin_sharehandler_bo::set_async_job(false);
+            //elogin_sharehandler_bo::set_async_job(true);
+
+            elogin_sharehandler_bo::handle();
 
             $tpl = new etemplate_new('elogin.index');
 			$tpl->exec(

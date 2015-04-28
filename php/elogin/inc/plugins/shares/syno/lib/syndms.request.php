@@ -20,12 +20,12 @@
                 curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
             }
 
-            curl_setopt($curl, CURLOPT_VERBOSE, true);
+            //curl_setopt($curl, CURLOPT_VERBOSE, true);
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
             if( $postdata ) {
                 if( is_array($postdata) ) {
-                    curl_setopt($ch,CURLOPT_POST, count($fields));
+                    curl_setopt($ch, CURLOPT_POST, count($postdata));
 
                     $strpost = "";
 

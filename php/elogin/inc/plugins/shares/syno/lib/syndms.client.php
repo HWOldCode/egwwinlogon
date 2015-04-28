@@ -435,12 +435,14 @@
          * @return boolean|string
          */
         public function createUser($name, $password, $cannot_chg_passwd=false, $expired='normal', $description='', $email='') {
+        var_dump($name);
+        var_dump($this->_isLogin);
             if( $this->_isLogin ) {
                 $data = $this->_queryByService('SYNO.Core.User', array(
                     'method'            => 'create',
                     'version'           => '1',
                     'name'              => $name,
-                    'passowrd'          => $password,
+                    'password'          => $password,
                     'description'       => $description,
                     'email'             => $email,
                     'cannot_chg_passwd' => ($cannot_chg_passwd ? 'true' : 'false'),
@@ -448,7 +450,7 @@
                     'notify_by_email'   => 'false',
                     'send_password'     => 'false',
                     ));
-
+            var_dump($data);
                 if( $data ) {
                     if( isset($data['name']) && isset($data['uid']) ) {
                         return $data['uid'];
@@ -572,6 +574,7 @@
          * setUser
          *
          * @param type $username
+         * @param type $newpassword
          * @param type $newusername
          * @param type $description
          * @param type $email
@@ -579,9 +582,9 @@
          * @param type $expired
          * @return boolean
          */
-        public function setUser($username, $newusername=null, $description, $email, $cannot_chg_passwd=false, $expired='normal') {
+        public function setUser($username, $newpassword=null, $newusername=null, $description, $email, $cannot_chg_passwd=false, $expired='normal') {
             if( $this->_isLogin ) {
-                $data = $this->_queryByService('SYNO.Core.User', array(
+                $query = array(
                     'method'            => 'set',
                     'version'           => '1',
                     'name'              => $username,
@@ -590,11 +593,48 @@
                     'cannot_chg_passwd' => ($cannot_chg_passwd ? 'true' : 'false'),
                     'expired'           => $expired,
                     'new_name'          => ($newusername != null ? $newusername : $username )
-                    ));
+                    );
+
+                if( $newpassword ) {
+                    $query['password'] = $newpassword;
+                }
+
+                $data = $this->_queryByService('SYNO.Core.User', $query);
 
                 if( $data ) {
                     if( isset($data['name']) && isset($data['uid']) ) {
                         return $data['uid'];
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * setUserPassword
+         *
+         * @param string $username
+         * @param string $newpassword
+         * @return boolean
+         */
+        public function setUserPassword($username, $newpassword) {
+            if( $this->_isLogin ) {
+                $userdata = $this->getUser($username);
+
+                if( is_array($userdata) ) {
+                    $treturn = $this->setUser(
+                        $username,
+                        $newpassword,
+                        null,
+                        $userdata['description'],
+                        $userdata['email'],
+                        false,
+                        $userdata['expired']
+                        );
+
+                    if( $treturn !== false ) {
+                        return true;
                     }
                 }
             }
@@ -616,6 +656,7 @@
                     $treturn = $this->setUser(
                         $username,
                         null,
+                        null,
                         $userdata['description'],
                         $userdata['email'],
                         false,
@@ -623,6 +664,56 @@
                         );
 
                     if( $treturn !== false ) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * enableUser
+         *
+         * @param string $username
+         * @return boolean
+         */
+        public function enableUser($username) {
+            if( $this->_isLogin ) {
+                $userdata = $this->getUser($username);
+
+                if( is_array($userdata) ) {
+                    $treturn = $this->setUser(
+                        $username,
+                        null,
+                        null,
+                        $userdata['description'],
+                        $userdata['email'],
+                        false,
+                        'normal'
+                        );
+
+                    if( $treturn !== false ) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * isUserDisabled
+         *
+         * @param string $username
+         * @return boolean
+         */
+        public function isUserDisabled($username) {
+            if( $this->_isLogin ) {
+                $userdata = $this->getUser($username);
+
+                if( is_array($userdata) ) {
+                    if( $userdata['expired'] == 'now' ) {
                         return true;
                     }
                 }
