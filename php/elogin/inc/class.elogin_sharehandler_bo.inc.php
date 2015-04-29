@@ -97,7 +97,7 @@
 
                     if( $egw_account['account_status'] == 'A' ) {
                 var_dump("Aktiv");
-                var_dump($usuid);
+                //var_dump($usuid);
                         if( !$isExist ) {
                             if( !($usuid) ) {
                                 $usershares = $provider->createUserShares($accid);
@@ -107,7 +107,11 @@
                             }
 
                             $isExist = $provider->isUsernameExist($username);
-                var_dump($isExist);
+
+                            if( !$isExist ) {
+                                echo "<b>nicht angelegt: $username!</b>";
+                            }
+                //var_dump($isExist);
                         }
                     }
 
@@ -118,7 +122,7 @@
 
                     // update account
                     if( $usershares ) {
-            var_dump($usershares->getUsername());
+            //var_dump($usershares->getUsername());
                         // disable account
                         if( ($egw_account['account_status'] <> 'A') && $isExist ) {
                             if( $usershares->getProvider()->disableUserShares($usershares) ) {

@@ -38,5 +38,15 @@ $phpgw_baseline = array(
 		'fk' => array(),
 		'ix' => array('el_unid','el_provider_id','el_egw_account'),
 		'uc' => array()
+	),
+	'egw_elogin_machine' => array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_name' => array('type' => 'varchar','precision' => '256')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_name'),
+		'uc' => array()
 	)
 );

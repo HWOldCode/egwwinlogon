@@ -435,10 +435,10 @@
          * @return boolean|string
          */
         public function createUser($name, $password, $cannot_chg_passwd=false, $expired='normal', $description='', $email='') {
-        var_dump($name);
-        var_dump($this->_isLogin);
+        //var_dump($name);
+        //var_dump($this->_isLogin);
             if( $this->_isLogin ) {
-                $data = $this->_queryByService('SYNO.Core.User', array(
+                $query = array(
                     'method'            => 'create',
                     'version'           => '1',
                     'name'              => $name,
@@ -449,8 +449,11 @@
                     'expired'           => $expired,
                     'notify_by_email'   => 'false',
                     'send_password'     => 'false',
-                    ));
-            var_dump($data);
+                    );
+
+            //var_dump($query);
+                $data = $this->_queryByService('SYNO.Core.User', $query);
+            //var_dump($data);
                 if( $data ) {
                     if( isset($data['name']) && isset($data['uid']) ) {
                         return $data['uid'];

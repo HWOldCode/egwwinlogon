@@ -49,7 +49,9 @@
                  * Admin
                  */
                 if( $GLOBALS['egw_info']['user']['apps']['admin'] ) {
+                    $file['Machine List'] = egw::link('/index.php', 'menuaction=' . $appname . '.elogin_machine_ui.machine_list&ajax=true');
                     $file['Share Provider'] = egw::link('/index.php', 'menuaction=' . $appname . '.elogin_shareprovider_ui.share_provider_list&ajax=true');
+                    $file['Cronjob by Hand'] = egw::link('/index.php', 'menuaction=' . $appname . '.elogin_ui.cronjob_hand&ajax=true');
                 }
 
                 $file['Share User']     = egw::link('/index.php', 'menuaction=' . $appname . '.elogin_usershares_ui.share_user_list&ajax=true');

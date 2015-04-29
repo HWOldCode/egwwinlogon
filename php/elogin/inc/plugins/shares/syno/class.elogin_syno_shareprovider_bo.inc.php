@@ -116,7 +116,7 @@
          * @param int|elogin_usershares_bo $account
          */
         public function createUserShares($account) {
-            var_dump($account);
+            //var_dump($account);
             if( $this->_syno ) {
                 if( $account instanceof elogin_usershares_bo ) {
                     $usershares = $account;
@@ -134,7 +134,7 @@
                     return $usershares;
                 }
                 else {
-                    var_dump($usershares);
+                    //var_dump($usershares);
                 }
             }
 

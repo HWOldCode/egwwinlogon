@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+    <template id="elogin.machine_list.header_right" template="" lang="" group="0" version="1.9.001">
+		<hbox>
+		</hbox>
+	</template>
+    <template id="elogin.machine_list.rows" template="" lang="" group="0" version="1.9.005">
+		<grid width="100%">
+			<columns>
+				<column width="54"/>
+				<column width="100%"/>
+				<column width="224"/>
+				<column width="288"/>
+				<column width="163"/>
+				<column width="163"/>
+			</columns>
+			<rows>
+				<row class="th">
+					<description label=""/>
+					<nextmatch-sortheader label="Machine-Name" id="el_machine_name_sort"/>
+					<nextmatch-sortheader label="Add-Date" id="el_adddate_sort"/>
+					<nextmatch-sortheader label="Last Login User" id="el_loginuser_sort"/>
+					<nextmatch-sortheader label="Last Login Date" id="el_logindate_sort"/>
+				</row>
+				<row class="$row_cont[cat_id] $row_cont[class]" valign="top">
+                    <vbox align="center">
+                        <image src="${row}[icon]" no_lang="1"/>
+                    </vbox>
+                    <vbox>
+                        <description id="${row}[el_machine_name]" options="b"/>
+                    </vbox>
+					<vbox>
+						<description id="${row}[el_adddate]"/>
+					</vbox>
+					<vbox>
+						<description id="${row}[el_loginuser]"/>
+					</vbox>
+                    <vbox>
+                        <description id="${row}[el_logindate]" options="b"/>
+                    </vbox>
+				</row>
+			</rows>
+		</grid>
+	</template>
+	<template id="elogin.machine_list" template="" lang="" group="0" version="1.9.001">
+		<grid width="100%" border="0" spacing="0" padding="0">
+			<columns>
+				<column/>
+			</columns>
+			<rows>
+                <row>
+					<description align="center" id="msg" no_lang="1" span="all" class="message"/>
+				</row>
+				<row>
+					<nextmatch id="nm" template="elogin.machine_list.rows" />
+				</row>
+			</rows>
+		</grid>
+	</template>
+</overlay>

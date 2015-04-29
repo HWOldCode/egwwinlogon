@@ -35,7 +35,7 @@
             if( !$GLOBALS['egw_info']['user']['apps']['admin'] ) {
                 die("Only for Admins!");
             }
-            
+
             $readonlys = array();
 
             if( !is_array($content) ) {
@@ -100,7 +100,13 @@
         public function get_rows_shareprovider(&$query, &$rows, &$readonlys) {
             egw_session::appsession('elogin_shareprovider_list', 'elogin', $query);
 
-            return elogin_shareprovider_bo::get_rows($query, $rows, $readonlys);
+            $count = elogin_shareprovider_bo::get_rows($query, $rows, $readonlys);
+
+            foreach( $rows as &$row ) {
+                $row['icon'] = 'provider.png';
+            }
+
+            return $count;
         }
 
         /**

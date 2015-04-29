@@ -27,6 +27,7 @@
             'ajax_machine_info'     => true,
             'ajax_cmd'              => true,
             'ajax_logging'          => true,
+            'cronjob_hand'          => true,
             );
 
         public function ajax_treelist($content=array()) {
@@ -59,9 +60,18 @@
             //$t = new elogin_usershares_bo('test');
             //var_dump($t->getCmds());
 
-            //elogin_sharehandler_bo::set_async_job(false);
-            //elogin_sharehandler_bo::set_async_job(true);
+            elogin_sharehandler_bo::set_async_job(false);
+            elogin_sharehandler_bo::set_async_job(true);
 
+            $tpl = new etemplate_new('elogin.index');
+			$tpl->exec(
+                'elogin.elogin_ui.index',
+                $content,
+                array(),
+                array());
+        }
+
+        public function cronjob_hand($content=array()) {
             elogin_sharehandler_bo::handle();
 
             $tpl = new etemplate_new('elogin.index');
@@ -99,6 +109,22 @@
          * @param array $content
          */
         public function ajax_machine_info($content=array()) {
+            error_log(__METHOD__.__LINE__.':'.  var_export($content, true));
+
+            if( isset($content['uid']) ) {
+                $machine = new elogin_machine_bo($content['uid']);
+
+                if( isset($content['name']) ) {
+                    $machine->setName($content['name']);
+                }
+
+                if( !$machine->getIsInDb() ) {
+                    $machine->save();
+                }
+
+                // TODO
+                // login logging
+            }
 
             return egw_json_response::get()->data(array('status' => 'ok'));
         }
@@ -110,7 +136,7 @@
          * @return mixed
          */
         public function ajax_cmd($content=array()) {
-
+            error_log(__METHOD__.__LINE__.':'.  var_export($content, true));
         }
 
         /**
