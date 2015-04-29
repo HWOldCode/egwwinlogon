@@ -10,8 +10,7 @@ import egwwinlogon.http.LogonHttpServer;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.*;
 
 /**
  * EgwWinLogon
@@ -22,7 +21,7 @@ public class EgwWinLogon {
     /**
      * logger
      */
-    private static final Logger logger = LoggerFactory.getLogger(EgwWinLogon.class);
+    private static final Logger logger = Logger.getLogger(EgwWinLogon.class);
 
 	/**
 	 * Global Error
@@ -146,6 +145,22 @@ public class EgwWinLogon {
      *
      */
     public void initEgroupware() {
+        if( true ) {
+            try {
+                SimpleLayout layout = new SimpleLayout();
+                FileAppender fileAppender = new FileAppender(layout,
+                    "C:/MeineLogDatei.log", 
+                    false
+                    );
+                
+                Logger tlogger = Logger.getRootLogger();
+                tlogger.addAppender(fileAppender);
+            }
+            catch( Exception e ) {
+                
+            }
+        }
+        
         logger.info("initEgroupware, init egroupware objects");
 
         // ---------------------------------------------------------------------
@@ -233,14 +248,16 @@ public class EgwWinLogon {
                     // ---------------------------------------------------------
 
                     // send login command
-                    _egw.request(new EgroupwareCommand(
+                    /*_egw.request(new EgroupwareCommand(
                         EgroupwareCommand.EGW_CMD_LOGIN,
                         this._settings.get("machinename") + ";" +
                             this._settings.get("sysfingerprint")
-                        ));
+                        ));*/
                 }
                 catch( Exception ec ) {
                     // nothing
+                    logger.error("EgroupwareMachineInfo: " + ec.getMessage() + 
+                        " <> " + ec.getLocalizedMessage());
                 }
 
                 // request login cache list

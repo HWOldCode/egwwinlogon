@@ -531,30 +531,32 @@ namespace pGina.Plugin.EGroupware
          */
         public void SessionChange(System.ServiceProcess.SessionChangeDescription changeDescription, SessionProperties properties) {
             if( properties != null ) {
+
+                UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
                 
                 string startApp = Settings.Store.startapp;
-                UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
+                string username = userInfo.Username;
 
-                this._logger.InfoFormat("SessionChange: {0}, {1}", changeDescription.Reason, userInfo.Username);
+                this._logger.InfoFormat("SessionChange: {0}, {1}", changeDescription.Reason, username);
 
                 switch( changeDescription.Reason ) {
                     case System.ServiceProcess.SessionChangeReason.SessionLogon:
 
                         if( startApp == "1" ) {
-                            this.startUserApp(userInfo.Username);
+                            this.startUserApp(username);
                         }
                         else {
-                            this._plist.Add(userInfo.Username, null);
+                            this._plist.Add(username, null);
                         }
 
-                        this._egwSessionChange(5, userInfo.Username);
+                        this._egwSessionChange(5, username);
                         //LogonEvent(changeDescription.SessionId);
                         break;
 
                     case System.ServiceProcess.SessionChangeReason.SessionLogoff:
                         
-                        if( this._plist.ContainsKey(userInfo.Username) ) {
-                            Process tp = this._plist[userInfo.Username];
+                        if( this._plist.ContainsKey(username) ) {
+                            Process tp = this._plist[username];
 
                             if( tp != null ) {
                                 if( !tp.HasExited ) {
@@ -562,10 +564,10 @@ namespace pGina.Plugin.EGroupware
                                 }
                             }
 
-                            this._plist.Remove(userInfo.Username);
+                            this._plist.Remove(username);
                         }
 
-                        this._egwSessionChange(6, userInfo.Username);
+                        this._egwSessionChange(6, username);
                         break;
                 }
 
