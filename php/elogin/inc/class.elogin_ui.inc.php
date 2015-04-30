@@ -39,7 +39,8 @@
          * @param array $content
          */
         public function index($content=array()) {
-            /*require_once('plugins/syndms/lib/syndms.client.php');
+            /*
+            require_once('plugins/shares/syno/lib/syndms.client.php');
 
             $syn = new SyndmsClient('192.168.11.4');
             if( $syn->login('admin', '1234') ) {
@@ -51,15 +52,16 @@
                 //var_dump($syn->removeUserByGroup('administrators', 'test3'));
                 //var_dump($syn->addUserToGroup('administrators', 'test3'));
                 //var_dump($syn->createShare('test3435', '/volume1'));
-                var_dump($syn->getUser('test3'));
-                var_dump($syn->disableUser('test3'));
-                var_dump($syn->setSharePermission('test3435', 'test2', 'rw'));
+                //var_dump($syn->getUser('test3'));
+                //var_dump($syn->disableUser('test3'));
+                //var_dump($syn->setSharePermission('test3435', 'test2', 'rw'));
+                $syn->getFileSharesList('/group Admins');
             }
-            echo "Hello World";*/
+            echo "Hello World";
 
             //$t = new elogin_usershares_bo('test');
             //var_dump($t->getCmds());
-
+exit;*/
             elogin_sharehandler_bo::set_async_job(false);
             elogin_sharehandler_bo::set_async_job(true);
 
@@ -104,30 +106,7 @@
             return egw_json_response::get()->data($cacheData);
         }
 
-        /**
-         * ajax_machine_info
-         * @param array $content
-         */
-        public function ajax_machine_info($content=array()) {
-            error_log(__METHOD__.__LINE__.':'.  var_export($content, true));
-
-            if( isset($content['uid']) ) {
-                $machine = new elogin_machine_bo($content['uid']);
-
-                if( isset($content['name']) ) {
-                    $machine->setName($content['name']);
-                }
-
-                if( !$machine->getIsInDb() ) {
-                    $machine->save();
-                }
-
-                // TODO
-                // login logging
-            }
-
-            return egw_json_response::get()->data(array('status' => 'ok'));
-        }
+        
 
         /**
          * ajax_cmd
@@ -139,11 +118,5 @@
             error_log(__METHOD__.__LINE__.':'.  var_export($content, true));
         }
 
-        /**
-         * ajax_logging
-         * @param array $content
-         */
-        public function ajax_logging($content=array()) {
 
-        }
     }

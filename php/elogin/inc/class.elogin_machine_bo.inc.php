@@ -126,6 +126,18 @@
         }
 
         /**
+         * createNewLogging
+         *
+         * @return elogin_machine_logging_bo
+         */
+        public function createNewLogging() {
+            $log = new elogin_machine_logging_bo();
+            $log->setMachineId($this->_id);
+
+            return $log;
+        }
+
+        /**
          * read
          *
          * @param string $id

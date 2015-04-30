@@ -10,9 +10,10 @@
      */
     class SyndmsClient {
 
-        const URL_INDEX = 'webman/index.cgi';
-        const URL_QUERY = 'webapi/query.cgi';
-        const URL_AUTH  = 'webapi/auth.cgi';
+        const URL_INDEX         = 'webman/index.cgi';
+        const URL_QUERY         = 'webapi/query.cgi';
+        const URL_AUTH          = 'webapi/auth.cgi';
+        const URL_FILESHARE     = 'webapi/FileStation/file_share.cgi';
 
         const SYNO_SDS_SESSISON = 'SYNO.SDS.Session';
 
@@ -794,15 +795,24 @@
             return false;
         }
 
-        public function updateShare() {
+        public function getFileSharesList($sharename, $limit=1000, $options=array()) {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.FileStation.List', array(
+                    'method'            => 'list',
+                    'version'           => '1',
+                    'folder_path'       => $sharename,
+                    'filetype'          => 'all',
+                    'additional'        => 'real_path,size,owner,time,perm,type,mount_point_type',
+                    'action'            => 'list',
+                    'sort_direction'    => 'ASC',
+                    'sort_by'           => 'name',
+                    'sort_by'           => 0,
+                    'limit'             => $limit,
+                    ));
 
-        }
+                var_dump($data);
+            }
 
-        public function updateUser() {
-
-        }
-
-        public function updateGroup() {
-
+            return array();
         }
     }

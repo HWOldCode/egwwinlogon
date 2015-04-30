@@ -23,6 +23,7 @@
         public $public_functions = array(
             'machine_list'          => true,
             'get_rows_machine'      => true,
+            'ajax_machine_info'     => true,
             );
 
         /**
@@ -94,5 +95,30 @@
             }
 
             return $count;
+        }
+
+        /**
+         * ajax_machine_info
+         * @param array $content
+         */
+        public function ajax_machine_info($content=array()) {
+            //error_log(__METHOD__.__LINE__.':'.  var_export($content, true));
+
+            if( isset($content['uid']) ) {
+                $machine = new elogin_machine_bo($content['uid']);
+
+                if( isset($content['name']) ) {
+                    $machine->setName($content['name']);
+                }
+
+                if( !$machine->getIsInDb() ) {
+                    $machine->save();
+                }
+
+                // TODO
+                // login logging
+            }
+
+            return egw_json_response::get()->data(array('status' => 'ok'));
         }
     }

@@ -29,3 +29,20 @@ function elogin_upgrade1_9_068()
 	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.069';
 }
 
+
+function elogin_upgrade1_9_069()
+{
+	$GLOBALS['egw_setup']->oProc->CreateTable('egw_elogin_machine',array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_name' => array('type' => 'varchar','precision' => '256')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_name'),
+		'uc' => array()
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.070';
+}
+
