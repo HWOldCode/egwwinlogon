@@ -19,7 +19,7 @@ public class EgroupwareMachineInfo extends EgroupwareJson {
     /**
      * menuaction
      */
-    public static final String EGW_HTTP_GET_MI_ACTION = "elogin.elogin_ui.ajax_machine_info";
+    public static final String EGW_HTTP_GET_MI_ACTION = "elogin.elogin_machine_ui.ajax_machine_info";
 
     /**
      * UID

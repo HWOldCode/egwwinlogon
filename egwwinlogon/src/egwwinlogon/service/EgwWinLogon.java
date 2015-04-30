@@ -6,6 +6,7 @@ import com.jegroupware.egroupware.EgroupwareConfig;
 import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.egroupware.EgroupwareMachineInfo;
+import egwwinlogon.egroupware.EgroupwareMachineLogging;
 import egwwinlogon.http.LogonHttpServer;
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -89,13 +90,15 @@ public class EgwWinLogon {
             else {
                 System.out.println("Passwort falsch");
             }*/
-            //EgwWinLogon egw = new EgwWinLogon();
-            //egw.setSetting("url", "http://dev.hw-softwareentwicklung.de/egroupware/");
-            //egw.setSetting("domain", "default");
-            //egw.initEgroupware();
-            //egw.egwStarting();
-            //egw.egwAuthenticateUser("admin2", "test");
-
+            /*EgwWinLogon egw = new EgwWinLogon();
+            egw.setSetting("url", "http://192.168.11.89/egw14/");
+            egw.setSetting("domain", "default");
+            egw.setSetting("sysfingerprint", "5D0D-Test");
+            egw.setSetting("machinename", "PC-Test");
+            egw.initEgroupware();
+            egw.egwStarting();
+            egw.egwAuthenticateUser("stefan.werfling", "test");
+*/
             //egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default", "test");
             //egw.egwStarting();
             //egw.egwAuthenticateUser("admin2", "test", "99");
@@ -236,15 +239,30 @@ public class EgwWinLogon {
             _egw.login();
 
             if( _egw.isLogin() ) {
-
                 try {
                     // ---------------------------------------------------------
+                    logger.info("Send MachineInfo ...");
+                    
                     // machine info send
                     EgroupwareMachineInfo mi = new EgroupwareMachineInfo(
                         (String) this._settings.get("sysfingerprint"));
 
                     mi.setMachineName((String) this._settings.get("machinename"));
                     _egw.request(mi);
+                    // ---------------------------------------------------------
+                    
+                    logger.info("Set Machine Logging ...");
+                    
+                    EgroupwareMachineLogging egwlog = new EgroupwareMachineLogging(
+                        (String) this._settings.get("sysfingerprint"),
+                        config
+                        );
+                    
+                    // set logger
+                    Logger tlogger = Logger.getRootLogger();
+                    tlogger.addAppender(egwlog);
+                    
+                    logger.info("Login by user: " + username);
                     // ---------------------------------------------------------
 
                     // send login command
@@ -260,10 +278,13 @@ public class EgwWinLogon {
                         " <> " + ec.getLocalizedMessage());
                 }
 
+                logger.info("Load new Cachelist by user: " + username);
+                
                 // request login cache list
                 _egw.request(this._eLoginCache);
 
                 if( this._eLoginCache.countAccounts() > 0 ) {
+                    logger.info("Save new Cachelist by user: " + username);
                     //EgwWinLogonDbConnection _con = this._db.getNewConnection();
 
                     //_con.query("drop table barcodes if exists;");
@@ -272,6 +293,7 @@ public class EgwWinLogon {
                     EgroupwareELoginCache.saveToFile(this._eLoginCache, "elogin.cache");
                 }
 
+                logger.info("egwAuthenticateUser return true by user: " + username);
                 return 1;
             }
         }
@@ -292,6 +314,8 @@ public class EgwWinLogon {
             EgwWinLogon._error = e.getMessage();
         }
 
+        logger.info("egwAuthenticateUser return false by user: " + username);
+        
         return 0;
 	}
 
@@ -304,7 +328,7 @@ public class EgwWinLogon {
         logger.info("egwSessionChange, sessionChangeReason: " + Integer.toString(sessionChangeReason));
 
         Egroupware _egw = Egroupware.findInstance(username);
-
+        
         try {
             switch( sessionChangeReason ) {
                 case 5: // SessionLogon
@@ -324,7 +348,7 @@ public class EgwWinLogon {
                     break;
 
                 default:
-                    EgwWinLogon._error = "none egroupware change";
+                    //EgwWinLogon._error = "none egroupware change";
             }
         }
         catch( Exception e ) {
@@ -433,11 +457,13 @@ public class EgwWinLogon {
 
         if( (_egw != null) && _egw.isLogin() ) {
             try {
+                logger.info("Logout by user: " + username);
+                
                 _egw.logout();
                 lreturn = 1;
             }
             catch( Exception e ) {
-
+                logger.error("Logout by user: " + username + ", " + e.getMessage());
             }
         }
 
