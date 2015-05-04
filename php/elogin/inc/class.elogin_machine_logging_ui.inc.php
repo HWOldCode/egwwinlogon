@@ -36,9 +36,52 @@
                 die("Only for Admins!");
             }
 
-
+            $readonlys = array();
+            
+            if( !is_array($content) ) {
+                if( !($content['nm'] = egw_session::appsession('elogin_machine_logging_list', 'elogin')) ) {
+					$content['nm'] = array(		// I = value set by the app, 0 = value on return / output
+						'get_rows'      =>	'elogin.elogin_machine_logging_ui.get_rows_logging',	// I  method/callback to request the data for the rows eg. 'notes.bo.get_rows'
+						'no_filter'     => true,// I  disable the 1. filter
+						'no_filter2'    => true,// I  disable the 2. filter (params are the same as for filter)
+						'no_cat'        => false,// I  disable the cat-selectbox
+						//'never_hide'    => true,// I  never hide the nextmatch-line if less then maxmatch entrie
+						'row_id'        => 'el_unid',
+						'actions'       => self::index_get_actions(),
+                        'header_row'    => 'elogin.machine_logging_list.header_right',
+                        'favorites'     => false
+						);
+				}
+			}
+            
+            $tpl = new etemplate_new('elogin.machine_loggin_list');
+			$tpl->exec(
+                'elogin.elogin_machine_loggin_ui.logging_list',
+                $content,
+                array(),
+                $readonlys,
+                array(),
+                0);
         }
 
+         /**
+         * index_get_actions
+         *
+         * @param array $query
+         * @return array
+         */
+        static public function index_get_actions($query=array()) {
+            $group = 1;
+            
+            return array();
+        }
+        
+        public function get_rows_logging(&$query, &$rows, &$readonlys) {
+            egw_session::appsession('elogin_shareprovider_list', 'elogin', $query);
+            
+            return 0;
+        }
+        
         /**
          * ajax_logging
          * @param array $content

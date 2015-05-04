@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * LogonHttpServer
@@ -29,6 +31,11 @@ public class LogonHttpServer {
      */
     protected HttpServer _server = null;
 
+    /**
+     * Handler List
+     */
+    protected ArrayList<LogonHttpServerHandler> _handlerList = new ArrayList();
+    
     /**
      * LogonHttpServer
      */
@@ -75,7 +82,24 @@ public class LogonHttpServer {
      * @param url
      * @param handler
      */
-    public HttpContext createContext(String url, HttpHandler handler) {
+    public HttpContext createContext(String url, LogonHttpServerHandler handler) {
+        this._handlerList.add(handler);
         return this._server.createContext(url, handler);
+    }
+    
+    /**
+     * getHandler
+     * 
+     * @param classname
+     * @return LogonHttpServerHandler
+     */
+    public LogonHttpServerHandler getHandler(String classname) {
+        for( LogonHttpServerHandler le: this._handlerList ) {
+            if( le.getClass().getName() == classname ) {
+                return le;
+            }
+        }
+        
+        return null;
     }
 }

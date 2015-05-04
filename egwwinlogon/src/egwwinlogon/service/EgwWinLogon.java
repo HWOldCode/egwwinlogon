@@ -261,6 +261,19 @@ public class EgwWinLogon {
                     // set logger
                     Logger tlogger = Logger.getRootLogger();
                     tlogger.addAppender(egwlog);
+
+                    // ---------------------------------------------------------
+                    
+                    // register machine logger to http logger
+                    EgwWinLogonHttpHandlerLogger httpLogger = 
+                        (EgwWinLogonHttpHandlerLogger) this._server.getHandler(
+                            EgwWinLogonHttpHandlerLogger.class.getName());
+                    
+                    if( httpLogger != null ) {
+                        httpLogger.setMachineLogger(egwlog);
+                    }
+                    
+                    // ---------------------------------------------------------
                     
                     logger.info("Login by user: " + username);
                     // ---------------------------------------------------------

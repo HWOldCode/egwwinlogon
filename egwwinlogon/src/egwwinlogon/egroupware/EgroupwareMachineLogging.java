@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.apache.log4j.helpers.OnlyOnceErrorHandler;
@@ -94,6 +95,23 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
         
         this._request_url = this._createJsonMenuaction(
             EgroupwareMachineLogging.EGW_HTTP_GET_ML_ACTION);
+    }
+    
+    /**
+     * log
+     * 
+     * @param message
+     * @param event
+     * @param level 
+     */
+    public void log(String message, String event, String level) {
+        LoggingEvent tevent = new LoggingEvent(
+            event, 
+            logger.getParent(), 
+            Level.toLevel(level), 
+            message, null);
+        
+        this.doAppend(tevent);
     }
     
     /**
