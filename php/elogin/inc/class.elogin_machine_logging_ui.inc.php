@@ -37,7 +37,7 @@
             }
 
             $readonlys = array();
-            
+
             if( !is_array($content) ) {
                 if( !($content['nm'] = egw_session::appsession('elogin_machine_logging_list', 'elogin')) ) {
 					$content['nm'] = array(		// I = value set by the app, 0 = value on return / output
@@ -53,10 +53,10 @@
 						);
 				}
 			}
-            
-            $tpl = new etemplate_new('elogin.machine_loggin_list');
+
+            $tpl = new etemplate_new('elogin.machine_logging_list');
 			$tpl->exec(
-                'elogin.elogin_machine_loggin_ui.logging_list',
+                'elogin.elogin_machine_logging_ui.logging_list',
                 $content,
                 array(),
                 $readonlys,
@@ -72,16 +72,27 @@
          */
         static public function index_get_actions($query=array()) {
             $group = 1;
-            
+
             return array();
         }
-        
+
         public function get_rows_logging(&$query, &$rows, &$readonlys) {
-            egw_session::appsession('elogin_shareprovider_list', 'elogin', $query);
-            
-            return 0;
+            egw_session::appsession('elogin_machine_logging_list', 'elogin', $query);
+
+            $count = elogin_machine_logging_bo::get_rows($query, $rows, $readonlys);
+
+            foreach( $rows as &$row ) {
+                $logging = new elogin_machine_logging_bo($row['el_unid']);
+                $machine = new elogin_machine_bo($row['el_machine_id']);
+
+                $row['icon']            = 'logging.png';
+                $row['el_machine_name'] = $machine->getName();
+                $row['el_username']     = $logging->getAccountName();
+            }
+
+            return $count;
         }
-        
+
         /**
          * ajax_logging
          * @param array $content

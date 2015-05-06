@@ -112,6 +112,24 @@
         }
 
         /**
+         * getAccountId
+         * 
+         * @return int
+         */
+        public function getAccountId() {
+            return $this->_account_id;
+        }
+
+        /**
+         * getAccountName
+         *
+         * @return string
+         */
+        public function getAccountName() {
+            return accounts::id2name($this->_account_id);
+        }
+
+        /**
          * setMachineId
          *
          * @param string $id
@@ -262,6 +280,35 @@
             }
 
             return $data['el_unid'];
+        }
+
+        /**
+         * get_rows
+         *
+         * @param array $query
+         * @param array $rows
+         * @param array $readonlys
+         * @return int
+         */
+        static public function get_rows(&$query, &$rows, &$readonlys) {
+            $where = array();
+            $cols = array(self::TABLE . '.*');
+            $join = array();
+
+            if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+                '', '', 0, $join)))
+            {
+                return array();
+            }
+
+            $rows = array();
+
+            foreach( $rs as $row ) {
+				$row = (array) $row;
+                $rows[] = $row;
+            }
+
+            return count($rows);
         }
     }
 

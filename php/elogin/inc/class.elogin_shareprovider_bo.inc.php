@@ -472,11 +472,12 @@
         }
 
         /**
+         * get_rows
          *
-         * @param type $query
-         * @param type $rows
-         * @param type $readonlys
-         * @return type
+         * @param array $query
+         * @param array $rows
+         * @param array $readonlys
+         * @return int
          */
         static public function get_rows(&$query, &$rows, &$readonlys) {
             $where = array();

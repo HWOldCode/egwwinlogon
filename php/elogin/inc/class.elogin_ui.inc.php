@@ -22,17 +22,10 @@
          */
         public $public_functions = array(
             'index'                 => true,
-            'ajax_treelist'         => true,
             'ajax_cache'            => true,
-            'ajax_machine_info'     => true,
             'ajax_cmd'              => true,
-            'ajax_logging'          => true,
             'cronjob_hand'          => true,
             );
-
-        public function ajax_treelist($content=array()) {
-
-        }
 
         /**
          * index
@@ -106,7 +99,7 @@ exit;*/
             return egw_json_response::get()->data($cacheData);
         }
 
-        
+
 
         /**
          * ajax_cmd

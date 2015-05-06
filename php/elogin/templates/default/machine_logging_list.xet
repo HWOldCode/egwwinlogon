@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+    <template id="elogin.machine_logging_list.header_right" template="" lang="" group="0" version="1.9.001">
+		<hbox>
+		</hbox>
+	</template>
+    <template id="elogin.machine_logging_list.rows" template="" lang="" group="0" version="1.9.005">
+		<grid width="100%">
+			<columns>
+				<column width="54"/>
+				<column width="224"/>
+				<column width="163"/>
+				<column width="163"/>
+				<column width="163"/>
+				<column width="100%"/>
+			</columns>
+			<rows>
+				<row class="th">
+					<description label=""/>
+                    <vbox>
+                        <nextmatch-sortheader label="Machine-Name" id="el_machine_name_sort"/>
+                        <nextmatch-sortheader label="Username" id="el_username_sort"/>
+                    </vbox>
+					<nextmatch-sortheader label="Date" id="el_date_sort"/>
+					<nextmatch-sortheader label="Event" id="el_event_sort" no_lang="1"/>
+					<nextmatch-sortheader label="Level" id="el_level_sort" no_lang="1"/>
+					<nextmatch-sortheader label="Message" id="el_message_sort"/>
+				</row>
+				<row class="$row_cont[cat_id] $row_cont[class]" valign="top">
+                    <vbox align="center">
+                        <image src="${row}[icon]" no_lang="1"/>
+                    </vbox>
+                    <vbox>
+                        <description id="${row}[el_machine_name]" options="b"/>
+                        <description id="${row}[el_username]"/>
+                    </vbox>
+					<vbox>
+						<description id="${row}[el_logdate]"/>
+					</vbox>
+					<vbox>
+						<description id="${row}[el_event]"/>
+					</vbox>
+                    <vbox>
+                        <description id="${row}[el_level]" options="b"/>
+                    </vbox>
+                    <vbox>
+                        <description id="${row}[el_message]" />
+                    </vbox>
+				</row>
+			</rows>
+		</grid>
+	</template>
+	<template id="elogin.machine_logging_list" template="" lang="" group="0" version="1.9.001">
+		<grid width="100%" border="0" spacing="0" padding="0">
+			<columns>
+				<column/>
+			</columns>
+			<rows>
+                <row>
+					<description align="center" id="msg" no_lang="1" span="all" class="message"/>
+				</row>
+				<row>
+					<nextmatch id="nm" template="elogin.machine_logging_list.rows" />
+				</row>
+			</rows>
+		</grid>
+	</template>
+</overlay>

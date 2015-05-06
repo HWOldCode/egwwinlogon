@@ -105,7 +105,7 @@
             foreach( $rows as &$row ) {
                 $row['icon'] = 'provider.png';
             }
-
+            
             return $count;
         }
 
