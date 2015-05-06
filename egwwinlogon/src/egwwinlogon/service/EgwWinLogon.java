@@ -3,6 +3,7 @@ package egwwinlogon.service;
 import egwwinlogon.service.db.EgwWinLogonDb;
 import com.jegroupware.egroupware.Egroupware;
 import com.jegroupware.egroupware.EgroupwareConfig;
+import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.egroupware.EgroupwareMachineInfo;
@@ -54,94 +55,8 @@ public class EgwWinLogon {
      */
     protected EgwWinLogonDb _db = null;
 
-
     public native void callStartApplication(String cmd);
     public native void callLogApp(String log);
-
-	/**
-	 * main
-	 * @param args String[]
-	 */
-	public static void main(String[] args) {
-        try {
-            /*Egroupware tegw = Egroupware.getInstance(new EgroupwareConfig(
-                "http://dev.hw-softwareentwicklung.de/egroupware/",
-                "default",
-                "admin2",
-                "test"
-                ));
-
-            tegw.login();
-
-            EgroupwareELoginCache mycache = new EgroupwareELoginCache();
-
-            tegw.request(mycache);
-
-            if( mycache.existUsername("admin2") ) {
-                System.out.println("Existiert!");
-            }
-            else {
-                System.out.println("Nicht :O");
-            }
-
-            if( mycache.compareUsernamePassword("admin2", "test") ) {
-                System.out.println("Passwort richtig");
-            }
-            else {
-                System.out.println("Passwort falsch");
-            }*/
-            /*EgwWinLogon egw = new EgwWinLogon();
-            egw.setSetting("url", "http://192.168.11.89/egw14/");
-            egw.setSetting("domain", "default");
-            egw.setSetting("sysfingerprint", "5D0D-Test");
-            egw.setSetting("machinename", "PC-Test");
-            egw.initEgroupware();
-            egw.egwStarting();
-            egw.egwAuthenticateUser("stefan.werfling", "test");
-*/
-            //egw.initEgroupware("http://dev.hw-softwareentwicklung.de/egroupware/", "default", "test");
-            //egw.egwStarting();
-            //egw.egwAuthenticateUser("admin2", "test", "99");
-            //EgwWinLogonClient tclient = new EgwWinLogonClient();
-            //tclient.getEgroupwareInstance("admin2");
-
-            /*EgroupwareELoginCache test = EgroupwareELoginCache.loadByFile("elogin.cache");
-            String username = "artur.skuratowicz";
-            String password = "";
-
-            if( test.countAccounts() > 0 ) {
-                // is activ and expries
-                if( test.isStatusA(username) && test.isAccountExpires(username) ) {
-                    // check password
-                    if( test.compareUsernamePassword(username, password) ) {
-                        System.out.println("Drin");
-                    }
-                }
-            }
-
-            Thread.sleep(10000);*/
-            /*Egroupware egw = Egroupware.getInstance(new EgroupwareConfig(
-            "https://www.hw-softwareentwicklung.de/egroupware/",
-            "default",
-            "",
-            ""
-            ));
-
-            try {
-            System.out.println(egw.getLoginDomains());
-            egw.login();
-            System.out.println(egw.getSession().getLastLoginId());
-            EgroupwareBrowser.open(egw);
-            }
-            catch( Exception e ) {
-            System.out.println();
-            }
-
-            System.out.println("test");*/
-        } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
-        }
-	}
 
     /**
      * initEgroupware
@@ -173,9 +88,16 @@ public class EgwWinLogon {
         if( this._eLoginCache == null ) {
             this._eLoginCache = new EgroupwareELoginCache();
         }
-
+        
         if( this._server == null ) {
-            this._server = new LogonHttpServer();
+            String tport = (String) this._settings.get("httpserverport");
+            
+            if( tport == null ) {
+                this._server = new LogonHttpServer();
+            }
+            else {
+                this._server = new LogonHttpServer(Integer.parseInt(tport));
+            }
 
             try {
                 this._server.init();
@@ -210,7 +132,19 @@ public class EgwWinLogon {
      * @param password
      * @return
      */
-	public int egwAuthenticateUser(String username, String password) {
+    public int egwAuthenticateUser(String username, String password) {
+        return this.egwAuthenticateUser(username, password, null);
+    }
+    
+    /**
+     * egwAuthenticateUser
+     *
+     * @param username
+     * @param password
+     * @param egwListener
+     * @return
+     */
+	public int egwAuthenticateUser(String username, String password, EgroupwareEventListener egwListener) {
         logger.info("egwAuthenticateUser, username: " + username);
 
         EgroupwareConfig config = null;
@@ -235,6 +169,10 @@ public class EgwWinLogon {
 
         Egroupware _egw = Egroupware.getInstance(config);
 
+        if( egwListener != null ) {
+            _egw.addListener(egwListener);
+        }
+        
         try {
             _egw.login();
 

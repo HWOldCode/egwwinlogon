@@ -15,9 +15,10 @@ import org.apache.commons.codec.binary.Base64;
 
 /**
  * EgwWinLogonClient
- * @author swe
+ * 
+ * @author Stefan Werfling
  */
-public class EgwWinLogonClient {
+public class EgwWinLogonClient  {
 
     // BASE URL
     public static final String URL = "http://localhost:8108/";
@@ -38,12 +39,26 @@ public class EgwWinLogonClient {
 
     /**
      * getEgroupwareInstance
-     * @return Egroupware
+     * @param user
+     * @return 
      */
     public Egroupware getEgroupwareInstance(String user) {
+        return this.getEgroupwareInstance(user, null);
+    }
+    
+    /**
+     * getEgroupwareInstance
+     * @param user
+     * @param url
+     * @return
+     */
+    public Egroupware getEgroupwareInstance(String user, String url) {
         try {
-            String request = EgwWinLogonClient.URL +
-                EgwWinLogonClient.REQUEST_SESSION + "?user=" + user;
+            if( url == null ) {
+                url = EgwWinLogonClient.URL;
+            }
+            
+            String request = url + EgwWinLogonClient.REQUEST_SESSION + "?user=" + user;
 System.out.println(request);
 /*System.out.println(System.getenv("USERNAME"));
 System.out.println(Advapi32Util.getUserName());
