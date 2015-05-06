@@ -395,18 +395,28 @@ public class EgwWinLogon {
 		return 0;
 	}
 
+    /**
+     * egwStarting
+     */
 	public void egwStarting() {
         if( this._server != null ) {
 
         }
 	}
 
+    /**
+     * egwStopping
+     */
 	public void egwStopping() {
         if( this._server != null ) {
             this._server.stop();
         }
 	}
 
+    /**
+     * egwGetLogs
+     * @return 
+     */
 	public String[] egwGetLogs() {
 		return null;
 	}
@@ -435,6 +445,10 @@ public class EgwWinLogon {
 		return "14.2";
 	}
 
+    /**
+     * egwAuthenticatedUserGateway
+     * @return 
+     */
 	public int egwAuthenticatedUserGateway() {
 		return 0;
 	}
