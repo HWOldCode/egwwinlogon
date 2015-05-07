@@ -98,7 +98,7 @@
          * @param array $content
          */
         public function ajax_logging($content=array()) {
-            error_log(__METHOD__.__LINE__.':'.  var_export($content, true));
+            //error_log(__METHOD__.__LINE__.':'.  var_export($content, true));
 
             if( isset($content['uid']) ) {
                 $machine = new elogin_machine_bo($content['uid']);
@@ -116,7 +116,7 @@
                             }
 
                             if( isset($tlog['message']) ) {
-                                $msg = $tlog['message'];
+                                $msg = base64_decode($tlog['message']);
                             }
 
                             if( isset($tlog['logdate']) ) {
