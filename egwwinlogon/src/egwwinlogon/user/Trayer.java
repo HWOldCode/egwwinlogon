@@ -122,7 +122,7 @@ public class Trayer {
         Image scaledimage = image.getScaledInstance(
             dimension.width, 
             dimension.height, 
-            Image.SCALE_REPLICATE
+            Image.SCALE_SMOOTH
             );
         
         return scaledimage;

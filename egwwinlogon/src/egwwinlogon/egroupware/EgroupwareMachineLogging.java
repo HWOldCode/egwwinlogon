@@ -12,6 +12,7 @@ import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
 import org.apache.log4j.Level;
@@ -129,10 +130,12 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
                 tlogs = tlogs + ",";
             }
             
+            String tmsg = (String) le.getMessage();
+            
             tlogs = tlogs + "{" + 
                 "\"event\": \"" + le.getLoggerName() + "\", " +
                 "\"level\": \"" + le.getLevel().toString() + "\", " +
-                "\"message\": \"" + le.getMessage() + "\", " +
+                "\"message\": \"" + new String(Base64.encodeBase64(tmsg.getBytes())) + "\", " +
                 "\"logdate\": \"" + Long.toString(le.getTimeStamp()/1000) + "\" " +
                 "}";
         }

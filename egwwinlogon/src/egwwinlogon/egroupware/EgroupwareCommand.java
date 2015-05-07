@@ -12,6 +12,7 @@ import java.util.Map;
 
 /**
  * EgroupwareCommand
+ * 
  * @author Stefan Werfling
  */
 public class EgroupwareCommand extends EgroupwareJson {
@@ -21,42 +22,34 @@ public class EgroupwareCommand extends EgroupwareJson {
      */
     public static final String EGW_HTTP_GET_CMD_ACTION = "elogin.elogin_ui.ajax_cmd";
 
-    public static final String EGW_CMD_LOGIN    = "login";
-    public static final String EGW_CMD_PING     = "ping";
-    public static final String EGW_CMD_LOGOUT   = "logout";
+    /**
+     * Types of cmd
+     */
+    public static final String EGW_CMD_TYPE_LOGIN    = "login";
+    public static final String EGW_CMD_TYPE_PING     = "ping";
+    public static final String EGW_CMD_TYPE_LOGOUT   = "logout";
 
     /**
-     * command
+     * uid of machine
      */
-    protected String _cmd = "";
-
+    protected String _uid = "";
+    
     /**
-     * Message
+     * command type
      */
-    protected String _msg = "";
+    protected String _cmdtype = "";
 
     /**
      * constructor
      *
-     * @param cmd
-     * @param msg
+     * @param uid
+     * @param cmdtype
      */
-    public EgroupwareCommand(String cmd, String msg) {
+    public EgroupwareCommand(String uid, String cmdtype) {
         super();
 
-        this._cmd = cmd;
-        this._msg = msg;
-
-        this._request_url = this._createJsonMenuaction(
-            EgroupwareCommand.EGW_HTTP_GET_CMD_ACTION);
-    }
-
-    /**
-     * EgroupwareCommand
-     */
-    public EgroupwareCommand() {
-        super();
-
+        this._uid       = uid;
+        this._cmdtype   = cmdtype;
         this._request_url = this._createJsonMenuaction(
             EgroupwareCommand.EGW_HTTP_GET_CMD_ACTION);
     }
@@ -70,7 +63,7 @@ public class EgroupwareCommand extends EgroupwareJson {
         Map<String, String> data = new HashMap<>();
 
         data.put("json_data", "{\"request\":{\"parameters\":[" +
-            "{\"cmd\": \"" + this._cmd + "\", \"msg\": \"" + this._msg + "\"}" +
+            "{\"uid\": \"" + this._uid + "\", \"cmdtype\": \"" + this._cmdtype + "\"}" +
             "]}}");
 
         return data;
