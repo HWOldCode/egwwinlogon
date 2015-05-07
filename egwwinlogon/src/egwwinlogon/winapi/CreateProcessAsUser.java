@@ -30,7 +30,7 @@ public class CreateProcessAsUser {
      * @return PROCESS_INFORMATION
      * @throws Exception 
      */
-    public PROCESS_INFORMATION createProcess(String cmdline, 
+    static public PROCESS_INFORMATION createProcess(String cmdline, 
         String directoryLocation, String username, String password) throws Exception 
     {
         WString nullW                           = null;

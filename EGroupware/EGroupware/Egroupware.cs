@@ -41,17 +41,32 @@ namespace pGina.Plugin.EGroupware
         protected JNIEnv env;
         protected Object _jEgwWinLogon;
 
-        Dictionary<string, Process> _plist;
+        protected Dictionary<string, Process> _plist;
         protected bool _shouldStop = false;
+
+        protected bool _isService = false;
 
         /**
          * constructor
          */
         public EGWWinLogin() {
+            // set vars
             this._logger = LogManager.GetLogger("pGina.Plugin.EGrroupware");
-
             this._plist = new Dictionary<string, Process>();
 
+            // -------------------------------
+            // check who is run this plugin
+            string currentProcessFileName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+
+            if( currentProcessFileName.IndexOf("pGina.Configuration.exe") != -1) {
+                this._isService = false;
+            }
+            else {
+                this._isService = true;
+            }
+
+            // -------------------------------
+            // init my java app
             try {
                 this.initJava();
             }
@@ -70,6 +85,9 @@ namespace pGina.Plugin.EGroupware
             return curPath;
         }
 
+        /**
+         * getJavaInstallationPath
+         */
         private string getJavaInstallationPath() {
             string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
 
@@ -129,7 +147,12 @@ namespace pGina.Plugin.EGroupware
                     this._egwSetSetting("domain", domain);
                     this._egwSetSetting("machinename", mname);
                     this._egwSetSetting("sysfingerprint", fingerprint);
-                    
+
+                    if( !this._isService ) {
+                        // no conflict set other port for 
+                        this._egwSetSetting("httpserverport", "8107");
+                    }
+   
                     this._jEgwWinLogon.Invoke(
                         "initEgroupware",
                         "()V");
@@ -143,14 +166,21 @@ namespace pGina.Plugin.EGroupware
         /**
          * _egwSessionChange
          */
-        private void _egwSessionChange(int change, string username) {
+        private void _egwSessionChange(int change, string username, string sessionid) {
             try{
+                if( sessionid == null ) {
+                    sessionid = "";
+                }
+
+                string changeStr = change.ToString();
+
                 if( this._jEgwWinLogon != null ) {
                     this._jEgwWinLogon.Invoke(
                         "egwSessionChange",
-                        "(I;Ljava/lang/String;)V", 
-                        change,
-                        username
+                        "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
+                        changeStr,
+                        username,
+                        sessionid
                         );
                 }
             }
@@ -178,16 +208,25 @@ namespace pGina.Plugin.EGroupware
          * _egwAuthenticateUser
          * 
          */
-        private bool _egwAuthenticateUser(string username, string password) {
+        private bool _egwAuthenticateUser(string username, string password, string domain, string sessionid) {
             this._logger.InfoFormat("_egwAuthenticateUser {0}", username);
 
-            if( this._jEgwWinLogon != null ) {
+            if( sessionid == null ) {
+                sessionid = "";
+            }
 
+            if( domain == null ) {
+                domain = "";
+            }
+
+            if( this._jEgwWinLogon != null ) {
                 int ret = this._jEgwWinLogon.Invoke<int>(
                     "egwAuthenticateUser",
-                    "(Ljava/lang/String;Ljava/lang/String;)I",
+                    "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
                     username,
-                    password
+                    password,
+                    domain,
+                    sessionid
                     );
 
                 this._logger.InfoFormat("return: {0}", ret);
@@ -206,12 +245,10 @@ namespace pGina.Plugin.EGroupware
         /**
          * _egwIsLogin
          */
-        private bool _egwIsLogin(string username)
-        {
+        private bool _egwIsLogin(string username) {
             this._logger.InfoFormat("_egwIsLogin {0}", username);
 
-            if (this._jEgwWinLogon != null)
-            {
+            if (this._jEgwWinLogon != null) {
                 int ret = this._jEgwWinLogon.Invoke<int>(
                     "isEgwLogin",
                     "(Ljava/lang/String;)I",
@@ -220,13 +257,11 @@ namespace pGina.Plugin.EGroupware
 
                 this._logger.InfoFormat("return: {0}", ret);
 
-                if (ret == 1)
-                {
+                if (ret == 1) {
                     return true;
                 }
             }
-            else
-            {
+            else {
                 this._logger.InfoFormat("_jEgwWinLogon is empty in _egwIsLogin");
             }
 
@@ -236,14 +271,11 @@ namespace pGina.Plugin.EGroupware
         /**
          * _egwSetSetting
          */
-        private void _egwSetSetting(string name, string value)
-        {
+        private void _egwSetSetting(string name, string value) {
             this._logger.InfoFormat("_egwSetSetting {0} {1}", name, value);
 
-            if (this._jEgwWinLogon != null)
-            {
-                try
-                {
+            if (this._jEgwWinLogon != null) {
+                try {
                     this._jEgwWinLogon.Invoke(
                         "setSetting",
                         "(Ljava/lang/String;Ljava/lang/String;)V",
@@ -251,14 +283,12 @@ namespace pGina.Plugin.EGroupware
                         value
                         );
                 }
-                catch (System.Exception e)
-                {
+                catch (System.Exception e) {
                     this._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
                     this._logger.InfoFormat("Exception: {0}: {1}", name, value);
                 }
             }
-            else
-            {
+            else {
                 this._logger.InfoFormat("_jEgwWinLogon is empty in _egwSetSetting");
             }
         }
@@ -447,14 +477,20 @@ namespace pGina.Plugin.EGroupware
          * AuthenticateUser
          */
         public BooleanResult AuthenticateUser(SessionProperties properties) {
+            string sessionid = properties.Id.ToString();
+
             UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
+
+            string username = userInfo.Username;
+            string password = userInfo.Password;
+            string domain   = userInfo.Domain;
 
             string msg = "";
 
             this.initJava();
 
             try {
-                if( this._egwAuthenticateUser(userInfo.Username, userInfo.Password) ) {
+                if( this._egwAuthenticateUser(username, password, domain, sessionid) ) {
                     this._logger.InfoFormat("Successfully authenticated {0}", userInfo.Username);
 
                     return new BooleanResult() { 
@@ -509,6 +545,9 @@ namespace pGina.Plugin.EGroupware
                 Message = string.Format("Allow")};
         }
 
+        /**
+         * startUserApp
+         */
         protected void startUserApp(string username) {
             string applicationName = "\"" + this.getJavaInstallationPath() + 
                 "\\bin\\java.exe\" -jar \"" + this.getAppDir() + "\\egwwinlogon.jar\" " + username;
@@ -532,6 +571,12 @@ namespace pGina.Plugin.EGroupware
         public void SessionChange(System.ServiceProcess.SessionChangeDescription changeDescription, SessionProperties properties) {
             if( properties != null ) {
 
+                string sessionid = properties.Id.ToString();
+
+                if( sessionid == null ) {
+                    sessionid = "";
+                }
+
                 UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
                 
                 string startApp = Settings.Store.startapp;
@@ -549,7 +594,7 @@ namespace pGina.Plugin.EGroupware
                             this._plist.Add(username, null);
                         }
 
-                        this._egwSessionChange(5, username);
+                        this._egwSessionChange(5, username, sessionid);
                         //LogonEvent(changeDescription.SessionId);
                         break;
 
@@ -567,7 +612,15 @@ namespace pGina.Plugin.EGroupware
                             this._plist.Remove(username);
                         }
 
-                        this._egwSessionChange(6, username);
+                        this._egwSessionChange(6, username, sessionid);
+                        break;
+
+                    case System.ServiceProcess.SessionChangeReason.SessionLock:
+                        this._egwSessionChange(7, username, sessionid);
+                        break;
+
+                    case System.ServiceProcess.SessionChangeReason.SessionUnlock:
+                        this._egwSessionChange(8, username, sessionid);
                         break;
                 }
 

@@ -37,6 +37,11 @@ public class LogonHttpServer {
     protected ArrayList<LogonHttpServerHandler> _handlerList = new ArrayList();
     
     /**
+     * server is started
+     */
+    protected Boolean _isStarted = false;
+    
+    /**
      * LogonHttpServer
      */
     public LogonHttpServer() {
@@ -66,16 +71,30 @@ public class LogonHttpServer {
      * @throws IOException
      */
     public void start() throws IOException {
-        this._server.start();
+        if( this._server != null ) {
+            this._server.start();
+            this._isStarted = true;
+        }
     }
 
     /**
      * stop
      */
     public void stop() {
-        this._server.stop(0);
+        if( this._server != null ) {
+            this._server.stop(0);
+            this._isStarted = false;
+        }
     }
 
+    /**
+     * isStarted
+     * @return boolean
+     */
+    public Boolean isStarted() {
+        return this._isStarted;
+    }
+    
     /**
      * createContext
      *
@@ -83,8 +102,12 @@ public class LogonHttpServer {
      * @param handler
      */
     public HttpContext createContext(String url, LogonHttpServerHandler handler) {
-        this._handlerList.add(handler);
-        return this._server.createContext(url, handler);
+        if( this._server != null ) {
+            this._handlerList.add(handler);
+            return this._server.createContext(url, handler);
+        }
+        
+        return null;
     }
     
     /**

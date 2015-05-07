@@ -64,7 +64,9 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
         egw.initEgroupware();
         egw.egwStarting();
         
-        if( egw.egwAuthenticateUser(username, password, new EgwWinLogonRunDebug()) == 1 ) {
+        if( egw.egwAuthenticateUser(username, password, domain, 
+            fingerprint, new EgwWinLogonRunDebug()) == 1 ) 
+        {
             System.out.println("User login: " + username);
             
             // open user part
