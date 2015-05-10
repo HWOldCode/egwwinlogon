@@ -51,6 +51,10 @@
                                 <description value="Password"/>
                                 <textbox id="account_password" />
                             </row>
+                            <row>
+                                <description value="Mount Address"/>
+                                <textbox id="mount_address" />
+                            </row>
                         </rows>
                     </grid>
                 </row>

@@ -71,6 +71,12 @@
         protected $_account_password = '';
 
         /**
+         * mount address
+         * @var string
+         */
+        protected $_mount_address = '';
+
+        /**
          * Init our static properties
          */
         static public function init_static() {
@@ -103,6 +109,7 @@
                 $this->_account_port        = intval($data['el_account_port']);
                 $this->_account_user        = $data['el_account_user'];
                 $this->_account_password    = $data['el_account_password'];
+                $this->_mount_address       = $data['el_mount_address'];
             }
         }
 
@@ -129,6 +136,7 @@
                 $provider->_account_user        = $this->_account_user;
                 $provider->_account_password    = $this->_account_password;
                 $provider->_username            = $this->_username;
+                $provider->_mount_address       = $this->_mount_address;
 
                 $provider->_construct2();
 
@@ -223,6 +231,24 @@
          */
         public function getAccountPassword() {
             return $this->_account_password;
+        }
+
+        /**
+         * setMountAddress
+         *
+         * @param string $address
+         */
+        public function setMountAddress($address) {
+            $this->_mount_address = $address;
+        }
+
+        /**
+         * getMountAddress
+         *
+         * @return string
+         */
+        public function getMountAddress() {
+            return $this->_mount_address;
         }
 
         /**
@@ -360,6 +386,7 @@
             $data['el_account_port']        = $this->_account_port;
             $data['el_account_user']        = $this->_account_user;
             $data['el_account_password']    = $this->_account_password;
+            $data['el_mount_address']       = $this->_mount_address;
 
             $return = self::_write($data);
 
@@ -409,6 +436,7 @@
          * @return array
          */
         static public function getShareProviderNames() {
+            // TODO
             return array(
                 'syno' => 'Synology DSM 5.1'
             );

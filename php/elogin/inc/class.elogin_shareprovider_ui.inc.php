@@ -105,7 +105,7 @@
             foreach( $rows as &$row ) {
                 $row['icon'] = 'provider.png';
             }
-            
+
             return $count;
         }
 
@@ -156,6 +156,7 @@
                     $content['account_password']
                     );
 
+                $provider->setMountAddress($content['mount_address']);
                 $provider->save();
 
 
@@ -181,6 +182,8 @@
                 $content['account_port']        = $provider->getAccountPort();
                 $content['account_user']        = $provider->getAccountUser();
                 $content['account_password']    = $provider->getAccountPassword();
+                $content['mount_address']       = $provider->getMountAddress();
+
             }
 
             $option_sel['provider'] = elogin_shareprovider_bo::getShareProviderNames();

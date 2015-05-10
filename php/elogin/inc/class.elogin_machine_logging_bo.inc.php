@@ -113,7 +113,7 @@
 
         /**
          * getAccountId
-         * 
+         *
          * @return int
          */
         public function getAccountId() {
@@ -296,7 +296,7 @@
             $join = array();
 
             if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                '', '', 0, $join)))
+                false, ' ORDER BY ' . self::TABLE . '.el_logdate ', 0, $join)))
             {
                 return array();
             }

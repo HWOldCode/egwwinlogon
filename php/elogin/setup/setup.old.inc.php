@@ -17,7 +17,7 @@
 	 */
 	$setup_info['elogin']['name']      			= 'elogin';
 	$setup_info['elogin']['title']     			= 'ELogin';
-	$setup_info['elogin']['version']			= '1.9.070';
+	$setup_info['elogin']['version']			= '1.9.072';
 	$setup_info['elogin']['app_order'] 			= 2;
 	$setup_info['elogin']['enable']    			= 1;
 
@@ -39,4 +39,5 @@
 	
 	// TABLES
 	
-	$setup_info['elogin']['tables'] = array('egw_elogin_shareproviders','egw_elogin_usershares','egw_elogin_machine');
+	$setup_info['elogin']['tables'] = array('egw_elogin_shareproviders','egw_elogin_usershares','egw_elogin_machine','egw_elogin_machine_logging');
+

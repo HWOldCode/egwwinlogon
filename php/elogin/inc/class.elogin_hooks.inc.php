@@ -78,6 +78,36 @@
 		 */
 		static function settings($hook_data=null) {
 
+            $settings = array(
+                '1.section' => array(
+                    'type'      => 'section',
+                    'title'     => lang('ELogin Client Settings (Windows)'),
+                    'no_lang'   => true,
+                    'xmlrpc'    => false,
+                    'admin'     => false
+                ),
+                'set_login_credential_img' => array(
+                    'type'      => 'input',
+                    'size'      => 256,
+                    'label'     => 'Set registry, credential login image',
+                    'name'      => 'set_login_credential_img',
+                    'forced'    => 'C:\\Program Files\\pGina\\titleimage.bmp',
+                    'help'     => 'Set registry, credential login image',
+                    'xmlrpc'    => true,
+                    'admin'     => false,
+                ),
+                'enable_show_trays' => array(
+                    'type'      => 'check',
+                    'label'     => 'Set registry, enable all trays show in notifactions area',
+                    'name'      => 'enable_show_trays',
+                    'help'      => 'Set registry, enable all trays show in notifactions area',
+                    'xmlrpc'    => true,
+                    'admin'     => false,
+                    'forced'    => '1',
+                ),
+            );
+
+            return $settings;
         }
     }
 

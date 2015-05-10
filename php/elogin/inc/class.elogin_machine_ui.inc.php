@@ -71,9 +71,39 @@
          * @return array
          */
         static public function index_get_actions($query=array()) {
-            $group = 1;
+            $group = 2;
 
-            return array();
+            $action = array(
+                'loglist' => array(
+                    'caption'	=> 'to Machine-logging List',
+                    'group'		=> $group,
+                    'default'	=> false,
+                    'icon'		=> 'list',
+                    'hint'		=> 'to Machine-logging List by Machine',
+                    'enabled'	=> true,
+                    'onExecute' => 'javaScript:app.elogin.elogin_machine_list_actions',
+                    ),
+                'usersharelist' => array(
+                    'caption'	=> 'to User-Share List',
+                    'group'		=> $group,
+                    'default'	=> false,
+                    'icon'		=> 'list',
+                    'hint'		=> 'to User-Share List by Machine',
+                    'enabled'	=> true,
+                    'onExecute' => 'javaScript:app.elogin.elogin_machine_list_actions',
+                ),
+                'settinglist' => array(
+                    'caption'	=> 'Setting',
+                    'group'		=> ++$group,
+                    'default'	=> false,
+                    'icon'		=> 'systemsettings',
+                    'hint'		=> 'Open Setting Dialog',
+                    'enabled'	=> true,
+                    'onExecute' => 'javaScript:app.elogin.elogin_machine_list_actions',
+                    ),
+            );
+
+            return $action;
         }
 
         /**

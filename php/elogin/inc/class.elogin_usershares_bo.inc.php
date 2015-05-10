@@ -285,6 +285,19 @@
         }
 
         /**
+         * getUserSharesMounts
+         *
+         * @return array of elogin_usershares_mount_bo
+         */
+        public function getUserSharesMounts() {
+            if( $this->_id != null ) {
+                // TODO
+            }
+
+            return null;
+        }
+
+        /**
          * getCmds
          * @param string $system
          */
@@ -328,7 +341,7 @@
                     }
 
                     $cmd = str_replace('<drivename>', $tshare['drivename'], $cmd);
-                    $cmd = str_replace('<server>', $this->getProvider()->getAccountServer(), $cmd);
+                    $cmd = str_replace('<server>', $this->getProvider()->getMountAddress(), $cmd);
                     $cmd = str_replace('<share>', $tshare['name'], $cmd);
                     $cmd = str_replace('<username>', $username, $cmd);
                     $cmd = str_replace('<password>', $sharepassword, $cmd);

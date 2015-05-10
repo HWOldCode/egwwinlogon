@@ -85,6 +85,16 @@
                     'url'       => 'menuaction=elogin.elogin_usershares_ui.share_user_edit&uid=$id',
                     'popup'     => '600x425',//egw_link::get_registry('elogin', 'add_popup'),
                     ),
+                'usersahresmount' => array(
+                    'caption'	=> 'Mount List',
+                    'group'		=> $group,
+                    'default'	=> false,
+                    'icon'		=> 'share',
+                    'hint'		=> 'Mount List by Usershares',
+                    'enabled'	=> true,
+                    'url'       => 'menuaction=elogin.elogin_usershares_ui.share_user_edit&uid=$id',
+                    'popup'     => '600x425',//egw_link::get_registry('elogin', 'add_popup'),
+                    )
                 );
 
             return $actions;
@@ -132,7 +142,7 @@
             if( !$GLOBALS['egw_info']['user']['apps']['admin'] ) {
                 die("Only for Admins!");
             }
-            
+
             if( $content == null ) {
                 $content = array();
             }
@@ -147,11 +157,9 @@
             $t = new elogin_usershares_bo($uid);
 
             if( $t->getId() != '' ) {
-                $content['provider']        = $t->getProvider()->getProviderName();
+                $content['provider']        = $t->getProvider(true)->getProviderName();
                 $content['user']            = $t->getUsername();
                 $content['sharepassword']   = $t->getSharePassword();
-
-                var_dump($t->getCmds());
             }
 
             $readonlys['user']      = true;
