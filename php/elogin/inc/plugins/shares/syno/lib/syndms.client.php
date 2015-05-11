@@ -820,12 +820,27 @@
 
                 if( $data && is_array($data) && isset($data['files']) ) {
                     $files = (array) $data['files'];
+                    $rlist = array();
                     
                     foreach( $files as $file ) {
                         $tfile = (array) $file;
                         
-                        var_dump($tfile);
+                        if( isset($options['only_dir']) && ($options['only_dir'] == true) ) {
+                            if( $tfile['isdir'] == true ) {
+                                $rlist[$tfile['path']] = $tfile['name'];
+                            }
+                        }
+                        elseif( isset($options['only_file']) && ($options['only_file'] == true) ) {
+                            if( $tfile['isdir'] == false ) {
+                                $rlist[$tfile['path']] = $tfile['name'];
+                            }
+                        }
+                        else {
+                            $rlist[$tfile['path']] = $tfile['name'];
+                        }
                     }
+                    
+                    return $rlist;
                 }
             }
 
