@@ -7,6 +7,7 @@ package egwwinlogon.service;
 
 import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.events.EgroupwareAuthentifiactionEvent;
+import com.jegroupware.egroupware.events.EgroupwareEvent;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.events.EgroupwareEventRequest;
 import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
@@ -108,6 +109,11 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
 
     @Override
     public void requestFailed(EgroupwareEventRequest e) {
+        
+    }
+
+    @Override
+    public void threadAction(EgroupwareEvent e) {
         
     }
 }

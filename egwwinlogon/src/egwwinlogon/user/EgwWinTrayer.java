@@ -10,6 +10,7 @@ import com.jegroupware.egroupware.EgroupwareBrowser;
 import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.dialogs.EgroupwareMainWebDialog;
 import com.jegroupware.egroupware.events.EgroupwareAuthentifiactionEvent;
+import com.jegroupware.egroupware.events.EgroupwareEvent;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.events.EgroupwareEventRequest;
 import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
@@ -96,6 +97,13 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
         popup.addActionListener(this);
         
         this._trayer.setPopupMenu(popup);
+        
+        if( (this._egw != null) && this._egw.isLogin() ) {
+            this._trayer.displayMsgInfo("Egroupware", "Benutzer ist eingelogt.");
+        }
+        else {
+            this._trayer.displayMsgInfo("Egroupware", "Offline modus, kein Internet?");
+        }
     }
 
     @Override
@@ -178,5 +186,10 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
                 }
             }
         }
+    }
+
+    @Override
+    public void threadAction(EgroupwareEvent e) {
+        
     }
 }

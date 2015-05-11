@@ -23,6 +23,13 @@
         const TABLE = 'egw_elogin_usershares_mount';
 
         /**
+         * Reference to global db object
+         *
+         * @var egw_db
+         */
+        static protected $_db;
+        
+        /**
          * id
          * @var string
          */
@@ -59,14 +66,31 @@
         protected $_mount_name = '';
 
         /**
+         * Init our static properties
+         */
+        static public function init_static() {
+            self::$_db = $GLOBALS['egw']->db;
+        }
+        
+        /**
          * constructor
          *
          * @param string $id
          */
         public function __construct($id=null) {
             if( $id != null ) {
-
+                $data = self::read($id);
+                
+                if( $data ) {
+                    $this->_usershare_id    = $data['el_usershare_id'];
+                    $this->_machine_id      = $data['el_machine_id'];
+                    $this->_account_id      = $data['el_account_id'];
+                    $this->_share_source    = $data['el_share_source'];
+                    $this->_mount_name      = $data['el_mount_name'];
+                }
             }
+            
+            $this->_id = $id;
         }
 
         /**
@@ -108,6 +132,29 @@
         public function setUsershareId($id) {
             $this->_usershare_id = $id;
         }
+        
+        /**
+         * read
+         *
+         * @param string $id
+         * @return boolean|array
+         */
+        static public function read($id=null) {
+            $where = array(self::TABLE . '.el_unid=' . "'" . (string)$id . "'");
+            $cols = array(self::TABLE . '.*');
+            $join = array();
 
+            if (!($data = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+                '', '', 0, $join)->fetch()))
+            {
+                return false;
+            }
 
+            return $data;
+        }
     }
+    
+    /**
+     * init
+     */
+    elogin_usershares_mount_bo::init_static();
