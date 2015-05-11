@@ -10,7 +10,6 @@ import egwwinlogon.egroupware.EgroupwareMachineInfo;
 import egwwinlogon.egroupware.EgroupwareMachineLogging;
 import egwwinlogon.egroupware.EgroupwareSettings;
 import egwwinlogon.http.LogonHttpServer;
-import egwwinlogon.winapi.CreateProcessAsUser;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -110,7 +109,8 @@ public class EgwWinLogon {
                     EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            EgwWinLogonHttpHandlerConfig config = new EgwWinLogonHttpHandlerConfig();
+            EgwWinLogonHttpHandlerConfig config = new EgwWinLogonHttpHandlerConfig(
+                (String) this._settings.get("sysfingerprint"));
             config.register(this._server);
 
             EgwWinLogonHttpHandlerLogger httplogger = new EgwWinLogonHttpHandlerLogger();
@@ -220,15 +220,19 @@ public class EgwWinLogon {
                     
                     // ---------------------------------------------------------
                     
-                    logger.info("Login by user: " + username);
+                    logger.info("Login by user: " + username + "@" + domain);
                     // ---------------------------------------------------------
 
-                    // send login command
-                    /*_egw.request(new EgroupwareCommand(
-                        EgroupwareCommand.EGW_CMD_LOGIN,
-                        this._settings.get("machinename") + ";" +
-                            this._settings.get("sysfingerprint")
-                        ));*/
+                    /*EgroupwareCommand cmds = new EgroupwareCommand(
+                        (String) this._settings.get("sysfingerprint"), 
+                        EgroupwareCommand.EGW_CMD_TYPE_USER);
+
+                    try {
+                        _egw.request(cmds);
+                        cmds.execute();
+                    }
+                    catch( Exception e ) {
+                    }*/
                 }
                 catch( Exception ec ) {
                     // nothing

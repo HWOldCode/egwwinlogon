@@ -22,6 +22,20 @@ import java.util.logging.Logger;
 public class EgwWinLogonHttpHandlerConfig extends LogonHttpServerHandler {
 
     /**
+     * machine id
+     */
+    protected String _machine_id = "";
+    
+    /**
+     * constructor
+     * @param machineid 
+     */
+    public EgwWinLogonHttpHandlerConfig(String machineid) {
+        super();
+        this._machine_id = machineid;
+    }
+    
+    /**
      * _getUrl
      * @return
      */
@@ -51,6 +65,9 @@ public class EgwWinLogonHttpHandlerConfig extends LogonHttpServerHandler {
                             response += entry.getKey() + ":" + entry.getValue() + ";";
                         }
 
+                        // add machine id
+                        response += "machine_id:" + this._machine_id + ";";
+                        
                         t.sendResponseHeaders(200, response.length());
                         OutputStream os = t.getResponseBody();
                         os.write(response.getBytes());

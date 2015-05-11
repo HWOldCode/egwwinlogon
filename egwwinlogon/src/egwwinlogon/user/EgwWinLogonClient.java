@@ -23,7 +23,8 @@ public class EgwWinLogonClient  {
     // BASE URL
     public static final String URL = "http://localhost:8108/";
 
-    public static final String REQUEST_SESSION = "session";
+    public static final String REQUEST_SESSION  = "session";
+    public static final String REQUEST_CONFIG   = "config";
 
     /**
      * LogonHttpClient
@@ -46,6 +47,33 @@ public class EgwWinLogonClient  {
         return this.getEgroupwareInstance(user, null);
     }
     
+    public String getMachineId(String url) {
+        try {
+            if( url == null ) {
+                url = EgwWinLogonClient.URL;
+            }
+        
+            String request = url + EgwWinLogonClient.REQUEST_CONFIG + "/?json=info";
+            String buffer = this._client.sendGET(request);
+            
+            String[] params = buffer.split(";");
+            
+            for( String param: params ) {
+                String[] values = param.split(":");
+
+                if( values.length > 1 ) {
+                    if( "machine_id".equals(values[0]) ) {
+                        return values[1];
+                    }
+                }
+            }
+        }
+        catch( Exception e ) {
+        } 
+        
+        return null;
+    }
+    
     /**
      * getEgroupwareInstance
      * @param user
@@ -59,15 +87,8 @@ public class EgwWinLogonClient  {
             }
             
             String request = url + EgwWinLogonClient.REQUEST_SESSION + "?user=" + user;
-System.out.println(request);
-/*System.out.println(System.getenv("USERNAME"));
-System.out.println(Advapi32Util.getUserName());
-
-for( Account account: Advapi32Util.getCurrentUserGroups())
-        System.out.println(account.fqn);
-*/
             String buffer = this._client.sendGET(request);
-System.out.println(buffer);
+            
             if( buffer != "error" ) {
                 EgroupwareConfig config = null;
                 EgroupwareSession session = null;

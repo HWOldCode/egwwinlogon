@@ -14,10 +14,13 @@ import com.jegroupware.egroupware.events.EgroupwareEvent;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.events.EgroupwareEventRequest;
 import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
+import egwwinlogon.egroupware.EgroupwareCommand;
+import egwwinlogon.egroupware.EgroupwareMachineLogging;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import org.apache.log4j.Logger;
 
 /**
  * EgwWinTrayer
@@ -25,6 +28,11 @@ import java.awt.event.ActionListener;
  * @author Stefan Werfling
  */
 public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
+    
+    /**
+     * logger
+     */
+    private static final Logger logger = Logger.getLogger(EgwWinTrayer.class);
     
     /**
      * EgwWinLogonClient
@@ -40,6 +48,11 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
      * Trayer
      */
     protected Trayer _trayer = null;
+    
+    /**
+     * Machine id
+     */
+    protected String _machine_id = null;
     
     /**
      * trayer title
@@ -73,8 +86,9 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
      * @param username 
      */
     public EgwWinTrayer(String username, String url) {
-        this._client = new EgwWinLogonClient();
-        this._egw = this._client.getEgroupwareInstance(username, url);
+        this._client        = new EgwWinLogonClient();
+        this._egw           = this._client.getEgroupwareInstance(username, url);
+        this._machine_id    = this._client.getMachineId(url);
         
         if( this._egw != null ) {
             this._egw.addListener(this);
@@ -100,6 +114,39 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
         
         if( (this._egw != null) && this._egw.isLogin() ) {
             this._trayer.displayMsgInfo("Egroupware", "Benutzer ist eingelogt.");
+            
+            if( this._machine_id != null ) {
+                
+                // -------------------------------------------------------------
+                EgroupwareMachineLogging egwlog = new EgroupwareMachineLogging(
+                        this._machine_id,
+                        this._egw.getConfig()
+                        );
+                    
+                // set logger
+                Logger tlogger = Logger.getRootLogger();
+                tlogger.addAppender(egwlog);
+                
+                // -------------------------------------------------------------
+                
+                logger.info("Start EgwWinLogin Trayer ...");
+                
+                // -------------------------------------------------------------
+                EgroupwareCommand cmds = new EgroupwareCommand(
+                    this._machine_id, 
+                    EgroupwareCommand.EGW_CMD_TYPE_USER);
+
+                try {
+                    this._egw.request(cmds);
+                    cmds.execute();
+                }
+                catch( Exception e ) {
+                    this._trayer.displayMsgError("Egroupware", e.getMessage());
+                }
+            }
+            else {
+                this._trayer.displayMsgError("Egroupware", "System ist unbekannt!");
+            }
         }
         else {
             this._trayer.displayMsgInfo("Egroupware", "Offline modus, kein Internet?");

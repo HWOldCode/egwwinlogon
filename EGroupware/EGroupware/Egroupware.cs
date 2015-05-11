@@ -480,7 +480,7 @@ namespace pGina.Plugin.EGroupware
             string sessionid = properties.Id.ToString();
 
             UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
-
+            
             string username = userInfo.Username;
             string password = userInfo.Password;
             string domain   = userInfo.Domain;
@@ -540,6 +540,7 @@ namespace pGina.Plugin.EGroupware
          * AuthorizeUser
          */
         public BooleanResult AuthorizeUser(SessionProperties properties) {
+
             return new BooleanResult {
                 Success = true,
                 Message = string.Format("Allow")};
