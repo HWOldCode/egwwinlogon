@@ -24,6 +24,7 @@ import java.util.zip.ZipFile;
 /**
  * WinLogonUpdater
  * @see http://www.dreamincode.net/forums/topic/190944-creating-an-updater-in-java/
+ * https://github.com/petesh/jna-mpr/blob/master/MprTest.java
  * @author Stefan Werfling
  */
 public class WinLogonUpdater extends Thread {

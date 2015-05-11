@@ -848,9 +848,32 @@
         }
         
         /**
+         * getSupportedACLPermission
+         * @return array
+         */
+        public function getSupportedACLPermission() {
+            return array(
+                'append_data',
+                'change_perm',
+                'delete',
+                'delete_sub',
+                'exe_file',
+                'read_attr',
+                'read_data',
+                'read_ext_attr',
+                'read_perm',
+                'take_ownership',
+                'write_attr',
+                'write_data',
+                'write_ext_attr'
+            );
+        }
+        
+        /**
          * getFileShareACLs
          * 
          * @param string $realpath
+         * @return array
          */
         public function getFileShareACLs($realpath) {
             if( $this->_isLogin ) {
@@ -861,8 +884,21 @@
                     'type'              => 'all',
                     ), true);
                 
-            var_dump($data);
+                if( $data && is_array($data) && isset($data['acl']) ) {
+                    $acls = (array) $data['acl'];
+                    
+                    $rlist = array();
+                    
+                    foreach( $acls as $acl ) {
+                        $tacl = (array) $acl;
+                        
+                        $rlist[$tacl['owner_name']] = (array) $tacl['permission'];
+                    }
+                    
+                    return $rlist;
+                }
             }
             
+            return array();
         }
     }
