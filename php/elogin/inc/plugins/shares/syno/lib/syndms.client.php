@@ -818,9 +818,21 @@
                     'limit'             => $limit,
                     ), true);
 
-                var_dump($data);
+                if( $data && is_array($data) && isset($data['files']) ) {
+                    $files = (array) $data['files'];
+                    
+                    foreach( $files as $file ) {
+                        $tfile = (array) $file;
+                        
+                        var_dump($tfile);
+                    }
+                }
             }
 
             return array();
+        }
+        
+        public function getFileShareACLs($realpath) {
+            
         }
     }
