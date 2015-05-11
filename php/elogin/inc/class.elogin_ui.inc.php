@@ -48,7 +48,7 @@
                 //var_dump($syn->getUser('test3'));
                 //var_dump($syn->disableUser('test3'));
                 //var_dump($syn->setSharePermission('test3435', 'test2', 'rw'));
-                var_dump($syn->getFileSharesList('/group Admins', 1000, array('only_dir' => true));
+                var_dump($syn->getFileSharesList('/group Admins', 1000, array('only_dir' => true)));
             }
             echo "Hello World";
 
