@@ -191,6 +191,11 @@
                                     var_dump("Share access is set.");
                                 }
                             }
+
+                            // -----
+                            // update mount list
+                        //var_dump("Update Mounts");
+                            $usershares->updateUserSharesMounts();
                         }
                     }
                 }

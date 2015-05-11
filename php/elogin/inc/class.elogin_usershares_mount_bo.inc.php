@@ -28,7 +28,7 @@
          * @var egw_db
          */
         static protected $_db;
-        
+
         /**
          * id
          * @var string
@@ -71,7 +71,7 @@
         static public function init_static() {
             self::$_db = $GLOBALS['egw']->db;
         }
-        
+
         /**
          * constructor
          *
@@ -80,7 +80,7 @@
         public function __construct($id=null) {
             if( $id != null ) {
                 $data = self::read($id);
-                
+
                 if( $data ) {
                     $this->_usershare_id    = $data['el_usershare_id'];
                     $this->_machine_id      = $data['el_machine_id'];
@@ -89,7 +89,7 @@
                     $this->_mount_name      = $data['el_mount_name'];
                 }
             }
-            
+
             $this->_id = $id;
         }
 
@@ -132,7 +132,115 @@
         public function setUsershareId($id) {
             $this->_usershare_id = $id;
         }
-        
+
+        /**
+         * getUsershare
+         *
+         * @return elogin_usershares_bo
+         */
+        public function getUsershare() {
+            return new elogin_usershares_bo($this->_usershare_id);
+        }
+
+        /**
+         * setShareSource
+         *
+         * @param string $sharesource
+         */
+        public function setShareSource($sharesource) {
+            $this->_share_source = $sharesource;
+        }
+
+        /**
+         * getShareSource
+         *
+         * @return string
+         */
+        public function getShareSource() {
+            return $this->_share_source;
+        }
+
+        /**
+         * setMountname
+         *
+         * @param string $name
+         */
+        public function setMountname($name) {
+            $this->_mount_name = $name;
+        }
+
+        /**
+         * getMountname
+         *
+         * @return string
+         */
+        public function getMountname() {
+            return $this->_mount_name;
+        }
+
+        /**
+         * getCmds
+         *
+         * @param type $system
+         */
+        public function getCmd($system=null) {
+            if( $system == null ) {
+                $system = elogin_bo::SYSTEM_WIN;
+            }
+
+            $replace_str = null;
+
+            switch( $system ) {
+                case elogin_bo::SYSTEM_WIN:
+                    $replace_str = 'net use <drivename>: "\\\\<server>\<share>" /user:<username> <password>';
+                    break;
+            }
+
+            if( $replace_str ) {
+                $us             = $this->getUsershare();
+                $username       = $us->getUsername();
+                $sharepassword  = $us->getSharePassword();
+
+                if( $this->getMountname() != '' ) {
+                    $cmd = $replace_str;
+                    $cmd = str_replace('<drivename>', $this->getMountname(), $cmd);
+                    $cmd = str_replace('<server>', $us->getProvider()->getMountAddress(), $cmd);
+                    $cmd = str_replace('<share>', $this->getShareSource(), $cmd);
+                    $cmd = str_replace('<username>', $username, $cmd);
+                    $cmd = str_replace('<password>', $sharepassword, $cmd);
+
+                    return $cmd;
+                }
+            }
+
+            return null;
+        }
+
+        /**
+         * save
+         */
+        public function save() {
+            $data = array();
+
+            if( $this->_id ) {
+                $data['el_unid'] = $this->_id;
+            }
+
+            $data['el_usershare_id']        = $this->_usershare_id;
+            $data['el_machine_id']          = $this->_machine_id;
+            $data['el_account_id']          = $this->_account_id;
+            $data['el_share_source']        = $this->_share_source;
+            $data['el_mount_name']          = $this->_mount_name;
+
+            $return = self::_write($data);
+
+            if( $return ) {
+                if( !($this->_id) ) {
+                    $this->_id = $return;
+                }
+            }
+        }
+
         /**
          * read
          *
@@ -152,8 +260,123 @@
 
             return $data;
         }
+
+        /**
+         * _write
+         *
+         * @param array $data
+         */
+        static protected function _write(array $data) {
+            if( isset($data['el_unid']) ) {
+                $unid = $data['el_unid'];
+                unset($data['el_unid']);
+
+                self::$_db->update(
+                    self::TABLE,
+                    $data,
+                    array(
+                        'el_unid' => $unid,
+                        ),
+                    __LINE__,
+                    __FILE__,
+                    'elogin'
+                    );
+            }
+            else {
+                $data['el_unid'] = elogin_bo::getPHPUuid();
+
+                self::$_db->insert(
+                    self::TABLE,
+                    $data,
+                    false,
+                    __LINE__,
+                    __FILE__,
+                    'elogin'
+                    );
+            }
+
+            return $data['el_unid'];
+        }
+
+        /**
+         * get_rows
+         *
+         * @param type $query
+         * @param type $rows
+         * @param type $readonlys
+         * @return type
+         */
+        static public function get_rows(&$query, &$rows, &$readonlys) {
+            $where = array();
+            $cols = array(self::TABLE . '.*');
+            $join = array();
+
+            if( key_exists('col_filter', $query) ) {
+                if( isset($query['col_filter']['el_share_source']) ) {
+                    $where['el_share_source'] = $query['col_filter']['el_share_source'];
+                }
+
+                if( isset($query['col_filter']['el_usershare_id']) ) {
+                    $where['el_usershare_id'] = $query['col_filter']['el_usershare_id'];
+                }
+            }
+
+            if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+                '', '', 0, $join)))
+            {
+                return array();
+            }
+
+            $rows = array();
+
+            foreach( $rs as $row ) {
+				$row = (array) $row;
+                $rows[] = $row;
+            }
+
+            return count($rows);
+        }
+
+        /**
+         * getUserShareMountsBy
+         *
+         * @param string $sharename
+         * @param string $usershareid
+         * @return array of elogin_usershares_mount_bo
+         */
+        static public function getUserShareMountsBy($sharename=null, $usershareid=null) {
+            $colfilter = array();
+
+            if( $sharename ) {
+                $colfilter['el_share_source'] = $sharename;
+            }
+
+            if( $usershareid ) {
+                $colfilter['el_usershare_id'] = $usershareid;
+            }
+
+            $query = array(
+                'col_filter' => $colfilter/*array(
+                    'el_share_source' => $sharename,
+                    'el_usershare_id' => $usershareid
+                    )*/
+                );
+
+            $rows = array();
+            $readonlys = array();
+
+            self::get_rows($query, $rows, $readonlys);
+
+            $list = array();
+
+            foreach( $rows as $row ) {
+                $list[] = new elogin_usershares_mount_bo($row['el_unid']);
+            }
+
+            return $list;
+        }
     }
-    
+
     /**
      * init
      */

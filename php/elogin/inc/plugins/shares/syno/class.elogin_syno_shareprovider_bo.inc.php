@@ -18,6 +18,17 @@
      */
     class elogin_syno_shareprovider_bo extends elogin_shareprovider_bo {
 
+        /**
+         * instances
+         * @var array
+         */
+        static protected $_synoInstances = array();
+
+
+        /**
+         * client
+         * @var SyndmsClient
+         */
         protected $_syno = null;
 
         /**
@@ -31,13 +42,22 @@
          */
         protected function _construct2() {
             if( $this->_account_server != null ) {
-                $this->_syno = new SyndmsClient(
-                    $this->_account_server,
-                    $this->_account_port
-                    );
+                if( isset(elogin_syno_shareprovider_bo::$_synoInstances[$this->_id]) ) {
+                    $this->_syno = elogin_syno_shareprovider_bo::$_synoInstances[$this->_id];
+                }
+                else {
+                    $this->_syno = new SyndmsClient(
+                        $this->_account_server,
+                        $this->_account_port
+                        );
 
-                if( $this->_syno->login($this->_account_user, $this->_account_password) ) {
-                    // TODO
+                    elogin_syno_shareprovider_bo::$_synoInstances[$this->_id] = $this->_syno;
+                }
+
+                if( !$this->_syno->isLogin() ) {
+                    if( $this->_syno->login($this->_account_user, $this->_account_password) ) {
+                        // TODO
+                    }
                 }
             }
         }
@@ -267,6 +287,21 @@
                     if( $this->_syno->setSharePermission($sharename, $username, $premission) ) {
                         return true;
                     }
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * isLogin
+         *
+         * @return boolean
+         */
+        public function isLogin() {
+            if( $this->_syno ) {
+                if( $this->_syno->isLogin() ) {
+                    return true;
                 }
             }
 

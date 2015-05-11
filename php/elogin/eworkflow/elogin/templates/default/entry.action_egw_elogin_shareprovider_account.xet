@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+	<template id="elogin.entry.action_egw_elogin_shareprovider_account" template="" lang="" group="0" version="">
+		<grid width="100%">
+			<columns>
+				<column/>
+			</columns>
+			<rows>
+                <row>
+					<caption label="ELogin Share Provider Account" class="dialogHeader2 th" options="b"/>
+				</row>
+                <row height="100%">
+                    <grid width="100%">
+                        <columns>
+                            <column width="240"/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row>
+                                <description value="Provider-List"/>
+                                <menulist>
+                                    <menupopup type="select" id="providers"/>
+                                </menulist>
+                             </row>
+                        </rows>
+                    </grid>
+                </row>
+			</rows>
+		</grid>
+	</template>
+</overlay>

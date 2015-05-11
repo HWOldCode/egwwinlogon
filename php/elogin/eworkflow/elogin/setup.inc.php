@@ -35,3 +35,27 @@
     $setup_info_spa['depends'] = array();
 
     $setup_info[] = $setup_info_spa;
+
+    // ---- share provider shares ----------------------------------------------
+
+    $setup_info_sps = array();
+	$setup_info_sps['name']         = 'elogin';
+    $setup_info_sps['app']          = 'elogin';
+    $setup_info_sps['class']        = 'elogin_action_share_provider_shares';
+    $setup_info_sps['title']        = 'ELogin Share Provider Shares';
+    $setup_info_sps['version']      = '1.0';
+
+    $setup_info_sps['author']       = 'Stefan Werfling';
+    $setup_info_sps['license']      = 'HW license';
+    $setup_info_sps['description']  = 'ELogin get Share Provider Shares';
+
+    $setup_info_sps['maintainer'] = array(
+		'name' 	=> 'HW-Softwareentwicklung GbR',
+		'email' => 'info@hw-softwareentwicklung.de'
+        );
+
+    $setup_info_sps['settings'] = array();
+
+    $setup_info_sps['depends'] = array();
+
+    $setup_info[] = $setup_info_sps;

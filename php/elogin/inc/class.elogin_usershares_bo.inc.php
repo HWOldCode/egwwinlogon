@@ -285,13 +285,52 @@
         }
 
         /**
+         * updateUserSharesMounts
+         *
+         */
+        public function updateUserSharesMounts() {
+            $shares = $this->getShares();
+
+             $_randdrivename = array(
+                'A', 'B', 'C', 'D', 'E', 'F'
+                );
+
+            foreach( $shares as $tshare ) {
+                $mounts = elogin_usershares_mount_bo::getUserShareMountsBy(
+                    $tshare['name'], $this->_id);
+
+                if( count($mounts) == 0 ) {
+                    $mountname = '';
+                    while( $trand=$this->_getRandomChar() ) {
+                        if( in_array($trand, $_randdrivename) ) {
+                            continue;
+                        }
+
+                        $_randdrivename[] = $trand;
+                        $mountname = $trand;
+                        break;
+                    }
+
+                    $mount = new elogin_usershares_mount_bo();
+                    $mount->setUsershareId($this->_id);
+                    $mount->setShareSource($tshare['name']);
+                    $mount->setMountname($mountname);
+                    $mount->save();
+                }
+            }
+        }
+
+        /**
          * getUserSharesMounts
          *
          * @return array of elogin_usershares_mount_bo
          */
         public function getUserSharesMounts() {
             if( $this->_id != null ) {
-                // TODO
+                return elogin_usershares_mount_bo::getUserShareMountsBy(
+                    null,
+                    $this->_id
+                    );
             }
 
             return null;
@@ -302,51 +341,15 @@
          * @param string $system
          */
         public function getCmds($system=null) {
-            if( $system == null ) {
-                $system = elogin_bo::SYSTEM_WIN;
-            }
-
-            $replace_str = null;
-            $shares = $this->getShares();
-
-            switch( $system ) {
-                case elogin_bo::SYSTEM_WIN:
-                    $replace_str = 'net use <drivename>: "\\\\<server>\<share>" /user:<username> <password>';
-                    break;
-            }
-
             $cmds = array();
 
-            if( $replace_str ) {
-                $username = $this->getUsername();
-                $sharepassword = $this->getSharePassword();
+            $mounts = $this->getUserSharesMounts();
 
-                $_randdrivename = array(
-                    'A', 'B', 'C', 'D', 'E', 'F'
-                    );
-
-                foreach( $shares as $tshare ) {
-                    $cmd = $replace_str;
-
-                    if( !isset($tshare['drivename']) ) {
-                        while( $trand=$this->_getRandomChar() ) {
-                            if( in_array($trand, $_randdrivename) ) {
-                                continue;
-                            }
-
-                            $_randdrivename[] = $trand;
-                            $tshare['drivename'] = $trand;
-                            break;
-                        }
+            if( $mounts ) {
+                foreach( $mounts as $mount ) {
+                    if( $mount instanceof elogin_usershares_mount_bo ) {
+                        $cmds[] = $mount->getCmd($system);
                     }
-
-                    $cmd = str_replace('<drivename>', $tshare['drivename'], $cmd);
-                    $cmd = str_replace('<server>', $this->getProvider()->getMountAddress(), $cmd);
-                    $cmd = str_replace('<share>', $tshare['name'], $cmd);
-                    $cmd = str_replace('<username>', $username, $cmd);
-                    $cmd = str_replace('<password>', $sharepassword, $cmd);
-
-                    $cmds[] = $cmd;
                 }
             }
 
@@ -497,6 +500,32 @@
             }
 
             return false;
+        }
+
+        /**
+         * getAllByAccount
+         * 
+         * @param type $accountid
+         * @return array of elogin_usershares_bo
+         */
+        static public function getAllByAccount($accountid) {
+            $query = array(
+                'col_filter' => array(
+                    'account_id' => $accountid
+                    )
+                );
+            $rows = array();
+            $readonlys = array();
+
+            self::get_rows($query, $rows, $readonlys);
+
+            $list = array();
+
+            foreach( $rows as $row ) {
+                $list[] = new elogin_usershares_bo($row['el_unid']);
+            }
+
+            return $list;
         }
     }
 

@@ -22,9 +22,12 @@
          * @var array
          */
         public $public_functions = array(
-            'share_user_list'       => true,
-            'get_rows_shareuser'    => true,
-            'share_user_edit'       => true,
+            'share_user_list'           => true,
+            'get_rows_shareuser'        => true,
+            'share_user_edit'           => true,
+            'get_rows_shareuser_mount'  => true,
+            'shareuser_mount_edit'      => true,
+            'ajax_usershare_mount'      => true,
             );
 
         /**
@@ -85,7 +88,7 @@
                     'url'       => 'menuaction=elogin.elogin_usershares_ui.share_user_edit&uid=$id',
                     'popup'     => '600x425',//egw_link::get_registry('elogin', 'add_popup'),
                     ),
-                'usersahresmount' => array(
+                /*'usersahresmount' => array(
                     'caption'	=> 'Mount List',
                     'group'		=> $group,
                     'default'	=> false,
@@ -94,7 +97,7 @@
                     'enabled'	=> true,
                     'url'       => 'menuaction=elogin.elogin_usershares_ui.share_user_edit&uid=$id',
                     'popup'     => '600x425',//egw_link::get_registry('elogin', 'add_popup'),
-                    )
+                    )*/
                 );
 
             return $actions;
@@ -160,6 +163,9 @@
                 $content['provider']        = $t->getProvider(true)->getProviderName();
                 $content['user']            = $t->getUsername();
                 $content['sharepassword']   = $t->getSharePassword();
+                $content['mountlist']       = array(
+                    'unid' => $uid
+                    );
             }
 
             $readonlys['user']      = true;
@@ -173,5 +179,73 @@
                 $readonlys,
                 $preserv,
                 2);
+        }
+
+        /**
+         * get_rows_shareuser_mount
+         *
+         * @param array $query
+         * @param array $rows
+         * @param type $readonlys
+         */
+        public function get_rows_shareuser_mount(&$query, &$rows, &$readonlys) {
+            if( key_exists('userschareunid', $query) ) {
+                $query['col_filter'] = array(
+                    'el_usershare_id' => $query['userschareunid']
+                    );
+
+                unset($query['userschareunid']);
+            }
+
+            $count = elogin_usershares_mount_bo::get_rows($query, $rows, $readonlys);
+
+            return $count;
+        }
+
+        /**
+         * shareuser_mount_edit
+         *
+         * @param array $content
+         */
+        public function shareuser_mount_edit($content=null) {
+            if( !$GLOBALS['egw_info']['user']['apps']['admin'] ) {
+                die("Only for Admins!");
+            }
+
+            if( $content == null ) {
+                $content = array();
+            }
+
+            $preserv    = array();
+            $option_sel = array();
+            $readonlys  = array();
+
+            $uid = ( isset($content['uid']) ? $content['uid'] : null);
+			$uid = ( $uid == null ? (isset($_GET['uid']) ? $_GET['uid'] : null) : $uid);
+
+
+            $etemplate = new etemplate_new('elogin.share_user_mount.dialog');
+            $etemplate->exec(
+                'elogin.elogin_usershares_ui.shareuser_mount_edit',
+                array_merge($content, $preserv),
+                $option_sel,
+                $readonlys,
+                $preserv,
+                2);
+        }
+
+        /**
+         * ajax_usershare_mount
+         *
+         * @param array $content
+         */
+        static public function ajax_usershare_mount($content=array()) {
+            if( isset($content['mountid']) ) {
+                if( $content['action'] == 'edit' ) {
+                    $mount = new elogin_usershares_mount_bo($content['mountid']);
+                    $mount->setMountname($content['mount_name']);
+                    $mount->save();
+                }
+            }
         }
     }

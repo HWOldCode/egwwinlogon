@@ -287,6 +287,14 @@
         }
 
         /**
+         * isLogin
+         * @return boolean
+         */
+        public function isLogin() {
+            return $this->_isLogin;
+        }
+
+        /**
          * getUsers
          *
          * @return array|null

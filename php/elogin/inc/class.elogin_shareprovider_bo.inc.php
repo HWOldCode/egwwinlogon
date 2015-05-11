@@ -372,6 +372,15 @@
         }
 
         /**
+         * isLogin
+         * 
+         * @return boolean
+         */
+        public function isLogin() {
+            return false;
+        }
+
+        /**
          * save
          */
         public function save() {
@@ -526,6 +535,26 @@
             }
 
             return count($rows);
+        }
+
+        /**
+         * getShareProviders
+         * @return array of elogin_shareprovider_bo
+         */
+        static public function getShareProviders() {
+            $query      = array();
+            $rows       = array();
+            $readonlys  = array();
+
+            self::get_rows($query, $rows, $readonlys);
+
+            $list = array();
+
+            foreach( $rows as $row ) {
+                $list[] = new elogin_shareprovider_bo($row['el_unid']);
+            }
+
+            return $list;
         }
     }
 

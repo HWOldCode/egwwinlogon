@@ -138,6 +138,18 @@
         }
 
         /**
+         * getCurrentUserShares
+         *
+         * @return array of elogin_usershares_bo
+         */
+        public function getCurrentUserShares() {
+            $account_id = $GLOBALS['egw_info']['user']['account_id'];
+            $usershares = elogin_usershares_bo::getAllByAccount($account_id);
+
+            return $usershares;
+        }
+
+        /**
          * read
          *
          * @param string $id

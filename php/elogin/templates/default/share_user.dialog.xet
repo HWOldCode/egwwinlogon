@@ -26,20 +26,47 @@
                         </rows>
 					</grid>
                 </row>
-				<row>
-                    <grid width="100%">
+				<row height="400px">
+                    <grid width="100%" height="400px">
                         <columns>
-                            <column/>
                             <column/>
                         </columns>
                         <rows>
                             <row>
-                                <description value="User"/>
-                                <textbox id="user" />
-                            </row>
-                            <row>
-                                <description value="Sharepassword"/>
-                                <textbox id="sharepassword" />
+                                <tabbox id="tabs" tab_height="390px">
+                                    <tabs>
+                                        <tab id="setting" label="Setting"/>
+                                        <tab id="mounts" label="Mounts"/>
+                                    </tabs>
+                                    <tabpanels>
+                                        <grid width="100%">
+                                            <columns>
+                                                <column/>
+                                                <column/>
+                                            </columns>
+                                            <rows>
+                                                <row>
+                                                    <description value="User"/>
+                                                    <textbox id="user" />
+                                                </row>
+                                                <row>
+                                                    <description value="Sharepassword"/>
+                                                    <textbox id="sharepassword" />
+                                                </row>
+                                            </rows>
+                                        </grid>
+                                        <grid width="100%">
+                                            <columns>
+                                                <column/>
+                                            </columns>
+                                            <rows>
+                                                <row>
+                                                    <elogin-mountlist id="mountlist" width="100%" height="300px" overflow="hidden" />
+                                                </row>
+                                            </rows>
+                                        </grid>
+                                    </tabpanels>
+                                </tabbox>
                             </row>
                         </rows>
                     </grid>

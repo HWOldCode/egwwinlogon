@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+	<template id="elogin.usershare_mount" template="" lang="" group="0" version="1.9.001">
+        <grid width="100%">
+			<columns>
+                <column/>
+				<column/>
+			</columns>
+			<rows>
+                <row>
+                    <caption label="Mountname"/>
+                    <hbox class="et2_prompt">
+                        <vbox class="ui-dialog-content">
+                            <textbox id="mount_name"/>
+                        </vbox>
+                    </hbox>
+                </row>
+            </rows>
+        </grid>
+	</template>
+</overlay>
