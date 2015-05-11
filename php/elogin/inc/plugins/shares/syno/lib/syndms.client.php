@@ -122,7 +122,7 @@
          * @param array $query
          * @return array|null
          */
-        protected function _queryByService($serviceName, $query) {
+        protected function _queryByService($serviceName, $query, $isJson=false) {
             if( isset($this->_services[$serviceName]) ) {
                 $service = $this->_services[$serviceName];
 
@@ -136,7 +136,7 @@
                     'webapi/' . $service['path'],
                     $query);
 
-                if( $service['requestFormat'] == 'JSON' ) {
+                if( ($service['requestFormat'] == 'JSON') || $isJson ) {
                     $data = json_decode($response['body']);
 
                     if( $data ) {
@@ -816,7 +816,7 @@
                     'sort_by'           => 'name',
                     'sort_by'           => 0,
                     'limit'             => $limit,
-                    ));
+                    ), true);
 
                 var_dump($data);
             }
