@@ -857,7 +857,7 @@
                 $data = $this->_queryByService('SYNO.Core.ACL', array(
                     'method'            => 'get',
                     'version'           => '1',
-                    'SYNO.Core.ACL'       => $realpath,
+                    'file_path'         => $realpath,
                     'type'              => 'all',
                     ), true);
                 
