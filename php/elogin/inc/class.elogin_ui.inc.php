@@ -32,7 +32,7 @@
          * @param array $content
          */
         public function index($content=array()) {
-            /*
+            
             require_once('plugins/shares/syno/lib/syndms.client.php');
 
             $syn = new SyndmsClient('192.168.11.4');
@@ -54,7 +54,7 @@
 
             //$t = new elogin_usershares_bo('test');
             //var_dump($t->getCmds());
-exit;*/
+exit;
             elogin_sharehandler_bo::set_async_job(false);
             elogin_sharehandler_bo::set_async_job(true);
 

@@ -132,7 +132,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
                 logger.info("Start EgwWinLogin Trayer ...");
                 
                 // -------------------------------------------------------------
-                EgroupwareCommand cmds = new EgroupwareCommand(
+                /*EgroupwareCommand cmds = new EgroupwareCommand(
                     this._machine_id, 
                     EgroupwareCommand.EGW_CMD_TYPE_USER);
 
@@ -142,7 +142,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
                 }
                 catch( Exception e ) {
                     this._trayer.displayMsgError("Egroupware", e.getMessage());
-                }
+                }*/
             }
             else {
                 this._trayer.displayMsgError("Egroupware", "System ist unbekannt!");

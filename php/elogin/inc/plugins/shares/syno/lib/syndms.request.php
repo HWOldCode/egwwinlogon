@@ -1,12 +1,21 @@
 <?php
 
     /**
-     * Description of syndms
+     * SyndmsRequest
      *
-     * @author swe
+     * @author Stefan Werfling
      */
     class SyndmsRequest {
 
+        /**
+         * curlRequest
+         * 
+         * @param string $query_string
+         * @param array $postdata
+         * @param string $content_type
+         * @param array $custom_headers
+         * @return array
+         */
         public static function curlRequest($query_string, $postdata=null, $content_type=null, $custom_headers=null) {
             $headers = (is_null($custom_headers)) ? array() : $custom_headers;
             $curl = curl_init();

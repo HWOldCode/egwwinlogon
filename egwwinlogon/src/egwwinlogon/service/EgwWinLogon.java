@@ -262,7 +262,11 @@ public class EgwWinLogon {
                 return 1;
             }
         }
-        catch( java.net.SocketTimeoutException | java.net.UnknownHostException  e ) {
+        catch( 
+            java.net.SocketTimeoutException | 
+            java.net.UnknownHostException | 
+            java.net.NoRouteToHostException e ) 
+        {
             // login by offline mode, username + password check by cachelist
             if( this._eLoginCache.countAccounts() > 0 ) {
                 // is activ and expries
