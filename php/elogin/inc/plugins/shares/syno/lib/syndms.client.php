@@ -847,7 +847,22 @@
             return array();
         }
         
+        /**
+         * getFileShareACLs
+         * 
+         * @param string $realpath
+         */
         public function getFileShareACLs($realpath) {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.ACL', array(
+                    'method'            => 'get',
+                    'version'           => '1',
+                    'SYNO.Core.ACL'       => $realpath,
+                    'type'              => 'all',
+                    ), true);
+                
+            var_dump($data);
+            }
             
         }
     }
