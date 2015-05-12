@@ -14,6 +14,7 @@
         const URL_QUERY         = 'webapi/query.cgi';
         const URL_AUTH          = 'webapi/auth.cgi';
         const URL_FILESHARE     = 'webapi/FileStation/file_share.cgi';
+        const URL_FILESHARE_CRT = 'webapi/FileStation/file_crtfdr.cgi';
 
         const SYNO_SDS_SESSISON = 'SYNO.SDS.Session';
 
@@ -821,10 +822,10 @@
                 if( $data && is_array($data) && isset($data['files']) ) {
                     $files = (array) $data['files'];
                     $rlist = array();
-                    
+
                     foreach( $files as $file ) {
                         $tfile = (array) $file;
-                        
+
                         if( isset($options['only_dir']) && ($options['only_dir'] == true) ) {
                             if( $tfile['isdir'] == true ) {
                                 $rlist[$tfile['path']] = $tfile['name'];
@@ -839,14 +840,47 @@
                             $rlist[$tfile['path']] = $tfile['name'];
                         }
                     }
-                    
+
                     return $rlist;
                 }
             }
 
             return array();
         }
-        
+
+        /**
+         * createDirShare
+         *
+         * @param string $sharename
+         * @param string $dir
+         * @return boolean
+         */
+        public function createDirShare($sharename, $dir) {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.FileStation.CreateFolder', array(
+                    'method'            => 'create',
+                    'version'           => '1',
+                    'folder_path'       => $sharename,
+                    'name'              => $dir,
+                    'force_parent'      => false,
+                    ), true);
+
+                if( $data && is_array($data) && isset($data['folders']) ) {
+                    $folders = (array) $data['folders'];
+
+                    foreach( $folders as $tfolder ) {
+                        $folder = (array) $tfolder;
+
+                        if( $folder['name'] == $dir ) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         /**
          * getSupportedACLPermission
          * @return array
@@ -868,10 +902,10 @@
                 'write_ext_attr'
             );
         }
-        
+
         /**
          * getFileShareACLs
-         * 
+         *
          * @param string $realpath
          * @return array
          */
@@ -883,22 +917,22 @@
                     'file_path'         => $realpath,
                     'type'              => 'all',
                     ), true);
-                
+
                 if( $data && is_array($data) && isset($data['acl']) ) {
                     $acls = (array) $data['acl'];
-                    
+
                     $rlist = array();
-                    
+
                     foreach( $acls as $acl ) {
                         $tacl = (array) $acl;
-                        
+
                         $rlist[$tacl['owner_name']] = (array) $tacl['permission'];
                     }
-                    
+
                     return $rlist;
                 }
             }
-            
+
             return array();
         }
     }

@@ -307,4 +307,63 @@
 
             return false;
         }
+
+        /**
+         * getShareDirList
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @return array
+         */
+        public function getShareDirList($usersharename, $dir="") {
+            if( $this->_syno ) {
+                $list = $this->_syno->getFileSharesList(
+                    $usersharename,
+                    1000,
+                    array(
+                        'only_dir' => true
+                        )
+                    );
+
+                return $list;
+            }
+
+            return array();
+        }
+
+        /**
+         * existShareDir
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @return boolean
+         */
+        public function existShareDir($usersharename, $dir) {
+            if( $this->_syno ) {
+                $list = $this->getShareDirList($usersharename);
+
+                if( isset($list[$usersharename . '/' . $dir]) ) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * createShareDir
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @return boolean
+         */
+        public function createShareDir($usersharename, $dir) {
+            if( $this->_syno ) {
+                if( $this->_syno->createDirShare($usersharename, $dir) ) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }

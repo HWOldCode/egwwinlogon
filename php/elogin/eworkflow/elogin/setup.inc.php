@@ -59,3 +59,51 @@
     $setup_info_sps['depends'] = array();
 
     $setup_info[] = $setup_info_sps;
+
+    // ---- share provider dir exist -------------------------------------------
+
+    $setup_info_spde = array();
+	$setup_info_spde['name']         = 'elogin';
+    $setup_info_spde['app']          = 'elogin';
+    $setup_info_spde['class']        = 'elogin_action_share_provider_dir_exist';
+    $setup_info_spde['title']        = 'ELogin Share Provider dir exist';
+    $setup_info_spde['version']      = '1.0';
+
+    $setup_info_spde['author']       = 'Stefan Werfling';
+    $setup_info_spde['license']      = 'HW license';
+    $setup_info_spde['description']  = 'ELogin get Share Provider dir exist';
+
+    $setup_info_spde['maintainer'] = array(
+		'name' 	=> 'HW-Softwareentwicklung GbR',
+		'email' => 'info@hw-softwareentwicklung.de'
+        );
+
+    $setup_info_spde['settings'] = array();
+
+    $setup_info_spde['depends'] = array();
+
+    $setup_info[] = $setup_info_spde;
+
+    // ---- share provider dir create ------------------------------------------
+
+    $setup_info_spdc = array();
+	$setup_info_spdc['name']         = 'elogin';
+    $setup_info_spdc['app']          = 'elogin';
+    $setup_info_spdc['class']        = 'elogin_action_share_provider_dir_create';
+    $setup_info_spdc['title']        = 'ELogin Share Provider dir create';
+    $setup_info_spdc['version']      = '1.0';
+
+    $setup_info_spdc['author']       = 'Stefan Werfling';
+    $setup_info_spdc['license']      = 'HW license';
+    $setup_info_spdc['description']  = 'ELogin get Share Provider dir create';
+
+    $setup_info_spdc['maintainer'] = array(
+		'name' 	=> 'HW-Softwareentwicklung GbR',
+		'email' => 'info@hw-softwareentwicklung.de'
+        );
+
+    $setup_info_spdc['settings'] = array();
+
+    $setup_info_spdc['depends'] = array();
+
+    $setup_info[] = $setup_info_spdc;

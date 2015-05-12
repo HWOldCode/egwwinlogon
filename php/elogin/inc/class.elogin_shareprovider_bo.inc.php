@@ -373,11 +373,44 @@
 
         /**
          * isLogin
-         * 
+         *
          * @return boolean
          */
         public function isLogin() {
             return false;
+        }
+
+        /**
+         * existShareDir
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @return boolean
+         */
+        public function existShareDir($usersharename, $dir) {
+            return false;
+        }
+
+        /**
+         * createShareDir
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @return boolean
+         */
+        public function createShareDir($usersharename, $dir) {
+            return false;
+        }
+
+        /**
+         * getShareDirList
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @return array
+         */
+        public function getShareDirList($usersharename, $dir="") {
+            return array();
         }
 
         /**

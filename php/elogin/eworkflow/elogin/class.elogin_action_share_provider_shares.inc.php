@@ -145,6 +145,25 @@
         }
 
         /**
+         * getProvider
+         *
+         * @return elogin_shareprovider_bo
+         */
+        public function getProvider() {
+            $entry = eworkflow_entrys_bo::loadEntry($this->getShareProviderEntryId());
+
+            if( $entry instanceof elogin_action_share_provider_account ) {
+                $provider = $entry->getProvider();
+
+                if( $provider instanceof elogin_shareprovider_bo ) {
+                    return $provider;
+                }
+            }
+
+            return null;
+        }
+
+        /**
 		 * uiEdit
 		 *
 		 * @param array $content
@@ -237,8 +256,10 @@
         public function execute($params) {
             if( !$this->_setStart($params) ) { return; };
 
+            // TODO
+
             // get link for next action
-            $this->_execNextEntryByLinkName($linkname, $params);
+            $this->_execNextEntryByLinkName(self::LINK_ACTION, $params);
         }
 
         /**

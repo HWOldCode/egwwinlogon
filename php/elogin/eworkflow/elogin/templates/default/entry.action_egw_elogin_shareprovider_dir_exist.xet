@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+	<template id="elogin.entry.action_egw_elogin_shareprovider_dir_exist" template="" lang="" group="0" version="">
+		<grid width="100%">
+			<columns>
+				<column/>
+			</columns>
+			<rows>
+                <row>
+					<caption label="ELogin Share Provider Dir Exist" class="dialogHeader2 th" options="b"/>
+				</row>
+                <row height="100%">
+                    <grid width="100%">
+                        <columns>
+                            <column width="240"/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row>
+                                <description value="Usershare entry select"/>
+                                <menulist>
+                                    <menupopup type="select" id="usershare_entry"/>
+                                </menulist>
+                             </row>
+                            <row>
+                                <description value="Dirname"/>
+                                <eworkflow-ptextbox id="dirname" height="280px"/>
+                             </row>
+                        </rows>
+                    </grid>
+                </row>
+			</rows>
+		</grid>
+	</template>
+</overlay>

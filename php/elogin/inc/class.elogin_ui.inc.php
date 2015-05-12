@@ -32,7 +32,7 @@
          * @param array $content
          */
         public function index($content=array()) {
-            
+/*
             require_once('plugins/shares/syno/lib/syndms.client.php');
 
             $syn = new SyndmsClient('192.168.11.4');
@@ -50,12 +50,13 @@
                 //var_dump($syn->setSharePermission('test3435', 'test2', 'rw'));
                 var_dump($syn->getFileSharesList('/group Admins', 1000, array('only_dir' => true)));
                 var_dump($syn->getFileShareACLs('/volume1/group Admins/test'));
+                var_dump($syn->createDirShare('/group Admins', 'papa23'));
             }
             echo "Hello World";
-
+*/
             //$t = new elogin_usershares_bo('test');
             //var_dump($t->getCmds());
-exit;
+//exit;
             elogin_sharehandler_bo::set_async_job(false);
             elogin_sharehandler_bo::set_async_job(true);
 
