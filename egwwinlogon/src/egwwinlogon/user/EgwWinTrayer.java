@@ -15,7 +15,9 @@ import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.events.EgroupwareEventRequest;
 import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
 import egwwinlogon.egroupware.EgroupwareCommand;
+import egwwinlogon.egroupware.EgroupwareELoginBrowser;
 import egwwinlogon.egroupware.EgroupwareMachineLogging;
+import egwwinlogon.winapi.mpr.MprHelper;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
@@ -64,6 +66,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
      * @param args String[]
      */
     public static void main(String[] args) {
+        MprHelper.mountW("\\\\192.168.0.252\\video\\", "megasave", "1234");
         if( (args.length > 0) && (args[0] != "") ) {
             // init
             new EgwWinTrayer(args[0]);
@@ -86,6 +89,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
      * @param username 
      */
     public EgwWinTrayer(String username, String url) {
+        
         this._client        = new EgwWinLogonClient();
         this._egw           = this._client.getEgroupwareInstance(username, url);
         this._machine_id    = this._client.getMachineId(url);
@@ -113,7 +117,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
         this._trayer.setPopupMenu(popup);
         
         if( (this._egw != null) && this._egw.isLogin() ) {
-            this._trayer.displayMsgInfo("Egroupware", "Benutzer ist eingelogt.");
+            this._trayer.displayMsgInfo("Egroupware", "Benutzer ist eingeloggt.");
             
             if( this._machine_id != null ) {
                 
@@ -132,7 +136,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
                 logger.info("Start EgwWinLogin Trayer ...");
                 
                 // -------------------------------------------------------------
-                /*EgroupwareCommand cmds = new EgroupwareCommand(
+                EgroupwareCommand cmds = new EgroupwareCommand(
                     this._machine_id, 
                     EgroupwareCommand.EGW_CMD_TYPE_USER);
 
@@ -142,7 +146,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
                 }
                 catch( Exception e ) {
                     this._trayer.displayMsgError("Egroupware", e.getMessage());
-                }*/
+                }
             }
             else {
                 this._trayer.displayMsgError("Egroupware", "System ist unbekannt!");
@@ -216,7 +220,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
             if( egwurl != null ) {
                 if( this._egw != null ) {
                     try {
-                        EgroupwareBrowser.open(
+                        EgroupwareELoginBrowser.open(
                             this._egw, 
                             egwurl, 
                             ""

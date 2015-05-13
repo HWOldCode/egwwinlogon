@@ -35,19 +35,23 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
         String password     = "test";
         
         for( String s: args ) {
+            System.out.println("Argument: " + s);
+            
             String[] tmp = s.split("=");
             
+            System.out.println("Argument-Split: " + Integer.toString(tmp.length));
+            
             if( tmp.length == 2 ) {
-                if( tmp[0] == "--url" ) {
+                if( tmp[0].contains("--url") ) {
                     url = tmp[1];
                 }
-                else if( tmp[0] == "--domain" ) {
+                else if( tmp[0].contains("--domain") ) {
                     domain = tmp[1];
                 }
-                else if( tmp[0] == "--username" ) {
+                else if( tmp[0].contains("--username") ) {
                     username = tmp[1];
                 }
-                else if( tmp[0] == "--password" ) {
+                else if( tmp[0].contains("--password") ) {
                     password = tmp[1];
                 }
             }
@@ -64,6 +68,8 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
         
         egw.initEgroupware();
         egw.egwStarting();
+        
+        System.out.println("Url: " + url);
         
         if( egw.egwAuthenticateUser(username, password, domain, 
             fingerprint, new EgwWinLogonRunDebug()) == 1 ) 
