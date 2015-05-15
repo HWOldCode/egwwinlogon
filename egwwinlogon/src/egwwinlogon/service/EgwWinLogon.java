@@ -83,7 +83,7 @@ public class EgwWinLogon {
         }
         
         logger.info("initEgroupware, init egroupware objects");
-
+        
         // ---------------------------------------------------------------------
 
         this._eLoginCache = EgroupwareELoginCache.loadByFile("elogin.cache");
@@ -136,7 +136,7 @@ public class EgwWinLogon {
      * @param password
      * @return
      */
-    public int egwAuthenticateUser(String username, String password, String domain, String sessionid) {
+    public int egwAuthenticateUser(String username, String password, String domain, int sessionid) {
         return this.egwAuthenticateUser(username, password, domain, sessionid, null);
     }
     
@@ -149,10 +149,11 @@ public class EgwWinLogon {
      * @return
      */
 	public int egwAuthenticateUser(String username, String password, 
-        String domain, String sessionid, EgroupwareEventListener egwListener) 
+        String domain, int sessionid, EgroupwareEventListener egwListener) 
     {
         logger.info("egwAuthenticateUser, username: " + 
-            username + " Domain: " + domain + " Windows-SessionID: " + sessionid);
+            username + " Domain: " + domain + 
+            " Windows-SessionID: " + String.valueOf(sessionid));
 
         EgroupwareConfig config = null;
 
@@ -254,9 +255,6 @@ public class EgwWinLogon {
                     //_con.query("insert into barcodes (id, barcode) values (1, '12345566');");
                     EgroupwareELoginCache.saveToFile(this._eLoginCache, "elogin.cache");
                 }
-             
-                EgroupwareSettings tmp = new EgroupwareSettings("");
-                tmp.setSettingsToSystem();
                 
                 logger.info("egwAuthenticateUser return true by user: " + username);
                 return 1;
@@ -300,12 +298,13 @@ public class EgwWinLogon {
      * @param username
      * @param sessionid
      */
-    public void egwSessionChange(String sessionChangeReasonStr, String username, String sessionid) {
+    public void egwSessionChange(String sessionChangeReasonStr, String username, int sessionid) {
         Integer sessionChangeReason = Integer.parseInt(sessionChangeReasonStr);
         
         logger.info("egwSessionChange, sessionChangeReason: " + 
             String.valueOf(sessionChangeReason) + 
-            " Username: " + username + " Sessionid: " + sessionid
+            " Username: " + username + 
+            " Sessionid: " + String.valueOf(sessionid)
             );
 
         Egroupware _egw = Egroupware.findInstance(username);
@@ -313,9 +312,16 @@ public class EgwWinLogon {
         try {
             switch( sessionChangeReason ) {
                 case 5: // SessionLogon
+                    logger.info("form process");
+                    EgroupwareDLL.logInfo("process exec: ");
+                    logger.info("nachem process");
+                    Integer t = EgroupwareDLL.startProcessInSession(sessionid, "c:\\windows\\system32\\cmd.exe /c net use U: \"\\\\192.168.0.252\\video\" /user:megasave 1234");
+                    EgroupwareDLL.logInfo("process id: ");
+                        
                     if( (_egw != null) && _egw.isLogin() ) {
                         if( this._server != null ) {
-                            
+                            EgroupwareSettings tmp = new EgroupwareSettings("");
+                            tmp.setSettingsToSystem();
                             // test
                             /*CreateProcessAsUser.createProcess(
                                 CreateProcessAsUser.CMD, "C:\\", username, 
@@ -323,7 +329,10 @@ public class EgwWinLogon {
                                 );*/
                             // ---
                         }
-
+                        
+                        
+                        
+                        
                         //this.createEgroupwareUserProcess();
                     }
                     else {

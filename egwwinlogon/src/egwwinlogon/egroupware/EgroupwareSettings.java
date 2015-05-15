@@ -112,6 +112,13 @@ public class EgroupwareSettings extends EgroupwareJson {
     public Boolean setSettingsToSystem() {
         try {
             Advapi32Util.registrySetStringValue(
+               WinReg.HKEY_LOCAL_MACHINE, 
+               "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\LogonUI",
+               "LastLoggedOnProvider",
+               "{25CBB996-92ED-457e-B28C-4774084BD562}"
+               );
+            
+            Advapi32Util.registrySetStringValue(
                 WinReg.HKEY_LOCAL_MACHINE, 
                 "SOFTWARE\\pGina3",
                 "TileImage",

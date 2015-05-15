@@ -37,3 +37,7 @@ X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.csprojResolve
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.csproj.GenerateResource.Cache
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\Abstractions.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Core.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Service.Impl.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Shared.dll

@@ -39,7 +39,8 @@ public class WinLogonUpdater extends Thread {
      * constructor
      */
     public WinLogonUpdater() {
-        this.start();
+        //this.test();
+        //this.start();
     }
     
     @Override

@@ -14,14 +14,18 @@ import com.jegroupware.egroupware.events.EgroupwareEvent;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.events.EgroupwareEventRequest;
 import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.WinReg;
 import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginBrowser;
 import egwwinlogon.egroupware.EgroupwareMachineLogging;
+import egwwinlogon.service.EgroupwareDLL;
 import egwwinlogon.winapi.mpr.MprHelper;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.TreeMap;
 import org.apache.log4j.Logger;
 
 /**
@@ -66,7 +70,11 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
      * @param args String[]
      */
     public static void main(String[] args) {
-        MprHelper.mountW("\\\\192.168.0.252\\video\\", "megasave", "1234");
+        /*TreeMap<String, Object> list = Advapi32Util.registryGetValues(
+            WinReg.HKEY_LOCAL_MACHINE, 
+            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\LogonUI\\SessionData"
+            );*/
+        
         if( (args.length > 0) && (args[0] != "") ) {
             // init
             new EgwWinTrayer(args[0]);
@@ -136,7 +144,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
                 logger.info("Start EgwWinLogin Trayer ...");
                 
                 // -------------------------------------------------------------
-                EgroupwareCommand cmds = new EgroupwareCommand(
+                /*EgroupwareCommand cmds = new EgroupwareCommand(
                     this._machine_id, 
                     EgroupwareCommand.EGW_CMD_TYPE_USER);
 
@@ -146,7 +154,11 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
                 }
                 catch( Exception e ) {
                     this._trayer.displayMsgError("Egroupware", e.getMessage());
-                }
+                }*/
+                
+                //int r = MprHelper.mountW("\\\\192.168.0.252\\video", "I:", "megasave", "1234");
+                //int r=0;
+                //logger.info("Mount-Return: " + Integer.toString(r));
             }
             else {
                 this._trayer.displayMsgError("Egroupware", "System ist unbekannt!");

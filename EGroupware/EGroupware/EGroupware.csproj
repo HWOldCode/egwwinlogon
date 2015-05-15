@@ -51,8 +51,9 @@
     </StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Abstractions">
-      <HintPath>..\..\..\..\..\..\..\Program Files\pGina\Abstractions.dll</HintPath>
+    <Reference Include="Abstractions, Version=3.1.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\pGina\Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="jni4net.n-0.8.8.0">
       <HintPath>.\jni4net.n-0.8.8.0.dll</HintPath>
@@ -60,8 +61,15 @@
     <Reference Include="log4net">
       <HintPath>..\..\..\..\..\..\..\Program Files\pGina\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="pGina.Shared">
-      <HintPath>..\..\..\..\..\..\..\Program Files\pGina\pGina.Shared.dll</HintPath>
+    <Reference Include="pGina.Core">
+      <HintPath>C:\Program Files\pGina\pGina.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="pGina.Service.Impl">
+      <HintPath>C:\Program Files\pGina\pGina.Service.Impl.dll</HintPath>
+    </Reference>
+    <Reference Include="pGina.Shared, Version=3.1.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\pGina\pGina.Shared.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

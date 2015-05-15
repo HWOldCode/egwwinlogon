@@ -14,30 +14,30 @@ import com.sun.jna.WString;
  */
 public class MprHelper {
     
-    public static void mountW(String remotepath, String username, String password) {
-        NETRESOURCEW lpNetResource;
+    public static void mountA(String remotepath, String username, String password) {
+        NETRESOURCEA lpNetResource;
         
         int dwFlags;
         int errorCode;
 
-        lpNetResource = new NETRESOURCEW();
+        lpNetResource = new NETRESOURCEA();
         lpNetResource.dwScope = 0;
         lpNetResource.dwType = NETRESOURCE.RESOURCETYPE_DISK;
         lpNetResource.dwDisplayType = NETRESOURCE.RESOURCEDISPLAYTYPE_SHARE;
         lpNetResource.dwUsage = NETRESOURCE.RESOURCEUSAGE_CONNECTABLE;
-        lpNetResource.lpLocalName = null;
-        lpNetResource.lpRemoteName = new WString(remotepath);
+        lpNetResource.lpLocalName = "G:";
+        lpNetResource.lpRemoteName = remotepath;
         lpNetResource.lpComment = null;
         lpNetResource.lpProvider = null;
         
-        WString lpPassword = new WString(password);
-        WString lpUserName = new WString(username);
+        String lpPassword = password;
+        String lpUserName = username;
         
         dwFlags = Mpr.CONNECT_TEMPORARY;
         
         System.out.println("Mounting Windows Share [" + lpNetResource.lpRemoteName + "] [" + lpUserName + "] ...");
 
-        errorCode = Mpr.INSTANCE.WNetAddConnection2W(
+        errorCode = Mpr.INSTANCE.WNetAddConnection2A(
             lpNetResource, 
             lpPassword, 
             lpUserName, 
@@ -45,5 +45,47 @@ public class MprHelper {
             );
 
         System.out.println("Mounting Windows Share: " + errorCode);
+    }
+    
+    
+    /**
+     * mountW
+     * 
+     * @param remotepath
+     * @param localname
+     * @param username
+     * @param password
+     * @return 
+     */
+    public static int mountW(String remotepath, String localname, String username, String password) {
+        NETRESOURCEW lpNetResource;
+        
+        int dwFlags;
+
+        lpNetResource               = new NETRESOURCEW();
+        lpNetResource.dwScope       = 0;
+        lpNetResource.dwType        = NETRESOURCE.RESOURCETYPE_ANY;
+        lpNetResource.dwDisplayType = NETRESOURCE.RESOURCEDISPLAYTYPE_SHARE;
+        lpNetResource.dwUsage       = NETRESOURCE.RESOURCEUSAGE_CONNECTABLE;
+        lpNetResource.lpLocalName   = new WString(localname);
+        lpNetResource.lpRemoteName  = new WString(remotepath);
+        lpNetResource.lpComment     = null;
+        lpNetResource.lpProvider    = null;//new WString("Microsoft Windows-Netzwerk");
+        
+        WString lpPassword = new WString(password);
+        WString lpUserName = new WString(username);
+        
+        dwFlags = Mpr.CONNECT_INTERACTIVE;
+        
+        //System.out.println("Mounting Windows Share [" + lpNetResource.lpRemoteName + "] [" + lpUserName + "] ...");
+
+        return Mpr.INSTANCE.WNetAddConnection2W(
+            lpNetResource, 
+            lpPassword, 
+            lpUserName, 
+            dwFlags
+            );
+
+        //System.out.println("Mounting Windows Share: " + errorCode);
     }
 }

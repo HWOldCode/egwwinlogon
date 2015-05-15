@@ -72,7 +72,7 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
         System.out.println("Url: " + url);
         
         if( egw.egwAuthenticateUser(username, password, domain, 
-            fingerprint, new EgwWinLogonRunDebug()) == 1 ) 
+            0, new EgwWinLogonRunDebug()) == 1 ) 
         {
             System.out.println("User login: " + username);
             
