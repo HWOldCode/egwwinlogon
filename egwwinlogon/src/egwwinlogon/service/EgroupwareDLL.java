@@ -40,6 +40,16 @@ public class EgroupwareDLL {
     static public native int startProcessInSession(int sessionId, String cmdLine);
     
     /**
+     * startProcessInSession
+     * start a process in a session
+     * 
+     * @param sessionId
+     * @param cmdLine
+     * @return 
+     */
+    static public native int startUserProcessInSession(int sessionId, String cmdLine);
+    
+    /**
      * logInfo
      * log a message as info
      * 
@@ -66,6 +76,15 @@ public class EgroupwareDLL {
     static public native boolean validateCredentials(String username, String domain, String password);
     
     /**
+     * getCredentials
+     * 
+     * @param title
+     * @param message
+     * @return 
+     */
+    static public native String getCredentials(String title, String message);
+    
+    /**
      * setSetting
      * set setting in egroupware.dll
      * 
@@ -73,4 +92,20 @@ public class EgroupwareDLL {
      * @param value 
      */
     static public native void setSetting(String name, String value);
+    
+    /**
+     * logoffSession
+     * 
+     * @param sessionId
+     * @return 
+     */
+    static public native boolean logoffSession(int sessionId);
+    
+    /**
+     * getUsername
+     * 
+     * @param sessionId
+     * @return 
+     */
+    static public native String getUsername(int sessionId);
 }

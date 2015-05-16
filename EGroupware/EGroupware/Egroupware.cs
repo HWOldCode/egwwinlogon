@@ -24,6 +24,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 using java.io;
+using System.Net;
 
 /**
  * http://jni4net.googlecode.com/svn/tags/0.3.0.0/jni4net.n/src/Bridge.JVM.convertor.cs
@@ -117,6 +118,10 @@ namespace pGina.Plugin.EGroupware
             }
         }
 
+        // ------------------------------------------------------------------------------------
+        // ------------------------------------------------------------------------------------
+        // ------------------------------------------------------------------------------------
+
         /**
          * _registerJavaMethods
          */
@@ -130,10 +135,14 @@ namespace pGina.Plugin.EGroupware
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "isRunAsService", "_isRunAsService", "()Z"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getAppDir", "_getAppDir", "()Ljava/lang/String;"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "startProcessInSession", "_startProcessInSession", "(ILjava/lang/String;)I"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "startUserProcessInSession", "_startUserProcessInSession", "(ILjava/lang/String;)I"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "logInfo", "_logInfo", "(Ljava/lang/String;)V"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "logError", "_logError", "(Ljava/lang/String;)V"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "validateCredentials", "_validateCredentials", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getCredentials", "_getCredentials", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "setSetting", "_setSetting", "(Ljava/lang/String;Ljava/lang/String;)V"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "logoffSession", "_logoffSession", "(I)Z"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getUsername", "_getUsername", "(I)Ljava/lang/String;"));
 
                     JNINativeMethod.Register(methods, egroupwareDllClass, env);
                 }
@@ -186,8 +195,32 @@ namespace pGina.Plugin.EGroupware
          * _startProcessInSession
          * method to java
          */
-        private static int _startProcessInSession(IntPtr @__envp, JniLocalHandle @__obj, int sessionId, JniLocalHandle cmdLine)
-        {
+        private static int _startProcessInSession(IntPtr @__envp, JniLocalHandle @__obj, int sessionId, JniLocalHandle cmdLine) {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                string tcmdLine = Convertor.StrongJ2CString(env, cmdLine);
+                int tsessionid = sessionId;
+
+                Process proc = pInvokes.StartProcessInSession(tsessionid, tcmdLine);
+
+                if( proc != null ) {
+                    return (int) proc.Id;
+                }
+            }
+            catch (global::System.Exception __ex) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return default(int);
+        }
+
+        /**
+         * _startUserProcessInSession
+         * method to java
+         */
+        private static int _startUserProcessInSession(IntPtr @__envp, JniLocalHandle @__obj, int sessionId, JniLocalHandle cmdLine) {
             JNIEnv env = JNIEnv.Wrap(@__envp);
 
             try {
@@ -196,23 +229,17 @@ namespace pGina.Plugin.EGroupware
 
                 Process proc = pInvokes.StartUserProcessInSession(tsessionid, tcmdLine);
 
-                if( proc != null ) {
-                    return (int) proc.Id;
+                if (proc != null) {
+                    return (int)proc.Id;
                 }
             }
-            catch (global::System.Exception __ex)
-            {
+            catch (global::System.Exception __ex) {
                 EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
                 env.ThrowExisting(__ex);
             }
 
             return default(int);
         }
-
-        /*private static void _mapDiveInSession()
-        {
-            pInvokes.StartUserProcessInSession
-        }*/
 
         /**
          * _logInfo
@@ -254,7 +281,8 @@ namespace pGina.Plugin.EGroupware
          * _validateCredentials
          * method to java
          */
-        private static bool _validateCredentials(IntPtr @__envp, JniLocalHandle @__obj, JniLocalHandle username, JniLocalHandle domain, JniLocalHandle password)
+        private static bool _validateCredentials(IntPtr @__envp, JniLocalHandle @__obj, 
+            JniLocalHandle username, JniLocalHandle domain, JniLocalHandle password) 
         {
             JNIEnv env = JNIEnv.Wrap(@__envp);
 
@@ -274,17 +302,95 @@ namespace pGina.Plugin.EGroupware
         }
 
         /**
+         * _getCredentials
+         * method to java
+         */
+        private static JniLocalHandle _getCredentials(IntPtr @__envp, JniLocalHandle @__obj,
+            JniLocalHandle title, JniLocalHandle message)
+        {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                string treturn  = "";
+                string ttitle   = Convertor.StrongJ2CString(env, title);
+                string tmessage = Convertor.StrongJ2CString(env, message);
+
+                NetworkCredential nc = pInvokes.GetCredentials(ttitle, tmessage);
+
+                if (nc != null) {
+                    treturn = treturn + "{username:" + nc.UserName + "}";
+                    treturn = treturn + "{domain:" + nc.Domain + "}";
+                    treturn = treturn + "{password:" + nc.Password + "}";
+                }
+
+                return Convertor.StrongC2JString(env, treturn);
+            }
+            catch (global::System.Exception __ex) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return default(JniLocalHandle);
+        }
+
+        /**
          * _setSetting
          * method to java
          */
-        private static void _setSetting(IntPtr @__envp, JniLocalHandle @__obj, JniLocalHandle name, JniLocalHandle value)
-        {
+        private static void _setSetting(IntPtr @__envp, JniLocalHandle @__obj, JniLocalHandle name, JniLocalHandle value) {
             JNIEnv env = JNIEnv.Wrap(@__envp);
-            //string tname    = name;
-            //string tvalue   = value;
 
-            //Settings.Store.SetDefault(tname, tvalue);
+            try {
+                string tname    = Convertor.StrongJ2CString(env, name);
+                string tvalue   = Convertor.StrongJ2CString(env, value);
+
+                Settings.Store.SetDefault(tname, tvalue);
+            }
+            catch (global::System.Exception __ex) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
         }
+
+        /**
+         * _logoffSession
+         * method to java
+         */
+        private static bool _logoffSession(IntPtr @__envp, JniLocalHandle @__obj, int sessionId) {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                return pInvokes.LogoffSession(sessionId);
+            }
+            catch (global::System.Exception __ex) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return false;
+        }
+
+        /**
+         * _getUsername
+         * method to java
+         */
+        private static JniLocalHandle _getUsername(IntPtr @__envp, JniLocalHandle @__obj, int sessionId) {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                return Convertor.StrongC2JString(env, pInvokes.GetUserName(sessionId));
+            }
+            catch (global::System.Exception __ex) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return default(JniLocalHandle);
+        }
+
+        // ------------------------------------------------------------------------------------
+        // ------------------------------------------------------------------------------------
+        // ------------------------------------------------------------------------------------
 
         /**
          * initUpdaterJava
@@ -345,11 +451,13 @@ namespace pGina.Plugin.EGroupware
                     string domain       = Settings.Store.domain;
                     string mname        = System.Environment.MachineName;
                     string fingerprint  = SysFingerPrint.Value();
+                    string startApp     = Settings.Store.startapp;
 
                     this._egwSetSetting("url", url);
                     this._egwSetSetting("domain", domain);
                     this._egwSetSetting("machinename", mname);
                     this._egwSetSetting("sysfingerprint", fingerprint);
+                    this._egwSetSetting("startapp", startApp);
 
                     if( !this._isService ) {
                         // no conflict set other port for 
@@ -417,6 +525,72 @@ namespace pGina.Plugin.EGroupware
             }
             else {
                 EGWWinLogin._logger.InfoFormat("_jEgwWinLogon is empty in _egwAuthenticateUser");
+            }
+
+            return false;
+        }
+
+        /**
+         * _egwAuthenticatedUserGateway
+         * 
+         */
+        private bool _egwAuthenticatedUserGateway(string username, string password, string domain) {
+            EGWWinLogin._logger.InfoFormat("_egwAuthenticatedUserGateway {0}", username);
+
+            if( domain == null ) {
+                domain = "";
+            }
+
+            if( this._jEgwWinLogon != null ) {
+                bool ret = this._jEgwWinLogon.Invoke<bool>(
+                    "egwAuthenticatedUserGateway",
+                    "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z",
+                    username,
+                    password,
+                    domain
+                    );
+
+                EGWWinLogin._logger.InfoFormat("return: {0}", ret);
+
+                if (ret == true ) {
+                    return true;
+                }
+            }
+            else {
+                EGWWinLogin._logger.InfoFormat("_jEgwWinLogon is empty in _egwAuthenticatedUserGateway");
+            }
+
+            return false;
+        }
+
+        /**
+         * _egwAuthorizeUser
+         * 
+         */
+        private bool _egwAuthorizeUser(string username, string password, string domain) {
+            EGWWinLogin._logger.InfoFormat("_egwAuthorizeUser {0}", username);
+
+            if( domain == null ) {
+                domain = "";
+            }
+
+            if( this._jEgwWinLogon != null ) {
+                bool ret = this._jEgwWinLogon.Invoke<bool>(
+                    "egwAuthorizeUser",
+                    "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z",
+                    username,
+                    password,
+                    domain
+                    );
+
+                EGWWinLogin._logger.InfoFormat("return: {0}", ret);
+
+                if( ret == true ) {
+                    return true;
+                }
+            }
+            else {
+                EGWWinLogin._logger.InfoFormat("_jEgwWinLogon is empty in _egwAuthorizeUser");
             }
 
             return false;
@@ -578,6 +752,10 @@ namespace pGina.Plugin.EGroupware
             }
         }
 
+        // ------------------------------------------------------------------------------------
+        // ------------------------------------------------------------------------------------
+        // ------------------------------------------------------------------------------------
+
         /**
          * Name
          */
@@ -618,10 +796,11 @@ namespace pGina.Plugin.EGroupware
          * Starting
          */
         public void Starting() {
-            this._shouldStop = false;
+            /*this._shouldStop = false;
 
             Thread thread = new Thread(new ThreadStart(this.workThreadFunction));
             thread.Start();
+            */
 
             try{
                 if( this._jEgwWinLogon != null ) {
@@ -639,7 +818,7 @@ namespace pGina.Plugin.EGroupware
          * Stopping
          */
         public void Stopping() {
-            this._shouldStop = true;
+            //this._shouldStop = true;
 
             try{
                 if( this._jEgwWinLogon != null ) {
@@ -711,58 +890,41 @@ namespace pGina.Plugin.EGroupware
             string password = userInfo.Password;
             string domain   = userInfo.Domain;
 
-            EGWWinLogin._logger.InfoFormat("AuthenticatedUserGateway: username {0} password: {1} domain: {2}", 
+            EGWWinLogin._logger.InfoFormat("AuthenticatedUserGateway: username {0} password: {1} domain: {2}",
                 username, password, domain);
-            /*try {
-                List<GroupGatewayRule> rules = GroupRuleLoader.GetGatewayRules();
 
-            }*/
+            if (this._egwAuthenticatedUserGateway(username, password, domain)) {
+                return new Shared.Types.BooleanResult { Success = true };
+            }
 
-            // Always return success
-            return new Shared.Types.BooleanResult { Success = true };
+            return new Shared.Types.BooleanResult { Success = false };
         }
 
         /**
          * AuthorizeUser
+         * 
          */
         public BooleanResult AuthorizeUser(SessionProperties properties) {
-            /*this._logger.InfoFormat("AuthorizeUser: username {0} password: {1} domain: {2}",
-                username, password, domain);*/
+            UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
 
-            /*try
-            {*/
-                bool alwaysAuth = true;
+            string username = userInfo.Username;
+            string password = userInfo.Password;
+            string domain = userInfo.Domain;
 
-                EGWWinLogin._logger.DebugFormat("AuthenticateUser({0})", properties.Id.ToString());
+            EGWWinLogin._logger.InfoFormat("AuthorizeUser: username {0} password: {1} domain: {2}",
+                username, password, domain);
 
-                UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
-
-                string username = userInfo.Username;
-                string password = userInfo.Password;
-                string domain = userInfo.Domain;
-
-                EGWWinLogin._logger.DebugFormat("Found username: {0}", username);
-
-                if( alwaysAuth /* && */)
-                {
-
-                }
-
-                EGWWinLogin._logger.ErrorFormat("Failed to authenticate user: {0}", username);
-
-                // Note that we don't include a message.  We are a last chance auth, and want previous/failed plugins
-                //  to have the honor of explaining why.
-                //return new BooleanResult() { Success = false, Message = null }; 
-            /*}
-            catch (Exception e)
-            {
-                EGWWinLogin._logger.ErrorFormat("AuthenticateUser exception: {0}", e);
-                throw;  // Allow pGina service to catch and handle exception
-            }*/
+            if (this._egwAuthorizeUser(username, password, domain)) {
+                return new BooleanResult {
+                    Success = true,
+                    Message = string.Format("Allow")
+                };
+            }
 
             return new BooleanResult {
-                Success = true,
-                Message = string.Format("Allow")};
+                Success = false,
+                Message = string.Format("no Authorize")
+            };
         }
 
         /**
@@ -814,12 +976,12 @@ namespace pGina.Plugin.EGroupware
                 switch( changeDescription.Reason ) {
                     case System.ServiceProcess.SessionChangeReason.SessionLogon:
 
-                        if( startApp == "1" ) {
+                        /*if( startApp == "1" ) {
                             this.startUserApp(sessionid, username);
                         }
                         else {
                             this._plist.Add(username, null);
-                        }
+                        }*/
 
                         this._egwSessionChange(5, username, sessionid);
                         //LogonEvent(changeDescription.SessionId);
@@ -827,7 +989,7 @@ namespace pGina.Plugin.EGroupware
 
                     case System.ServiceProcess.SessionChangeReason.SessionLogoff:
                         
-                        if( this._plist.ContainsKey(username) ) {
+                        /*if( this._plist.ContainsKey(username) ) {
                             Process tp = this._plist[username];
 
                             if( tp != null ) {
@@ -837,7 +999,7 @@ namespace pGina.Plugin.EGroupware
                             }
 
                             this._plist.Remove(username);
-                        }
+                        }*/
 
                         this._egwSessionChange(6, username, sessionid);
                         break;
@@ -851,8 +1013,6 @@ namespace pGina.Plugin.EGroupware
                         break;
                 }
 
-                
-
                 if( this._egwIsError() ) {
                     EGWWinLogin._logger.InfoFormat("Egroupware Error: {0}", this._egwGetError());
                 }
@@ -862,7 +1022,7 @@ namespace pGina.Plugin.EGroupware
         /**
          * workThreadFunction 
          */
-        public void workThreadFunction() {
+        /*public void workThreadFunction() {
             while( !this._shouldStop ) {
                 Thread.Sleep(100);
 
@@ -890,7 +1050,7 @@ namespace pGina.Plugin.EGroupware
                     }
                 }
             }
-        }
+        }*/
 
         /**
          * Configure
@@ -904,6 +1064,8 @@ namespace pGina.Plugin.EGroupware
          * Main Example and Debug used
          **/
         public static void Main() {
+            //NetworkCredential tmp = pInvokes.GetCredentials("Test", "gib deine Daten ein");
+            //Console.WriteLine(tmp.Password);
             //WTS.ListUsers("localhost");
             //usbControl u = new usbControl();
 

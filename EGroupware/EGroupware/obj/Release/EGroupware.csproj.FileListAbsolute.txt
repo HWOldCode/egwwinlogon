@@ -35,9 +35,9 @@ F:\veracrypt1\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.dl
 F:\veracrypt1\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.pdb
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.csprojResolveAssemblyReference.cache
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.csproj.GenerateResource.Cache
-X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.dll
-X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\Abstractions.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Core.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Service.Impl.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Shared.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.dll

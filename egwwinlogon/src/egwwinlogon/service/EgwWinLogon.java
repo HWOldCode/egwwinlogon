@@ -58,9 +58,6 @@ public class EgwWinLogon {
      */
     protected EgwWinLogonDb _db = null;
 
-    public native void callStartApplication(String cmd);
-    public native void callLogApp(String log);
-
     /**
      * initEgroupware
      *
@@ -292,6 +289,40 @@ public class EgwWinLogon {
 	}
 
     /**
+     * egwAuthenticatedUserGateway
+     * 
+     * @param username
+     * @param password
+     * @param domain
+     * @return 
+     */
+    public Boolean egwAuthenticatedUserGateway(String username, String password, String domain) {
+        // moment ever true
+        if( true ) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * egwAuthorizeUser
+     * 
+     * @param username
+     * @param password
+     * @param domain
+     * @return 
+     */
+    public Boolean egwAuthorizeUser(String username, String password, String domain) {
+        // moment ever true
+        if( true ) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
      * egwSessionChange
      * 
      * @param sessionChangeReason
@@ -429,14 +460,6 @@ public class EgwWinLogon {
 	 */
 	public String egwGetVersion() {
 		return "14.2";
-	}
-
-    /**
-     * egwAuthenticatedUserGateway
-     * @return 
-     */
-	public int egwAuthenticatedUserGateway() {
-		return 0;
 	}
 
     /**
