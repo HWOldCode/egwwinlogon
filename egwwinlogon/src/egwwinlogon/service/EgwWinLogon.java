@@ -28,6 +28,11 @@ public class EgwWinLogon {
      */
     private static final Logger logger = Logger.getLogger(EgwWinLogon.class);
 
+    /**
+     * _settings
+     */
+    static protected LinkedHashMap _settings = new LinkedHashMap();
+    
 	/**
 	 * Global Error
 	 */
@@ -37,12 +42,7 @@ public class EgwWinLogon {
      * LogonHttpServer
      */
     protected LogonHttpServer _server = null;
-
-    /**
-     * _settings
-     */
-    protected LinkedHashMap _settings = new LinkedHashMap();
-
+    
     /**
      * Egroupware Configs
      */
@@ -90,7 +90,7 @@ public class EgwWinLogon {
         }
         
         if( this._server == null ) {
-            String tport = (String) this._settings.get("httpserverport");
+            String tport = (String) EgwWinLogon._settings.get("httpserverport");
             
             if( tport == null ) {
                 this._server = new LogonHttpServer();
@@ -107,7 +107,7 @@ public class EgwWinLogon {
             }
 
             EgwWinLogonHttpHandlerConfig config = new EgwWinLogonHttpHandlerConfig(
-                (String) this._settings.get("sysfingerprint"));
+                (String) EgwWinLogon._settings.get("sysfingerprint"));
             config.register(this._server);
 
             EgwWinLogonHttpHandlerLogger httplogger = new EgwWinLogonHttpHandlerLogger();
@@ -163,8 +163,8 @@ public class EgwWinLogon {
             config = new EgroupwareConfig();
         }
 
-        config.setUrl((String) this._settings.get("url"));
-        config.setDomain((String) this._settings.get("domain"));
+        config.setUrl((String) EgwWinLogon._settings.get("url"));
+        config.setDomain((String) EgwWinLogon._settings.get("domain"));
         config.setUser(username);
         config.setPassword(password);
 
@@ -188,16 +188,16 @@ public class EgwWinLogon {
                     
                     // machine info send
                     EgroupwareMachineInfo mi = new EgroupwareMachineInfo(
-                        (String) this._settings.get("sysfingerprint"));
+                        (String) EgwWinLogon._settings.get("sysfingerprint"));
 
-                    mi.setMachineName((String) this._settings.get("machinename"));
+                    mi.setMachineName((String) EgwWinLogon._settings.get("machinename"));
                     _egw.request(mi);
                     // ---------------------------------------------------------
                     
                     logger.info("Set Machine Logging ...");
                     
                     EgroupwareMachineLogging egwlog = new EgroupwareMachineLogging(
-                        (String) this._settings.get("sysfingerprint"),
+                        (String) EgwWinLogon._settings.get("sysfingerprint"),
                         config
                         );
                     
@@ -221,16 +221,14 @@ public class EgwWinLogon {
                     logger.info("Login by user: " + username + "@" + domain);
                     // ---------------------------------------------------------
 
-                    /*EgroupwareCommand cmds = new EgroupwareCommand(
-                        (String) this._settings.get("sysfingerprint"), 
-                        EgroupwareCommand.EGW_CMD_TYPE_USER);
-
-                    try {
-                        _egw.request(cmds);
-                        cmds.execute();
+                    // final init wlt
+                    EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(username);
+                    
+                    if( _wlt == null ) {
+                        _wlt = new EgwWinLogonThread(_egw);
                     }
-                    catch( Exception e ) {
-                    }*/
+                    
+                    // ---------------------------------------------------------
                 }
                 catch( Exception ec ) {
                     // nothing
@@ -296,7 +294,7 @@ public class EgwWinLogon {
      * @param domain
      * @return 
      */
-    public Boolean egwAuthenticatedUserGateway(String username, String password, String domain) {
+    public boolean egwAuthenticatedUserGateway(String username, String password, String domain) {
         // moment ever true
         if( true ) {
             return true;
@@ -313,7 +311,7 @@ public class EgwWinLogon {
      * @param domain
      * @return 
      */
-    public Boolean egwAuthorizeUser(String username, String password, String domain) {
+    public boolean egwAuthorizeUser(String username, String password, String domain) {
         // moment ever true
         if( true ) {
             return true;
@@ -338,47 +336,34 @@ public class EgwWinLogon {
             " Sessionid: " + String.valueOf(sessionid)
             );
 
-        Egroupware _egw = Egroupware.findInstance(username);
+        // main objects
+        Egroupware _egw         = Egroupware.findInstance(username);
+        EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(sessionid);
+        
+        if( _wlt == null ) {
+            _wlt = EgwWinLogonThread.getInstance(username);
+            
+            if( _wlt != null ) {
+                _wlt.setSessionId(sessionid);
+            }
+        }
         
         try {
             switch( sessionChangeReason ) {
                 case 5: // SessionLogon
-                    logger.info("form process");
+                   
+                    /*logger.info("form process");
                     EgroupwareDLL.logInfo("process exec: ");
                     logger.info("nachem process");
                     Integer t = EgroupwareDLL.startProcessInSession(sessionid, "c:\\windows\\system32\\cmd.exe /c net use U: \"\\\\192.168.0.252\\video\" /user:megasave 1234");
                     EgroupwareDLL.logInfo("process id: ");
-                        
-                    if( (_egw != null) && _egw.isLogin() ) {
-                        if( this._server != null ) {
-                            EgroupwareSettings tmp = new EgroupwareSettings("");
-                            tmp.setSettingsToSystem();
-                            // test
-                            /*CreateProcessAsUser.createProcess(
-                                CreateProcessAsUser.CMD, "C:\\", username, 
-                                _egw.getConfig().getPassword()
-                                );*/
-                            // ---
-                        }
-                        
-                        
-                        
-                        
-                        //this.createEgroupwareUserProcess();
-                    }
-                    else {
-                        EgwWinLogon._error = "please login in egroupware";
-                    }
+                    */    
                     break;
-
-                case 6:
-                    if( (_egw != null) && _egw.isLogin() ) {
-                        this.logoutEgw(username);
-                    }
-                    else {
-                        EgwWinLogon._error = "egroupware instance empty";
-                    }
-                    break;
+            }
+            
+            // set session status
+            if( _wlt != null ) {
+                _wlt.setSessionStatus(sessionChangeReason);
             }
         }
         catch( Exception e ) {
@@ -524,10 +509,23 @@ public class EgwWinLogon {
      * @param value
      */
     public void setSetting(String key, String value) {
-        if( this._settings.containsKey(key) ) {
-            this._settings.remove(key);
+        if( EgwWinLogon._settings.containsKey(key) ) {
+            EgwWinLogon._settings.remove(key);
         }
 
-        this._settings.put(key, value);
+        EgwWinLogon._settings.put(key, value);
+    }
+    
+    /**
+     * getSetting
+     * @param key
+     * @return 
+     */
+    static public String getSetting(String key) {
+        if( EgwWinLogon._settings.containsKey(key) ) {
+            return (String) EgwWinLogon._settings.get(key);
+        }
+        
+        return "";
     }
 }

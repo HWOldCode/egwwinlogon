@@ -7,6 +7,7 @@ package egwwinlogon.egroupware;
 
 import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
+import egwwinlogon.service.EgroupwareDLL;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -114,17 +115,19 @@ public class EgroupwareCommand extends EgroupwareJson {
     
     /**
      * execute
+     * @param sessionId 
      */
-    public void execute() {
+    public void execute(int sessionId) {
         if( this._cmds != null ) {
             for( int i=0; i<this._cmds.size(); i++ ) {
                 String cmd = (String) this._cmds.get(i);
                 
-                logger.info("Userapp Cmd: " + cmd);
+                logger.info("EgroupwareCommand execute-Cmd: " + cmd);
                 
                 try {
-                    Process proc = Runtime.getRuntime().exec("cmd /c " + cmd);
+                    int pid = EgroupwareDLL.startUserProcessInSession(sessionId, "cmd /c " + cmd); //Runtime.getRuntime().exec("cmd /c " + cmd);
                     
+                    logger.info("EgroupwareCommand pid: " + String.valueOf(pid));
                     /*String cmdout = "";
                     
                     Reader r = new InputStreamReader(proc.getInputStream());
