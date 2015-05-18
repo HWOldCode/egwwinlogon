@@ -5,6 +5,7 @@
  */
 package egwwinlogon.updater;
 
+import egwwinlogon.service.EgwWinLogon;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Enumeration;
@@ -36,22 +38,57 @@ public class WinLogonUpdater extends Thread {
     private final String _root                  = "update/";
     
     /**
+     * version old
+     */
+    private String _oldVersion  = "";
+    
+    /**
+     * version new
+     */
+    private String _newVersion  = "";
+    
+    /**
      * constructor
      */
     public WinLogonUpdater() {
-        //this.test();
-        //this.start();
+        this.run();
+    }
+
+    /**
+	 * main
+	 * @param args String[]
+	 */
+	public static void main(String[] args) {
+        WinLogonUpdater lu = new WinLogonUpdater();
     }
     
+    /**
+     * run
+     */
     @Override
     public void run() {
         try {
-            this._downloadFile(this._getDownloadLinkFromHost());
-            this._unzip();
-            this._copyFiles(
-                new File(this._root), 
-                new File("").getAbsolutePath()
-                );
+            //File jardir = WinLogonUpdater.getJarDir(WinLogonUpdater.class);
+            //System.out.println(jardir.toString());
+            //System.exit(1);
+            String lastVersion  = WinLogonUpdater.getLatestVersion();
+            EgwWinLogon wl      = new EgwWinLogon();
+            
+            if( !wl.egwGetVersion().equals(lastVersion) ) {
+                this._newVersion = lastVersion;
+                this._oldVersion = wl.egwGetVersion();
+                
+                this._downloadFile(this._getDownloadLinkFromHost());
+                this._unzip();
+                this._copyFiles(
+                    new File(this._root), 
+                    new File("").getAbsolutePath()
+                    );
+            }
+            else {
+                this._oldVersion = wl.egwGetVersion();
+                this._newVersion = this._oldVersion;
+            }
         }
         catch (Exception ex) {
             ex.printStackTrace();
@@ -265,6 +302,61 @@ public class WinLogonUpdater extends Thread {
             else {
                 ff.delete();
             }
+        }
+    }
+    
+    /**
+     * getJarDir
+     * @param aclass
+     * @return 
+     */
+    public static File getJarDir(Class aclass) {
+        URL url;
+        String extURL;      //  url.toExternalForm();
+
+        // get an url
+        try {
+            url = aclass.getProtectionDomain().getCodeSource().getLocation();
+              // url is in one of two forms
+              //        ./build/classes/   NetBeans test
+              //        jardir/JarName.jar  froma jar
+        } 
+        catch (SecurityException ex) {
+            url = aclass.getResource(aclass.getSimpleName() + ".class");
+            // url is in one of two forms, both ending "/com/physpics/tools/ui/PropNode.class"
+            //          file:/U:/Fred/java/Tools/UI/build/classes
+            //          jar:file:/U:/Fred/java/Tools/UI/dist/UI.jar!
+        }
+
+        // convert to external form
+        extURL = url.toExternalForm();
+        
+        // prune for various cases
+        if( extURL.endsWith(".jar") ) {   // from getCodeSource
+            extURL = extURL.substring(0, extURL.lastIndexOf("/"));
+        }
+        else {  // from getResource
+            String suffix = "/"+(aclass.getName()).replace(".", "/")+".class";
+            extURL = extURL.replace(suffix, "");
+            
+            if( extURL.startsWith("jar:") && extURL.endsWith(".jar!") ) {
+                extURL = extURL.substring(4, extURL.lastIndexOf("/"));
+            }
+        }
+
+        // convert back to url
+        try {
+            url = new URL(extURL);
+        } catch (MalformedURLException mux) {
+            // leave url unchanged; probably does not happen
+        }
+
+        // convert url to File
+        try {
+            return new File(url.toURI());
+        } 
+        catch( URISyntaxException ex ) {
+            return new File(url.getPath());
         }
     }
 }

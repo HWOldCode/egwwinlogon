@@ -289,7 +289,7 @@ public class EgwWinLogonThread implements Runnable {
                     String.valueOf(this._userappProcessId));
             }
             else {
-                try {
+                /*try {
                     if( !ProcessUtils.existProcessById(this._userappProcessId) ) {
 
                         String username = EgroupwareDLL.getUsername(this._sessionId);
@@ -309,6 +309,7 @@ public class EgwWinLogonThread implements Runnable {
                 catch( Exception ex ) {
                     logger.error(ex.getMessage());
                 }
+                */
             }
         }
     }

@@ -25,6 +25,8 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.TreeMap;
 import org.apache.log4j.Logger;
 
@@ -33,7 +35,7 @@ import org.apache.log4j.Logger;
  * 
  * @author Stefan Werfling
  */
-public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
+public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, MouseListener {
     
     /**
      * logger
@@ -70,11 +72,6 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
      * @param args String[]
      */
     public static void main(String[] args) {
-        /*TreeMap<String, Object> list = Advapi32Util.registryGetValues(
-            WinReg.HKEY_LOCAL_MACHINE, 
-            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\LogonUI\\SessionData"
-            );*/
-        
         if( (args.length > 0) && (args[0] != "") ) {
             // init
             new EgwWinTrayer(args[0]);
@@ -107,15 +104,12 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
         }
         
         this._trayer = new Trayer();
+        this._trayer.addMouseListener(this);
         this._trayer.setIconTooltip(this._trayerTitle + ": " + username);
         
         // set popup
         PopupMenu popup = new PopupMenu();
         popup.add(new MenuItem("About"));
-        popup.addSeparator();
-        popup.add(new MenuItem("Addressbook"));
-        popup.add(new MenuItem("Calendar"));
-        popup.add(new MenuItem("InfoLog"));
         popup.addSeparator();
         popup.add(new MenuItem("Logout"));
         popup.addSeparator();
@@ -254,5 +248,45 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener {
     @Override
     public void threadAction(EgroupwareEvent e) {
         
+    }
+
+    /**
+     * mouseClicked
+     * @param e 
+     */
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if( (e.getButton() == MouseEvent.BUTTON1) && 
+            (e.getClickCount() == 2) ) 
+        {
+            try {
+                if( this._egw.isLogin() ) {
+                    EgroupwareELoginBrowser.open(this._egw);
+                }
+            }
+            catch( Exception ex ) {
+                logger.error("mouseClicked: " + ex.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
