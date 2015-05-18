@@ -290,7 +290,8 @@
          */
         public function updateUserSharesMounts() {
             $shares = $this->getShares();
-
+        //var_dump($shares);
+        //exit;
              $_randdrivename = array(
                 'A', 'B', 'C', 'D', 'E', 'F'
                 );
@@ -301,7 +302,16 @@
 
                 if( count($mounts) == 0 ) {
                     $mountname = '';
-                    while( $trand=$this->_getRandomChar() ) {
+
+                    $tmc = 0;
+
+                    while( $trand = $this->_getRandomChar() ) {
+                        $tmc++;
+
+                        if( $tmc > 26 ) {
+                            break;
+                        }
+
                         if( in_array($trand, $_randdrivename) ) {
                             continue;
                         }
@@ -504,7 +514,7 @@
 
         /**
          * getAllByAccount
-         * 
+         *
          * @param type $accountid
          * @return array of elogin_usershares_bo
          */

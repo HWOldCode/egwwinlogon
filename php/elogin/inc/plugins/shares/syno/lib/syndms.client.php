@@ -65,6 +65,12 @@
             $this->_port    = $port;
         }
 
+        /**
+         * _createUrl
+         *
+         * @param string $url
+         * @return string
+         */
         protected function _createUrl($url) {
             return 'http://' . $this->_ip . ':' . $this->_port . '/' . $url;
         }
@@ -268,7 +274,7 @@
                     'passwd' => $password,
                     'session' => 'FileStation',
                     'format' => 'cookie'));
-
+            //var_dump($response);
                 if( $response ) {
                     $data = json_decode($response['body']);
 

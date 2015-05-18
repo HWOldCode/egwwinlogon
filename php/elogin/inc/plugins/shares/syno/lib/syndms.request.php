@@ -9,7 +9,7 @@
 
         /**
          * curlRequest
-         * 
+         *
          * @param string $query_string
          * @param array $postdata
          * @param string $content_type
@@ -19,6 +19,9 @@
         public static function curlRequest($query_string, $postdata=null, $content_type=null, $custom_headers=null) {
             $headers = (is_null($custom_headers)) ? array() : $custom_headers;
             $curl = curl_init();
+
+            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT ,0);
+            curl_setopt($curl, CURLOPT_TIMEOUT, 100);
 
 			curl_setopt($curl, CURLOPT_URL, $query_string);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);

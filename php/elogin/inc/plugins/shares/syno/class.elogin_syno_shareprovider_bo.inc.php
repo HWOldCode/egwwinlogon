@@ -41,11 +41,16 @@
          * _construct2
          */
         protected function _construct2() {
+            //var_dump($this->_account_user);
+            //var_dump($this->_account_password);
+
             if( $this->_account_server != null ) {
                 if( isset(elogin_syno_shareprovider_bo::$_synoInstances[$this->_id]) ) {
+                    //echo "Cache client<br>";
                     $this->_syno = elogin_syno_shareprovider_bo::$_synoInstances[$this->_id];
                 }
                 else {
+                    //echo "Erzeuge client<br>";
                     $this->_syno = new SyndmsClient(
                         $this->_account_server,
                         $this->_account_port
@@ -55,10 +60,17 @@
                 }
 
                 if( !$this->_syno->isLogin() ) {
+                    //echo "nicht eingelogt client<br>";
                     if( $this->_syno->login($this->_account_user, $this->_account_password) ) {
                         // TODO
+                        //echo "eingelogt client<br>";
+                    }
+                    else {
+                       //echo "fehler login client<br>";
                     }
                 }
+
+                //exit;
             }
         }
 

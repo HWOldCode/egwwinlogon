@@ -168,6 +168,8 @@
                     );
             }
 
+            $t->updateUserSharesMounts();
+
             $readonlys['user']      = true;
             $readonlys['provider']  = true;
 
