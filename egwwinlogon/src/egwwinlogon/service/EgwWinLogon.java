@@ -63,7 +63,7 @@ public class EgwWinLogon {
      *
      */
     public void initEgroupware() {
-        if( true ) {
+        if( false ) {
             try {
                 SimpleLayout layout = new SimpleLayout();
                 FileAppender fileAppender = new FileAppender(layout,
@@ -266,6 +266,14 @@ public class EgwWinLogon {
                 if( this._eLoginCache.isStatusA(username) && this._eLoginCache.isAccountExpires(username) ) {
                     // check password
                     if( this._eLoginCache.compareUsernamePassword(username, password) ) {
+                        
+                        // final init wlt
+                        EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(username);
+
+                        if( _wlt == null ) {
+                            _wlt = new EgwWinLogonThread(_egw);
+                        }
+                        
                         return 1;
                     }
                 }

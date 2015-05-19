@@ -28,6 +28,9 @@ namespace EGroupware
             return GetHexString(sec.ComputeHash(bt));
         }
 
+        /**
+         * GetHexString
+         */
         private static string GetHexString(byte[] bt) {
             string s = string.Empty;
 
@@ -38,25 +41,21 @@ namespace EGroupware
                 n1 = n & 15;
                 n2 = (n >> 4) & 15;
 
-                if (n2 > 9)
-                {
+                if( n2 > 9 ) {
                     s += ((char)(n2 - 10 + (int)'A')).ToString();
                 }
-                else
-                {
+                else {
                     s += n2.ToString();
                 }
 
-                if (n1 > 9)
-                {
+                if( n1 > 9 ) {
                     s += ((char)(n1 - 10 + (int)'A')).ToString();
                 }
-                else
-                {
+                else {
                     s += n1.ToString();
                 }
 
-                if ((i + 1) != bt.Length && (i + 1) % 2 == 0) { 
+                if( (i + 1) != bt.Length && (i + 1) % 2 == 0 ) { 
                     s += "-"; 
                 }
             }
@@ -64,14 +63,16 @@ namespace EGroupware
             return s;
         }
 
-        private static string identifier(string wmiClass, string wmiProperty, string wmiMustBeTrue)
-        {
+        /**
+         * identifier
+         */
+        private static string identifier(string wmiClass, string wmiProperty, string wmiMustBeTrue) {
             string result = "";
+
             System.Management.ManagementClass mc = new System.Management.ManagementClass(wmiClass);
             System.Management.ManagementObjectCollection moc = mc.GetInstances();
 
-            foreach (System.Management.ManagementObject mo in moc)
-            {
+            foreach( System.Management.ManagementObject mo in moc ) {
                 if (mo[wmiMustBeTrue].ToString() == "True")
                 {
                     //Only get the first one
@@ -91,19 +92,19 @@ namespace EGroupware
             return result;
         }
 
-        private static string identifier(string wmiClass, string wmiProperty)
-        {
+        /**
+         * identifier
+         */
+        private static string identifier(string wmiClass, string wmiProperty) {
             string result = "";
+
             System.Management.ManagementClass mc = new System.Management.ManagementClass(wmiClass);
             System.Management.ManagementObjectCollection moc = mc.GetInstances();
 
-            foreach (System.Management.ManagementObject mo in moc)
-            {
+            foreach( System.Management.ManagementObject mo in moc ) {
                 //Only get the first one
-                if (result == "")
-                {
-                    try
-                    {
+                if( result == "" ) {
+                    try {
                         result = mo[wmiProperty].ToString();
                         break;
                     }
@@ -112,28 +113,37 @@ namespace EGroupware
                     }
                 }
             }
+
             return result;
         }
 
-        private static string cpuId()
-        {
+        /**
+         * cpuId
+         */
+        private static string cpuId() {
+
             //Uses first CPU identifier available in order of preference
             //Don't get all identifiers, as it is very time consuming
             string retVal = identifier("Win32_Processor", "UniqueId");
-            if (retVal == "") //If no UniqueID, use ProcessorID
+
+            if( retVal == "" ) //If no UniqueID, use ProcessorID
             {
                 retVal = identifier("Win32_Processor", "ProcessorId");
+
                 if (retVal == "") //If no ProcessorId, use Name
                 {
                     retVal = identifier("Win32_Processor", "Name");
+
                     if (retVal == "") //If no Name, use Manufacturer
                     {
                         retVal = identifier("Win32_Processor", "Manufacturer");
                     }
+
                     //Add clock speed for extra security
                     retVal += identifier("Win32_Processor", "MaxClockSpeed");
                 }
             }
+
             return retVal;
         }
 

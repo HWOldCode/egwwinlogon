@@ -1,6 +1,11 @@
 package egwwinlogon.service;
 
 import com.jegroupware.egroupware.Egroupware;
+import com.jegroupware.egroupware.events.EgroupwareAuthentifiactionEvent;
+import com.jegroupware.egroupware.events.EgroupwareEvent;
+import com.jegroupware.egroupware.events.EgroupwareEventListener;
+import com.jegroupware.egroupware.events.EgroupwareEventRequest;
+import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Tlhelp32;
@@ -21,7 +26,7 @@ import org.apache.log4j.Priority;
  * 
  * @author Stefan Werfling
  */
-public class EgwWinLogonThread implements Runnable {
+public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
 
     /**
      * list of instance of EgwWinLogonThread
@@ -104,6 +109,8 @@ public class EgwWinLogonThread implements Runnable {
      */
     public EgwWinLogonThread(Egroupware egw) {
         this._egw = egw;
+        
+        this._egw.addListener(this);
         
         this._runnable = true;
         
@@ -311,6 +318,9 @@ public class EgwWinLogonThread implements Runnable {
                 }
                 */
             }
+            
+            // check can later login
+            // TODO
         }
     }
     
@@ -322,7 +332,7 @@ public class EgwWinLogonThread implements Runnable {
         // ---------------------------------------------------------------------
         // is egroupware logout
         if( !this._egw.isLogin() ) {
-            EgroupwareDLL.logoffSession(this._sessionId);
+            
             return;
         }
     }
@@ -389,6 +399,69 @@ public class EgwWinLogonThread implements Runnable {
      * _changeSessionUnlock
      */
     private void _changeSessionUnlock() {
+        
+    }
+
+    /**
+     * authentificationSucceeded
+     * @param e 
+     */
+    @Override
+    public void authentificationSucceeded(EgroupwareAuthentifiactionEvent e) {
+        
+    }
+
+    /**
+     * authentificationFailed
+     * @param e 
+     */
+    @Override
+    public void authentificationFailed(EgroupwareAuthentifiactionEvent e) {
+        
+    }
+
+    /**
+     * logoutSucceeded
+     * @param e 
+     */
+    @Override
+    public void logoutSucceeded(EgroupwareLogoutEvent e) {
+        EgroupwareDLL.logoffSession(this._sessionId);
+    }
+
+    /**
+     * logoutFailed
+     * @param e 
+     */
+    @Override
+    public void logoutFailed(EgroupwareLogoutEvent e) {
+        
+    }
+
+    /**
+     * requestSucceeded
+     * @param e 
+     */
+    @Override
+    public void requestSucceeded(EgroupwareEventRequest e) {
+        
+    }
+
+    /**
+     * requestFailed
+     * @param e 
+     */
+    @Override
+    public void requestFailed(EgroupwareEventRequest e) {
+        
+    }
+
+    /**
+     * threadAction
+     * @param e 
+     */
+    @Override
+    public void threadAction(EgroupwareEvent e) {
         
     }
 }

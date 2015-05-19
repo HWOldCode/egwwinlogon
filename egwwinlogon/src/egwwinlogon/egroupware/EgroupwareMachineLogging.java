@@ -213,11 +213,18 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
             }
         }
         catch( Exception ec ) {
-            logger.error("EgroupwareMachineLogging: can`t send logging list");
-            
             for( LoggingEvent tle: this._appender_eventsList ) {
                 tlist.add(tle);
             }
+            
+            tlist.add(new LoggingEvent(
+                ec.getClass().getName(), 
+                logger.getParent(), 
+                Level.ERROR, 
+                "EgroupwareMachineLogging: can`t send logging list: " + 
+                    ec.getMessage(), 
+                null
+                ));
             
             this._appender_eventsList = tlist;
         }

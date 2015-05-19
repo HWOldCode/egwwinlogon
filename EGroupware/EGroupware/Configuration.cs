@@ -15,45 +15,60 @@ namespace EGroupware
 {
     public partial class Configuration : Form
     {
+        /**
+         * 
+         */
         public Configuration() {
             InitializeComponent();
             this.SettingsToUi();
         }
 
+        /**
+         * SettingsToUi
+         */
         public void SettingsToUi() {
             string url = Settings.Store.url;
             string domain = Settings.Store.domain;
-            string startApp = Settings.Store.startapp;
+            string jvmdb = Settings.Store.jvmdb;
 
             this.textEgroupwareUrl.Text = url;
             this.textEgroupwareDomain.Text = domain;
 
-            if (startApp == "1")
+            if (jvmdb == "1")
             {
-                this.checkBoxStartApp.Checked = true;
+                this.checkBoxJVMDB.Checked = true;
             }
         }
 
+        /**
+         * UiToSettings
+         */
         public void UiToSettings()
         {
             Settings.Store.url = this.textEgroupwareUrl.Text;
             Settings.Store.domain = this.textEgroupwareDomain.Text;
 
-            if (this.checkBoxStartApp.Checked)
+            if (this.checkBoxJVMDB.Checked)
             {
-                Settings.Store.startapp = "1";
+                Settings.Store.jvmdb = "1";
             }
             else
             {
-                Settings.Store.startapp = "0";
+                Settings.Store.jvmdb = "0";
             }
         }
 
+        /**
+         * button2_Click
+         */
         private void button2_Click(object sender, EventArgs e) {
             this.UiToSettings();
             this.Close();
         }
 
+        /**
+         * button1_Click
+         */
         private void button1_Click(object sender, EventArgs e)
         {
             this.Close();
