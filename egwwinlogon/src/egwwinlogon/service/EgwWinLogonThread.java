@@ -6,20 +6,10 @@ import com.jegroupware.egroupware.events.EgroupwareEvent;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.events.EgroupwareEventRequest;
 import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.Tlhelp32;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinNT;
-import com.sun.jna.platform.win32.WinReg;
-import com.sun.jna.win32.W32APIOptions;
 import egwwinlogon.egroupware.EgroupwareCommand;
-import egwwinlogon.winapi.ProcessUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 /**
  * EgwWinLogonThread
@@ -124,60 +114,6 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
     }
     
     /**
-     * getJavaInstallationPath
-     * @return 
-     */
-    static public String getJavaInstallationPath() {
-        String javaHome = "";
-        
-        try {
-            String javaEnv = "SOFTWARE\\JavaSoft\\Java Runtime Environment";
-
-            String currentVersion = Advapi32Util.registryGetStringValue(
-                    WinReg.HKEY_LOCAL_MACHINE, 
-                    javaEnv,
-                    "CurrentVersion");
-
-            String javaCV = javaEnv + "\\" + currentVersion;
-
-            javaHome = Advapi32Util.registryGetStringValue(
-                    WinReg.HKEY_LOCAL_MACHINE, 
-                    javaCV,
-                    "JavaHome");
-
-            logger.info("JavaHome: " + javaHome);
-        }
-        catch( Exception e) {
-            //logger.log(Priority.ERROR, null, e);
-            logger.error("Error getJavaInstallationPath: " + e.getMessage());
-        }
-        
-        return javaHome;
-    }
-    
-    /**
-     * getUserAppCmd
-     * @param params
-     * @return 
-     */
-    static public String getUserAppCmd(String params) {
-        String appDir = "";
-        
-        try {
-            appDir = EgroupwareDLL.getAppDir();
-        }
-        catch( Exception ex ) {
-            logger.error("Error getUserAppCmd: " + ex.getMessage());
-        }
-        
-        String appCmd = "\"" + EgwWinLogonThread.getJavaInstallationPath() + 
-            "\\bin\\javaw.exe\" -jar \"" + appDir + 
-            "egwwinlogon.jar\" " + params;
-        
-        return appCmd;
-    }
-    
-    /**
      * getEgroupware
      * @return 
      */
@@ -278,6 +214,22 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      * ever
      */
     protected void _run() {
+        // ---------------------------------------------------------------------
+        // offline, check have connection
+        
+        if( !this._egw.isLogin() ) {
+            if( EgwWinLogonUltis.pingUrl(this._egw.getConfig().getUrl()) ) {
+                try {
+                    this._egw.login();
+                }
+                catch( Exception e ) {
+                    //
+                }
+            }
+        }
+        
+        // ---------------------------------------------------------------------
+        // userapp
         if( this._sessionId != -1 ) {
             if( this._userappProcessId == -1 ) {
                 logger.info("Start Userapp...");
@@ -285,7 +237,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
                 String username = EgroupwareDLL.getUsername(this._sessionId);
                 logger.info("Userapp for username: " + username);
                 
-                String cmdApp = EgwWinLogonThread.getUserAppCmd(username);
+                String cmdApp = EgwWinLogonUltis.getUserAppCmd(username);
                 
                 logger.info("Userapp cmd: " + cmdApp);
                 
@@ -369,7 +321,8 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
         // call cmd by server
         if( this._egw.isLogin() ) {
             EgroupwareCommand egwcmd = new EgroupwareCommand(
-                EgwWinLogon.getSetting("sysfingerprint"), EgroupwareCommand.EGW_CMD_TYPE_SERVICE);
+                EgwWinLogon.getSetting("sysfingerprint"), 
+                EgroupwareCommand.EGW_CMD_TYPE_SERVICE);
             
             try {
                 this._egw.request(egwcmd);

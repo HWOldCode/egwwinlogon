@@ -20,6 +20,7 @@ import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginBrowser;
 import egwwinlogon.egroupware.EgroupwareMachineLogging;
 import egwwinlogon.service.EgroupwareDLL;
+import egwwinlogon.protocol.EgwWinLogonProtocol;
 import egwwinlogon.winapi.mpr.MprHelper;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -28,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -46,6 +48,16 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
      * EgwWinLogonClient
      */
     protected EgwWinLogonClient _client = null;
+    
+    /**
+     * username
+     */
+    protected String _username = "";
+    
+    /**
+     * URL
+     */
+    protected String _url = null;
     
     /**
      * Egroupware
@@ -76,6 +88,10 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
             // init
             new EgwWinTrayer(args[0]);
         }
+        else {
+            String currentUserName = Advapi32Util.getUserName();
+            new EgwWinTrayer(currentUserName);
+        }
     }
     
     /**
@@ -94,10 +110,44 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
      * @param username 
      */
     public EgwWinTrayer(String username, String url) {
+        this._username = username;
+        this._url = url;
         
         this._client        = new EgwWinLogonClient();
         this._egw           = this._client.getEgroupwareInstance(username, url);
         this._machine_id    = this._client.getMachineId(url);
+        
+        // Thread check is egroupware offline to online
+        if( (this._egw == null) || ((this._egw != null) && !this._egw.isLogin()) ) {
+            Thread thread = new Thread(){
+                public void run(){
+                    while( true ) {
+                        _egw = _client.getEgroupwareInstance(_username, _url);
+                        
+                        if( (_egw != null) && (_egw.isLogin()) ) {
+                            if( _trayer != null ) {
+                                _trayer.displayMsgInfo(
+                                    "Egroupware", 
+                                    "Benutzer ist eingeloggt.");
+                            }
+                            
+                            break;
+                        }
+                        
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            java.util.logging.Logger.getLogger(EgwWinTrayer.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            };
+            
+            thread.start();
+        }
+        
+
+        // ---------------------------------------------------------------------
         
         if( this._egw != null ) {
             this._egw.addListener(this);

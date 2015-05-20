@@ -10,6 +10,7 @@ import egwwinlogon.egroupware.EgroupwareMachineInfo;
 import egwwinlogon.egroupware.EgroupwareMachineLogging;
 import egwwinlogon.egroupware.EgroupwareSettings;
 import egwwinlogon.http.LogonHttpServer;
+import egwwinlogon.protocol.EgwWinLogonProtocol;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -409,6 +410,10 @@ public class EgwWinLogon {
      * egwStarting
      */
 	public void egwStarting() {
+        // setup 
+        EgwWinLogonProtocol.setup();
+        // ---------------------------------
+        
         if( this._server != null ) {
 
         }
