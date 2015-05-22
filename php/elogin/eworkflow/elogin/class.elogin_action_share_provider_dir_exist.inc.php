@@ -61,7 +61,7 @@
          * @return string
          */
         public function getEntryDefaultIcon() {
-            return "share.png";
+            return "folderexist.png";
         }
 
         /**

@@ -107,3 +107,51 @@
     $setup_info_spdc['depends'] = array();
 
     $setup_info[] = $setup_info_spdc;
+
+    // ---- share provider dir permission remove -------------------------------
+
+    $setup_info_spdpr = array();
+	$setup_info_spdpr['name']         = 'elogin';
+    $setup_info_spdpr['app']          = 'elogin';
+    $setup_info_spdpr['class']        = 'elogin_action_share_provider_dir_permission_remove';
+    $setup_info_spdpr['title']        = 'ELogin Share Provider dir permission remove';
+    $setup_info_spdpr['version']      = '1.0';
+
+    $setup_info_spdpr['author']       = 'Stefan Werfling';
+    $setup_info_spdpr['license']      = 'HW license';
+    $setup_info_spdpr['description']  = 'ELogin get Share Provider dir permission remove';
+
+    $setup_info_spdpr['maintainer'] = array(
+		'name' 	=> 'HW-Softwareentwicklung GbR',
+		'email' => 'info@hw-softwareentwicklung.de'
+        );
+
+    $setup_info_spdpr['settings'] = array();
+
+    $setup_info_spdpr['depends'] = array();
+
+    $setup_info[] = $setup_info_spdpr;
+
+    // ---- share provider dir permission set ----------------------------------
+
+    $setup_info_spdps = array();
+	$setup_info_spdps['name']         = 'elogin';
+    $setup_info_spdps['app']          = 'elogin';
+    $setup_info_spdps['class']        = 'elogin_action_share_provider_dir_permission_set';
+    $setup_info_spdps['title']        = 'ELogin Share Provider dir permission set';
+    $setup_info_spdps['version']      = '1.0';
+
+    $setup_info_spdps['author']       = 'Stefan Werfling';
+    $setup_info_spdps['license']      = 'HW license';
+    $setup_info_spdps['description']  = 'ELogin get Share Provider dir permission set';
+
+    $setup_info_spdps['maintainer'] = array(
+		'name' 	=> 'HW-Softwareentwicklung GbR',
+		'email' => 'info@hw-softwareentwicklung.de'
+        );
+
+    $setup_info_spdps['settings'] = array();
+
+    $setup_info_spdps['depends'] = array();
+
+    $setup_info[] = $setup_info_spdps;
