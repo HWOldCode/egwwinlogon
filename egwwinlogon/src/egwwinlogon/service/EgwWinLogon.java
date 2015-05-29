@@ -10,6 +10,7 @@ import egwwinlogon.egroupware.EgroupwareMachineInfo;
 import egwwinlogon.egroupware.EgroupwareMachineLogging;
 import egwwinlogon.egroupware.EgroupwareSettings;
 import egwwinlogon.http.LogonHttpServer;
+import egwwinlogon.protocol.EgwWinLogonProtocol;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -63,7 +64,7 @@ public class EgwWinLogon {
      *
      */
     public void initEgroupware() {
-        if( true ) {
+        if( false ) {
             try {
                 SimpleLayout layout = new SimpleLayout();
                 FileAppender fileAppender = new FileAppender(layout,
@@ -266,6 +267,14 @@ public class EgwWinLogon {
                 if( this._eLoginCache.isStatusA(username) && this._eLoginCache.isAccountExpires(username) ) {
                     // check password
                     if( this._eLoginCache.compareUsernamePassword(username, password) ) {
+                        
+                        // final init wlt
+                        EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(username);
+
+                        if( _wlt == null ) {
+                            _wlt = new EgwWinLogonThread(_egw);
+                        }
+                        
                         return 1;
                     }
                 }
@@ -401,6 +410,10 @@ public class EgwWinLogon {
      * egwStarting
      */
 	public void egwStarting() {
+        // setup 
+        EgwWinLogonProtocol.setup();
+        // ---------------------------------
+        
         if( this._server != null ) {
 
         }
@@ -444,7 +457,7 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetVersion() {
-		return "14.2";
+		return "14.2.5";
 	}
 
     /**

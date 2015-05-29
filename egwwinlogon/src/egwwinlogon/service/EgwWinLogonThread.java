@@ -1,27 +1,22 @@
 package egwwinlogon.service;
 
 import com.jegroupware.egroupware.Egroupware;
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.Tlhelp32;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinNT;
-import com.sun.jna.platform.win32.WinReg;
-import com.sun.jna.win32.W32APIOptions;
+import com.jegroupware.egroupware.events.EgroupwareAuthentifiactionEvent;
+import com.jegroupware.egroupware.events.EgroupwareEvent;
+import com.jegroupware.egroupware.events.EgroupwareEventListener;
+import com.jegroupware.egroupware.events.EgroupwareEventRequest;
+import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
 import egwwinlogon.egroupware.EgroupwareCommand;
-import egwwinlogon.winapi.ProcessUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 
 /**
  * EgwWinLogonThread
  * 
  * @author Stefan Werfling
  */
-public class EgwWinLogonThread implements Runnable {
+public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
 
     /**
      * list of instance of EgwWinLogonThread
@@ -105,6 +100,8 @@ public class EgwWinLogonThread implements Runnable {
     public EgwWinLogonThread(Egroupware egw) {
         this._egw = egw;
         
+        this._egw.addListener(this);
+        
         this._runnable = true;
         
         this._cthread = new Thread(this);
@@ -114,60 +111,6 @@ public class EgwWinLogonThread implements Runnable {
         
         // add self
         EgwWinLogonThread._instances.add(this);
-    }
-    
-    /**
-     * getJavaInstallationPath
-     * @return 
-     */
-    static public String getJavaInstallationPath() {
-        String javaHome = "";
-        
-        try {
-            String javaEnv = "SOFTWARE\\JavaSoft\\Java Runtime Environment";
-
-            String currentVersion = Advapi32Util.registryGetStringValue(
-                    WinReg.HKEY_LOCAL_MACHINE, 
-                    javaEnv,
-                    "CurrentVersion");
-
-            String javaCV = javaEnv + "\\" + currentVersion;
-
-            javaHome = Advapi32Util.registryGetStringValue(
-                    WinReg.HKEY_LOCAL_MACHINE, 
-                    javaCV,
-                    "JavaHome");
-
-            logger.info("JavaHome: " + javaHome);
-        }
-        catch( Exception e) {
-            //logger.log(Priority.ERROR, null, e);
-            logger.error("Error getJavaInstallationPath: " + e.getMessage());
-        }
-        
-        return javaHome;
-    }
-    
-    /**
-     * getUserAppCmd
-     * @param params
-     * @return 
-     */
-    static public String getUserAppCmd(String params) {
-        String appDir = "";
-        
-        try {
-            appDir = EgroupwareDLL.getAppDir();
-        }
-        catch( Exception ex ) {
-            logger.error("Error getUserAppCmd: " + ex.getMessage());
-        }
-        
-        String appCmd = "\"" + EgwWinLogonThread.getJavaInstallationPath() + 
-            "\\bin\\javaw.exe\" -jar \"" + appDir + 
-            "egwwinlogon.jar\" " + params;
-        
-        return appCmd;
     }
     
     /**
@@ -271,6 +214,22 @@ public class EgwWinLogonThread implements Runnable {
      * ever
      */
     protected void _run() {
+        // ---------------------------------------------------------------------
+        // offline, check have connection
+        
+        if( !this._egw.isLogin() ) {
+            if( EgwWinLogonUltis.pingUrl(this._egw.getConfig().getUrl()) ) {
+                try {
+                    this._egw.login();
+                }
+                catch( Exception e ) {
+                    //
+                }
+            }
+        }
+        
+        // ---------------------------------------------------------------------
+        // userapp
         if( this._sessionId != -1 ) {
             if( this._userappProcessId == -1 ) {
                 logger.info("Start Userapp...");
@@ -278,7 +237,7 @@ public class EgwWinLogonThread implements Runnable {
                 String username = EgroupwareDLL.getUsername(this._sessionId);
                 logger.info("Userapp for username: " + username);
                 
-                String cmdApp = EgwWinLogonThread.getUserAppCmd(username);
+                String cmdApp = EgwWinLogonUltis.getUserAppCmd(username);
                 
                 logger.info("Userapp cmd: " + cmdApp);
                 
@@ -289,7 +248,7 @@ public class EgwWinLogonThread implements Runnable {
                     String.valueOf(this._userappProcessId));
             }
             else {
-                try {
+                /*try {
                     if( !ProcessUtils.existProcessById(this._userappProcessId) ) {
 
                         String username = EgroupwareDLL.getUsername(this._sessionId);
@@ -309,7 +268,11 @@ public class EgwWinLogonThread implements Runnable {
                 catch( Exception ex ) {
                     logger.error(ex.getMessage());
                 }
+                */
             }
+            
+            // check can later login
+            // TODO
         }
     }
     
@@ -321,7 +284,7 @@ public class EgwWinLogonThread implements Runnable {
         // ---------------------------------------------------------------------
         // is egroupware logout
         if( !this._egw.isLogin() ) {
-            EgroupwareDLL.logoffSession(this._sessionId);
+            
             return;
         }
     }
@@ -358,7 +321,8 @@ public class EgwWinLogonThread implements Runnable {
         // call cmd by server
         if( this._egw.isLogin() ) {
             EgroupwareCommand egwcmd = new EgroupwareCommand(
-                EgwWinLogon.getSetting("sysfingerprint"), EgroupwareCommand.EGW_CMD_TYPE_SERVICE);
+                EgwWinLogon.getSetting("sysfingerprint"), 
+                EgroupwareCommand.EGW_CMD_TYPE_SERVICE);
             
             try {
                 this._egw.request(egwcmd);
@@ -388,6 +352,69 @@ public class EgwWinLogonThread implements Runnable {
      * _changeSessionUnlock
      */
     private void _changeSessionUnlock() {
+        
+    }
+
+    /**
+     * authentificationSucceeded
+     * @param e 
+     */
+    @Override
+    public void authentificationSucceeded(EgroupwareAuthentifiactionEvent e) {
+        
+    }
+
+    /**
+     * authentificationFailed
+     * @param e 
+     */
+    @Override
+    public void authentificationFailed(EgroupwareAuthentifiactionEvent e) {
+        
+    }
+
+    /**
+     * logoutSucceeded
+     * @param e 
+     */
+    @Override
+    public void logoutSucceeded(EgroupwareLogoutEvent e) {
+        EgroupwareDLL.logoffSession(this._sessionId);
+    }
+
+    /**
+     * logoutFailed
+     * @param e 
+     */
+    @Override
+    public void logoutFailed(EgroupwareLogoutEvent e) {
+        
+    }
+
+    /**
+     * requestSucceeded
+     * @param e 
+     */
+    @Override
+    public void requestSucceeded(EgroupwareEventRequest e) {
+        
+    }
+
+    /**
+     * requestFailed
+     * @param e 
+     */
+    @Override
+    public void requestFailed(EgroupwareEventRequest e) {
+        
+    }
+
+    /**
+     * threadAction
+     * @param e 
+     */
+    @Override
+    public void threadAction(EgroupwareEvent e) {
         
     }
 }

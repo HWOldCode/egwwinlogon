@@ -10,14 +10,21 @@ namespace pGina.Plugin.EGroupware
 
         private static dynamic m_settings = new pGina.Shared.Settings.pGinaDynamicSettings(EGWWinLogin.PluginUuid);
 
+        /**
+         * 
+         */
         public static dynamic Store {
             get { return m_settings; }
         }
 
+        /**
+         * 
+         */
         static Settings() {
             m_settings.SetDefault("url", "https://localhost/egroupware/");
             m_settings.SetDefault("domain", "default");
             m_settings.SetDefault("startapp", "1");
+            m_settings.SetDefault("jvmdb", "0");
         }
     }
 }

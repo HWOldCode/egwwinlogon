@@ -12,13 +12,13 @@ namespace EGroupware {
         private ManagementEventWatcher _watcherRemove;
 
         public usbControl() {
+            string sql = "SELECT * FROM __InstanceCreationEvent WITHIN 2 WHERE TargetInstance ISA 'Win32_PnPEntity'";
+
             // Add USB plugged event watching
             _watcherAttach = new ManagementEventWatcher();
             //var queryAttach = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2");
             _watcherAttach.EventArrived += new EventArrivedEventHandler(watcher_EventArrived);
-            _watcherAttach.Query = new WqlEventQuery(/*"SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 1"*/ "SELECT * FROM __InstanceCreationEvent " +
-    "WITHIN 2 "
-  + "WHERE TargetInstance ISA 'Win32_PnPEntity'");
+            _watcherAttach.Query = new WqlEventQuery(/*"SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 1"*/ sql);
             _watcherAttach.Start();
 
             // Add USB unplugged event watching
@@ -30,6 +30,7 @@ namespace EGroupware {
         }
 
         void watcher_EventArrived(object sender, EventArrivedEventArgs e) {
+
             /*foreach( PropertyData pd in e.NewEvent.Properties ) {
                 if( pd != null ) {
                     if( pd.Value != null ) {

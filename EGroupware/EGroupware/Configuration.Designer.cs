@@ -29,19 +29,19 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Configuration));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBoxJVMDB = new System.Windows.Forms.CheckBox();
             this.textEgroupwareDomain = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.textEgroupwareUrl = new System.Windows.Forms.TextBox();
             this.labelEgroupwareUrl = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.checkBoxStartApp = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.checkBoxStartApp);
+            this.groupBox1.Controls.Add(this.checkBoxJVMDB);
             this.groupBox1.Controls.Add(this.textEgroupwareDomain);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.textEgroupwareUrl);
@@ -52,6 +52,16 @@
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Egroupware";
+            // 
+            // checkBoxJVMDB
+            // 
+            this.checkBoxJVMDB.AutoSize = true;
+            this.checkBoxJVMDB.Location = new System.Drawing.Point(14, 92);
+            this.checkBoxJVMDB.Name = "checkBoxJVMDB";
+            this.checkBoxJVMDB.Size = new System.Drawing.Size(118, 17);
+            this.checkBoxJVMDB.TabIndex = 6;
+            this.checkBoxJVMDB.Text = "JVM Debug Enable";
+            this.checkBoxJVMDB.UseVisualStyleBackColor = true;
             // 
             // textEgroupwareDomain
             // 
@@ -105,16 +115,6 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // checkBoxStartApp
-            // 
-            this.checkBoxStartApp.AutoSize = true;
-            this.checkBoxStartApp.Location = new System.Drawing.Point(14, 92);
-            this.checkBoxStartApp.Name = "checkBoxStartApp";
-            this.checkBoxStartApp.Size = new System.Drawing.Size(139, 17);
-            this.checkBoxStartApp.TabIndex = 6;
-            this.checkBoxStartApp.Text = "Start Java App by Login";
-            this.checkBoxStartApp.UseVisualStyleBackColor = true;
-            // 
             // Configuration
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -141,6 +141,6 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox textEgroupwareDomain;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.CheckBox checkBoxStartApp;
+        private System.Windows.Forms.CheckBox checkBoxJVMDB;
     }
 }

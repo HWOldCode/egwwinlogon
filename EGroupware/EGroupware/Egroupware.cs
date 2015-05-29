@@ -74,14 +74,12 @@ namespace pGina.Plugin.EGroupware
             // -------------------------------
             // init java updater app
 
-            /*try
-            {
+            try {
                 this.initUpdaterJava();
             }
-            catch (System.Exception e)
-            {
+            catch( System.Exception e ) {
                 EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
-            }*/
+            }
 
             // -------------------------------
             // init egwwinlogon java app
@@ -101,6 +99,23 @@ namespace pGina.Plugin.EGroupware
             curPath = curPath.Replace("Plugins\\Core", "");
 
             return curPath;
+        }
+
+        /**
+         * getDLLHash
+         */
+        private string getDLLHash() {
+            FileStream fc = System.IO.File.OpenRead(this.getAppDir() + "Plugins\\Core\\" + 
+                Assembly.GetExecutingAssembly().GetName().Name);
+
+            System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+            byte[] md5hash = md5.ComputeHash(fc);
+
+            fc.Close();
+
+            string hash = BitConverter.ToString(md5hash).Replace("-", "").ToLower();
+
+            return hash;
         }
 
         /**
@@ -143,6 +158,11 @@ namespace pGina.Plugin.EGroupware
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "setSetting", "_setSetting", "(Ljava/lang/String;Ljava/lang/String;)V"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "logoffSession", "_logoffSession", "(I)Z"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getUsername", "_getUsername", "(I)Ljava/lang/String;"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getDLLHash", "_getDLLHash", "()Ljava/lang/String;"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getSysFingerprint", "_getSysFingerprint", "()Ljava/lang/String;"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getMachineName", "_getMachineName", "()Ljava/lang/String;"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "setDeviceEnabled", "_setDeviceEnabled", "(Ljava/lang/String;Ljava/lang/String;Z)V"));
+                    
 
                     JNINativeMethod.Register(methods, egroupwareDllClass, env);
                 }
@@ -388,6 +408,85 @@ namespace pGina.Plugin.EGroupware
             return default(JniLocalHandle);
         }
 
+        /**
+         * _getDLLHash
+         * method to java
+         */
+        private static JniLocalHandle _getDLLHash(IntPtr @__envp, JniLocalHandle @__obj) {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                return Convertor.StrongC2JString(env, EGWWinLogin._self.getDLLHash());
+            }
+            catch( global::System.Exception __ex ) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return default(JniLocalHandle);
+        }
+
+        /**
+         * _getSysFingerprint
+         * method to java
+         */
+        private static JniLocalHandle _getSysFingerprint(IntPtr @__envp, JniLocalHandle @__obj) {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                return Convertor.StrongC2JString(env, SysFingerPrint.Value());
+            }
+            catch( global::System.Exception __ex ) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return default(JniLocalHandle);
+        }
+
+        /**
+         * _getMachineName
+         * method to java
+         */
+        private static JniLocalHandle _getMachineName(IntPtr @__envp, JniLocalHandle @__obj) {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                return Convertor.StrongC2JString(env, System.Environment.MachineName);
+            }
+            catch (global::System.Exception __ex) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return default(JniLocalHandle);
+        }
+
+        /**
+         * _setDeviceEnabled
+         * method to java
+         */
+        private static void _setDeviceEnabled(IntPtr @__envp, JniLocalHandle @__obj, 
+            JniLocalHandle deviceGuid, JniLocalHandle instancePath, bool enable)
+        {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                string tdeviceGuid = Convertor.StrongJ2CString(env, deviceGuid);
+                string tinstancePath = Convertor.StrongJ2CString(env, instancePath);
+
+                DeviceHelper.SetDeviceEnabled(
+                    new Guid(tdeviceGuid), 
+                    tinstancePath, 
+                    enable
+                    );
+            }
+            catch( global::System.Exception __ex ) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+        }
+
         // ------------------------------------------------------------------------------------
         // ------------------------------------------------------------------------------------
         // ------------------------------------------------------------------------------------
@@ -396,7 +495,14 @@ namespace pGina.Plugin.EGroupware
          * initUpdaterJava
          */
         private void initUpdaterJava() {
+            string jvmdb = Settings.Store.jvmdb;
+
             var setup = new BridgeSetup();
+
+            if( jvmdb == "1" ) {
+                setup.AddJVMOption("-Xrunjdwp:transport=dt_socket,server=y,address=8888,suspend=n");
+            }
+            
             setup.AddAllJarsClassPath(this.getAppDir() + ".");
             setup.Verbose = true;
 
@@ -415,8 +521,14 @@ namespace pGina.Plugin.EGroupware
          * initEgwWinLogonJava
          */
         private void initEgwWinLogonJava() {
+            string jvmdb = Settings.Store.jvmdb;
+
             var setup = new BridgeSetup();
-            
+
+            if( jvmdb == "1" ) {
+                setup.AddJVMOption("-Xrunjdwp:transport=dt_socket,server=y,address=8889,suspend=n");
+            }
+
             setup.AddAllJarsClassPath(this.getAppDir() + ".");
             setup.Verbose = true;
 
@@ -890,8 +1002,8 @@ namespace pGina.Plugin.EGroupware
             string password = userInfo.Password;
             string domain   = userInfo.Domain;
 
-            EGWWinLogin._logger.InfoFormat("AuthenticatedUserGateway: username {0} password: {1} domain: {2}",
-                username, password, domain);
+            EGWWinLogin._logger.InfoFormat("AuthenticatedUserGateway: username {0} domain: {1}",
+                username, domain);
 
             if (this._egwAuthenticatedUserGateway(username, password, domain)) {
                 return new Shared.Types.BooleanResult { Success = true };
@@ -911,8 +1023,8 @@ namespace pGina.Plugin.EGroupware
             string password = userInfo.Password;
             string domain = userInfo.Domain;
 
-            EGWWinLogin._logger.InfoFormat("AuthorizeUser: username {0} password: {1} domain: {2}",
-                username, password, domain);
+            EGWWinLogin._logger.InfoFormat("AuthorizeUser: username {0} domain: {1}",
+                username, domain);
 
             if (this._egwAuthorizeUser(username, password, domain)) {
                 return new BooleanResult {
@@ -925,37 +1037,6 @@ namespace pGina.Plugin.EGroupware
                 Success = false,
                 Message = string.Format("no Authorize")
             };
-        }
-
-        /**
-         * startUserApp
-         */
-        protected void startUserApp(int sessionId, string username) {
-            string applicationName = "\"" + this.getJavaInstallationPath() + 
-                "\\bin\\javaw.exe\" -jar \"" + this.getAppDir() + "\\egwwinlogon.jar\" " + username;
-
-            EGWWinLogin._logger.InfoFormat(applicationName);
-
-            /*ApplicationLoader.PROCESS_INFORMATION procInfo;
-
-            if( ApplicationLoader.StartProcessAndBypassUAC(applicationName, out procInfo) ) {
-                if( this._plist.ContainsKey(username) ) {
-                    this._plist.Remove(username);
-                }
-
-                this._plist.Add(username, Process.GetProcessById((int)procInfo.dwProcessId));
-            }*/
-
-            Process proc = pInvokes.StartProcessInSession(sessionId, applicationName);
-
-            if( proc != null ) {
-                if (this._plist.ContainsKey(username))
-                {
-                    this._plist.Remove(username);
-                }
-
-                this._plist.Add(username, proc);
-            }
         }
 
         /**
@@ -975,32 +1056,10 @@ namespace pGina.Plugin.EGroupware
 
                 switch( changeDescription.Reason ) {
                     case System.ServiceProcess.SessionChangeReason.SessionLogon:
-
-                        /*if( startApp == "1" ) {
-                            this.startUserApp(sessionid, username);
-                        }
-                        else {
-                            this._plist.Add(username, null);
-                        }*/
-
                         this._egwSessionChange(5, username, sessionid);
-                        //LogonEvent(changeDescription.SessionId);
                         break;
 
                     case System.ServiceProcess.SessionChangeReason.SessionLogoff:
-                        
-                        /*if( this._plist.ContainsKey(username) ) {
-                            Process tp = this._plist[username];
-
-                            if( tp != null ) {
-                                if( !tp.HasExited ) {
-                                    tp.Close();
-                                }
-                            }
-
-                            this._plist.Remove(username);
-                        }*/
-
                         this._egwSessionChange(6, username, sessionid);
                         break;
 

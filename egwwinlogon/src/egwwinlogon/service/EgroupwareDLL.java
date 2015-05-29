@@ -108,4 +108,34 @@ public class EgroupwareDLL {
      * @return 
      */
     static public native String getUsername(int sessionId);
+    
+    /**
+     * getDLLHash
+     * 
+     * @return 
+     */
+    static public native String getDLLHash();
+    
+    /**
+     * getSysFingerprint
+     * 
+     * @return 
+     */
+    static public native String getSysFingerprint();
+    
+    /**
+     * getMachineName
+     * 
+     * @return 
+     */
+    static public native String getMachineName();
+    
+    /**
+     * setDeviceEnabled
+     * 
+     * @param deviceGuid
+     * @param instancePath
+     * @param enable 
+     */
+    static public native void setDeviceEnabled(String deviceGuid, String instancePath, boolean enable);
 }

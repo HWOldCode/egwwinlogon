@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.awt.event.MouseListener;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
 
@@ -59,6 +60,16 @@ public class Trayer {
     public void setIconTooltip(String msg) {
         if( this._systemtray != null ) {
             this._trayicon.setToolTip(msg);
+        }
+    }
+    
+    /**
+     * addMouseListener
+     * @param listener 
+     */
+    public void addMouseListener(MouseListener listener) {
+        if( this._systemtray != null ) {
+            this._trayicon.addMouseListener(listener);
         }
     }
     
