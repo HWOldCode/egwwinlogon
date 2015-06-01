@@ -33,7 +33,15 @@
             }
 
             curl_setopt($curl, CURLOPT_VERBOSE, false);
+
+            if( $postdata ) {
+                if( is_array($postdata) ) {
+                    $headers[] = "Content-type: application/x-www-form-urlencoded;charset=UTF-8";
+                }
+            }
+
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+            //curl_setopt($curl, CURLOPT_ENCODING, "UTF-8");
 
             if( $postdata ) {
                 if( is_array($postdata) ) {

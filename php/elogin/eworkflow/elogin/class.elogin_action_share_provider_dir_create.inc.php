@@ -230,7 +230,9 @@
             // -----------------------------------------------------------------
 
             $linkname = self::LINK_ERROR;
-            $dirname   = strip_tags(trim($pro->getParamValue(static::PARAM_DC_DIRNAME)));
+            $dirname = eworkflow_vfs_bo::cleanUtf8PathName($pro->getParamValue(static::PARAM_DC_DIRNAME));
+            //$dirname = str_replace('&', "\x00\x26", $dirname);
+            //$dirname = iconv("UTF-8", "UTF-8//IGNORE", $dirname);
 
             $entryid = $this->getUserShareEntryid();
             $entry = eworkflow_entrys_bo::loadEntry($entryid);
