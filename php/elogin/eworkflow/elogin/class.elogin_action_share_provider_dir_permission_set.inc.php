@@ -278,7 +278,7 @@
             // -----------------------------------------------------------------
 
             $linkname = self::LINK_ERROR;
-            $dirname   = trim($pro->getParamValue(static::PARAM_DPS_DIRNAME));
+            $dirname   = strip_tags(trim($pro->getParamValue(static::PARAM_DPS_DIRNAME)));
 
             $username =
                 eworkflow_dialog_input_etemplate_widget::getEWorkflowValueBy(

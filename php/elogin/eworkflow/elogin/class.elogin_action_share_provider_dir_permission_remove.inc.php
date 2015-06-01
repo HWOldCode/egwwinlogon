@@ -230,7 +230,7 @@
             // -----------------------------------------------------------------
 
             $linkname = self::LINK_ERROR;
-            $dirname   = trim($pro->getParamValue(static::PARAM_DPR_DIRNAME));
+            $dirname   = strip_tags(trim($pro->getParamValue(static::PARAM_DPR_DIRNAME)));
 
             $entryid = $this->getUserShareEntryid();
             $entry = eworkflow_entrys_bo::loadEntry($entryid);
