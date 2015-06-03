@@ -8,7 +8,7 @@
 			</columns>
 			<rows>
                 <row>
-					<caption label="ELogin Share Provider Dir Set permission" class="dialogHeader2 th" options="b"/>
+					<caption label="ELogin Share Provider Dir Set permission" class="dialogHeader2 th"/>
 				</row>
                 <row height="100%">
                     <grid width="100%">

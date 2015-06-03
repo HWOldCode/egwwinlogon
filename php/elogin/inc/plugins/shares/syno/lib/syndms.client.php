@@ -874,9 +874,6 @@
          */
         public function createDirShare($sharename, $dir) {
             if( $this->_isLogin ) {
-                //$dir = "Hüttner  Werfling";
-                //error_log(__METHOD__ . ' ('.__LINE__.') sharedirname:' . $dir);
-
                 $data = $this->_queryByService('SYNO.FileStation.CreateFolder', array(
                     'method'            => 'create',
                     'version'           => '1',

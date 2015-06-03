@@ -54,7 +54,7 @@
                             $strpost .= "&";
                         }
 
-                        $strpost .= $key . "=" . $value;
+                        $strpost .= $key . "=" . urlencode($value);
                     }
 
                     $postdata = $strpost;

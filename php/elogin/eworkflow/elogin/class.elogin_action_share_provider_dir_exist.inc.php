@@ -230,7 +230,8 @@
             // -----------------------------------------------------------------
 
             $linkname = self::LINK_NO;
-            $dirname   = strip_tags(trim($pro->getParamValue(static::PARAM_DE_DIRNAME)));
+            $dirname   = eworkflow_vfs_bo::cleanUtf8PathName(
+                $pro->getParamValue(static::PARAM_DE_DIRNAME));
 
             $entryid = $this->getUserShareEntryid();
             $entry = eworkflow_entrys_bo::loadEntry($entryid);
