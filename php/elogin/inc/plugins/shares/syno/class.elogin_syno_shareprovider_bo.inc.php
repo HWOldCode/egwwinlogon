@@ -378,4 +378,110 @@
 
             return false;
         }
+
+        /**
+         * removeAllPermissionDir
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @return boolean
+         */
+        public function removeAllPermissionDir($usersharename, $dir) {
+            if( $this->_syno ) {
+                if( $this->_syno->setFileShareACLs('/volume1', $usersharename . $dir) ) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * addPermissionDir
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @param string $username
+         * @param boolean $read
+         * @param boolean $write
+         * @return boolean
+         */
+        public function addPermissionDir($usersharename, $dir, $username, $read=false, $write=false) {
+            if( $this->_syno ) {
+                if( !$this->isUsernameExist($username) ) {
+                    return false;
+                }
+
+                /*$shares = $this->_syno->getUserShares($username);
+                $sharelist = array();
+
+                foreach( $shares as $tshare ) {
+                    if( $tshare[''])
+                    $sharelist[] = $tshare['share_path'];
+                }
+
+                if( !in_array('/volume1' . $usersharename, $sharelist) ) {
+                    return false;
+                }
+                */
+
+                $list = $this->_syno->getFileShareACLs('/volume1' . $usersharename . $dir);
+
+                $rules = array();
+
+                foreach( $list as $tusername => $permission ) {
+                    if( $tusername == $username ) {
+                        continue;
+                    }
+
+                    $rules[] = array(
+                        'owner_type'        => 'user',
+                        'owner_name'        => $tusername,
+                        'permission_type'   => 'allow',
+                        'permission'        => $permission,
+                        'inherit'           => array(
+                            'child_files'   => true,
+                            'child_folders' => true,
+                            'this_folder'   => true,
+                            'all_descendants' => true
+                        )
+                    );
+                }
+
+                $permission = array(
+                    'read_data' => ($read ? true : false),
+                    'write_data' => ($write ? true : false),
+                    'exe_file' => ($read ? true : false),
+                    'append_data' => ($write ? true : false),
+                    'delete' => ($write ? true : false),
+                    'delete_sub' => ($write ? true : false),
+                    'read_attr' => ($read ? true : false),
+                    'write_attr' => ($write ? true : false),
+                    'read_ext_attr' => ($read ? true : false),
+                    'write_ext_attr' => ($write ? true : false),
+                    'read_perm' => ($read ? true : false),
+                    'change_perm' => false,
+                    'take_ownership' => false
+                    );
+
+                $rules[] = array(
+                    'owner_type'        => 'user',
+                    'owner_name'        => $username,
+                    'permission_type'   => 'allow',
+                    'permission'        => $permission,
+                    'inherit'           => array(
+                            'child_files'   => true,
+                            'child_folders' => true,
+                            'this_folder'   => true,
+                            'all_descendants' => true
+                        )
+                    );
+
+                if( $this->_syno->setFileShareACLs('/volume1', $usersharename . $dir, $rules) ) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }

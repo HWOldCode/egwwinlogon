@@ -82,7 +82,7 @@
          * @param array $data
          * @return array
          */
-        protected function _request($url, $data=null) {
+        protected function _request($url, $data=null, $isJson=false) {
             $url = $this->_createUrl($url);
 
             $header = array();
@@ -99,6 +99,10 @@
                 }
 
                 $header[] = 'Cookie: ' . $cookie;
+            }
+
+            if( $isJson ) {
+                $header[] = 'X-Requested-With: XMLHttpRequest';
             }
 
             $response = SyndmsRequest::curlRequest($url, $data, null, $header);
@@ -141,7 +145,7 @@
 
                 $response = $this->_request(
                     'webapi/' . $service['path'],
-                    $query);
+                    $query, $isJson);
 
                 if( ($service['requestFormat'] == 'JSON') || $isJson ) {
                     $data = json_decode($response['body']);
@@ -161,6 +165,13 @@
                             }
                             else {
                                 return $data['success'];
+                            }
+                        }
+                        elseif( isset($data['success']) && (!$data['success'])) {
+                            if( isset($data['error']) ) {
+                                $error = (array) $data['error'];
+                                var_dump($error);
+                                throw new Exception("code: " . $error['code'], $error['code']);
                             }
                         }
                     }
@@ -940,5 +951,60 @@
             }
 
             return array();
+        }
+
+        /**
+         * setFileShareACLs
+         *
+         * @param string $volume
+         * @param string $realpath
+         * @param array $rules
+         */
+        public function setFileShareACLs($volume, $realpath, $rules=array()) {
+             if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.ACL', array(
+                    'method'            => 'set',
+                    'version'           => '1',
+                    'file_path'         =>  $volume . $realpath,
+                    'files'             =>  $volume  . $realpath,
+                    'dirPaths'          =>  $realpath,
+                    'change_acl'        => 'true',
+                    'rules'             => json_encode($rules),
+                    'inherited'         => 'false',
+                    'acl_recur'         => 'false'
+                    ), true);
+
+                if( is_array($data) && isset($data['task_id']) ) {
+                    $status = $this->_getFileShareACLStatus($data['task_id']);
+
+                    if( $status ) {
+                        return true;
+                    }
+                }
+             }
+
+            return false;
+        }
+
+        /**
+         * _getFileShareACLStatus
+         *
+         * @param string $taskid
+         * @return boolean
+         */
+        protected function _getFileShareACLStatus($taskid) {
+            if( $this->_isLogin ) {
+                $data = $this->_queryByService('SYNO.Core.ACL', array(
+                    'method'            => 'status',
+                    'version'           => '1',
+                    'task_id'           => $taskid,
+                    ), true);
+
+                if( is_array($data) && isset($data['finished']) && $data['finished'] ) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }

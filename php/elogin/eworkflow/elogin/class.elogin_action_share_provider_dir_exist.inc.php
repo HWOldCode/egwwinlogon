@@ -61,7 +61,7 @@
          * @return string
          */
         public function getEntryDefaultIcon() {
-            return "share.png";
+            return "folderexist.png";
         }
 
         /**
@@ -230,7 +230,8 @@
             // -----------------------------------------------------------------
 
             $linkname = self::LINK_NO;
-            $dirname   = trim($pro->getParamValue(static::PARAM_DE_DIRNAME));
+            $dirname   = eworkflow_vfs_bo::cleanUtf8PathName(
+                $pro->getParamValue(static::PARAM_DE_DIRNAME));
 
             $entryid = $this->getUserShareEntryid();
             $entry = eworkflow_entrys_bo::loadEntry($entryid);

@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
 <overlay>
-	<template id="elogin.entry.action_egw_elogin_shareprovider_dir_create" template="" lang="" group="0" version="">
+	<template id="elogin.entry.action_egw_elogin_shareprovider_dir_permission_remove" template="" lang="" group="0" version="">
 		<grid width="100%">
 			<columns>
 				<column/>
 			</columns>
 			<rows>
                 <row>
-					<caption label="ELogin Share Provider Dir Create" class="dialogHeader2 th"/>
+					<caption label="ELogin Share Provider Dir Remove permission" class="dialogHeader2 th"/>
 				</row>
                 <row height="100%">
                     <grid width="100%">

@@ -414,6 +414,31 @@
         }
 
         /**
+         * removeAllPermissionDir
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @return boolean
+         */
+        public function removeAllPermissionDir($usersharename, $dir) {
+            return false;
+        }
+
+        /**
+         * addPermissionDir
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @param string $username
+         * @param boolean $read
+         * @param boolean $write
+         * @return boolean
+         */
+        public function addPermissionDir($usersharename, $dir, $username, $read=false, $write=false) {
+            return false;
+        }
+
+        /**
          * save
          */
         public function save() {

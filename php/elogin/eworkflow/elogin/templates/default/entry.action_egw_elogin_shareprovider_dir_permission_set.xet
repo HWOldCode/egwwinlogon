@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
 <overlay>
-	<template id="elogin.entry.action_egw_elogin_shareprovider_dir_create" template="" lang="" group="0" version="">
+	<template id="elogin.entry.action_egw_elogin_shareprovider_dir_permission_set" template="" lang="" group="0" version="">
 		<grid width="100%">
 			<columns>
 				<column/>
 			</columns>
 			<rows>
                 <row>
-					<caption label="ELogin Share Provider Dir Create" class="dialogHeader2 th"/>
+					<caption label="ELogin Share Provider Dir Set permission" class="dialogHeader2 th"/>
 				</row>
                 <row height="100%">
                     <grid width="100%">
@@ -27,6 +27,10 @@
                                 <description value="Dirname"/>
                                 <eworkflow-ptextbox id="dirname" height="280px"/>
                              </row>
+                             <row class="row">
+                                <description value="Username"/>
+                                <eworkflow-dialog-input id="username" statustext="Username "/>
+                            </row>
                         </rows>
                     </grid>
                 </row>
