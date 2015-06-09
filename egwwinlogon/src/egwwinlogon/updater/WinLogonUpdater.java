@@ -68,6 +68,8 @@ public class WinLogonUpdater extends Thread {
     @Override
     public void run() {
         try {
+            //new WinLogonUpdaterDialog();
+            
             //File jardir = WinLogonUpdater.getJarDir(WinLogonUpdater.class);
             //System.out.println(jardir.toString());
             //System.exit(1);
