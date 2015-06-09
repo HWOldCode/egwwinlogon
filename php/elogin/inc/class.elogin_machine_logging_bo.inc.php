@@ -234,10 +234,10 @@
         static public function read($id=null) {
             $where = array(self::TABLE . '.el_unid=' . "'" . (string)$id . "'");
             $cols = array(self::TABLE . '.*');
-            $join = array();
+            $join = '';
 
             if (!($data = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                '', '', 0, $join)->fetch()))
+                false, '', false, -1, $join)->fetch()))
             {
                 return false;
             }
@@ -293,10 +293,10 @@
         static public function get_rows(&$query, &$rows, &$readonlys) {
             $where = array();
             $cols = array(self::TABLE . '.*');
-            $join = array();
+            $join = '';
 
             if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                false, ' ORDER BY ' . self::TABLE . '.el_logdate ', 0, $join)))
+                false, ' ORDER BY ' . self::TABLE . '.el_logdate ', false, -1, $join)))
             {
                 return array();
             }

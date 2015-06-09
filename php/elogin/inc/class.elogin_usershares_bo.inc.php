@@ -145,6 +145,14 @@
         }
 
         /**
+         * getUserId
+         * @return string
+         */
+        public function getUserId() {
+            return $this->_egwaccountid;
+        }
+
+        /**
          * getUsername
          *
          * @return string
@@ -399,10 +407,10 @@
         static public function read($id=null) {
             $where = array(self::TABLE . '.el_unid=' . "'" . (string)$id . "'");
             $cols = array(self::TABLE . '.*');
-            $join = array();
+            $join = '';
 
             if (!($data = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                '', '', 0, $join)->fetch()))
+                false, '', false, -1, $join)->fetch()))
             {
                 return false;
             }
@@ -458,7 +466,7 @@
         static public function get_rows(&$query, &$rows, &$readonlys) {
             $where = array();
             $cols = array(self::TABLE . '.*');
-            $join = array();
+            $join = '';
 
             if( key_exists('col_filter', $query) ) {
                 if( isset($query['col_filter']['provider_id']) ) {
@@ -471,7 +479,7 @@
             }
 
             if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                '', '', 0, $join)))
+                false, '', false, -1, $join)))
             {
                 return array();
             }

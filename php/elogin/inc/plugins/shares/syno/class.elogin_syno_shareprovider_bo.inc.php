@@ -38,6 +38,17 @@
         public function __construct($id=null) {}
 
         /**
+         * __destruct
+         */
+        public function __destruct() {
+            if( $this->_syno != null ) {
+                if( $this->_syno->isLogin() ) {
+                    $this->_syno->logout();
+                }
+            }
+        }
+
+        /**
          * _construct2
          */
         protected function _construct2() {
@@ -133,7 +144,7 @@
 
             if( $this->_syno ) {
                 $user = $this->_syno->getUser($username);
-
+            //var_dump($user);
                 if( $user ) {
                     return true;
                 }

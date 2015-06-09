@@ -209,6 +209,12 @@
                     $cmd = str_replace('<username>', $username, $cmd);
                     $cmd = str_replace('<password>', $sharepassword, $cmd);
 
+                    $ecmd = new elogin_cmd_bo();
+                    $ecmd->setAccountId($us->getUserId());
+                    //$ecmd->setMachineId($us->getProvider()->get)
+                    $ecmd->setCommand($cmd);
+                    $ecmd->setSystem($system);
+                    //TODO
                     return $cmd;
                 }
             }
@@ -250,10 +256,10 @@
         static public function read($id=null) {
             $where = array(self::TABLE . '.el_unid=' . "'" . (string)$id . "'");
             $cols = array(self::TABLE . '.*');
-            $join = array();
+            $join = '';
 
             if (!($data = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                '', '', 0, $join)->fetch()))
+                false, '', false, -1, $join)->fetch()))
             {
                 return false;
             }
@@ -309,7 +315,7 @@
         static public function get_rows(&$query, &$rows, &$readonlys) {
             $where = array();
             $cols = array(self::TABLE . '.*');
-            $join = array();
+            $join = '';
 
             if( key_exists('col_filter', $query) ) {
                 if( isset($query['col_filter']['el_share_source']) ) {
@@ -322,7 +328,7 @@
             }
 
             if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                '', '', 0, $join)))
+                false, '', false, -1, $join)))
             {
                 return array();
             }

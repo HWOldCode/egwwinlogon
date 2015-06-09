@@ -69,7 +69,7 @@
                     $provider_list[] = $tprovider;
                 }
             }
-
+var_dump('Providerlist: ' . count($tprovider) );
             // -----------------------------------------------------------------
 
             $egw_accounts = elogin_bo::getEgroupwareAccounts();
@@ -90,6 +90,8 @@
                     $accid          = $egw_account['account_id'];
                     $username       = $egw_account['account_lid'];
                     $isExist        = $provider->isUsernameExist($username);
+
+        var_dump("User Exist: " . $username . " Exist: " . ($isExist ? 'ja' : 'nein') . "<br>");
 
                     $usershares     = null;
 

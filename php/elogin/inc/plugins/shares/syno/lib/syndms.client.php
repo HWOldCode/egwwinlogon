@@ -11,12 +11,33 @@
     class SyndmsClient {
 
         const URL_INDEX         = 'webman/index.cgi';
+        const URL_LOGOUT        = 'webman/logout.cgi';
         const URL_QUERY         = 'webapi/query.cgi';
         const URL_AUTH          = 'webapi/auth.cgi';
         const URL_FILESHARE     = 'webapi/FileStation/file_share.cgi';
         const URL_FILESHARE_CRT = 'webapi/FileStation/file_crtfdr.cgi';
 
         const SYNO_SDS_SESSISON = 'SYNO.SDS.Session';
+
+        /**
+         * error List
+         * @var array
+         */
+        static protected $_errors = array(
+            '100' => 'Unknown error',
+            '101' => 'Invalid parameter',
+            '102' => 'The requested API does not exist',
+            '103' => 'The requested method does not exist',
+            '104' => 'The requested version does not support the functionality',
+            '105' => 'The logged in session does not have permission',
+            '106' => 'Session timeout',
+            '107' => 'Session interrupted by duplicate login',
+            '400' => 'No such account or incorrect password',
+            '401' => 'Guest account disabled',
+            '402' => 'Account disabled',
+            '403' => 'Wrong password',
+            '404' => 'Permission denied'
+            );
 
         /**
          * IP
@@ -63,6 +84,15 @@
         public function __construct($ip, $port=5000) {
             $this->_ip      = $ip;
             $this->_port    = $port;
+        }
+
+        /**
+         * __destruct
+         */
+        public function __destruct() {
+            if( $this->_isLogin ) {
+                $this->logout();
+            }
         }
 
         /**
@@ -170,8 +200,13 @@
                         elseif( isset($data['success']) && (!$data['success'])) {
                             if( isset($data['error']) ) {
                                 $error = (array) $data['error'];
-                                var_dump($error);
-                                throw new Exception("code: " . $error['code'], $error['code']);
+
+                                throw new Exception(
+                                        "servicename: " . $serviceName .
+                                        " method: " . $query['method'] .
+                                        " code: " . $error['code'] .
+                                        ' var_export: ' . var_export($query, true),
+                                    $error['code']);
                             }
                         }
                     }
@@ -302,6 +337,19 @@
 
             $this->_isLogin = false;
             return false;
+        }
+
+        /**
+         * logout
+         */
+        public function logout() {
+            if( $this->_isLogin ) {
+                $response = $this->_request(self::URL_LOGOUT, array(
+                    ));
+            }
+
+            $this->_cookies = array();
+            $this->_isLogin = false;
         }
 
         /**
@@ -579,21 +627,29 @@
          */
         public function getUser($username) {
             if( $this->_isLogin ) {
-                $data = $this->_queryByService('SYNO.Core.User', array(
-                    'method'            => 'get',
-                    'version'           => '1',
-                    'name'              => $username,
-                    'additional'        => '["description","email","expired","cannot_chg_passwd"]'
-                    ));
+                try {
+                    $data = $this->_queryByService('SYNO.Core.User', array(
+                        'method'            => 'get',
+                        'version'           => '1',
+                        'name'              => $username,
+                        'additional'        => '["description","email","expired","cannot_chg_passwd"]'
+                        ));
 
-                if( $data ) {
-                    if( isset($data['users']) ) {
-                        $users = array();
+                    if( $data ) {
+                        if( isset($data['users']) ) {
+                            $users = array();
 
-                        foreach( $data['users'] as $tuser ) {
-                            return (array)$tuser;
+                            foreach( $data['users'] as $tuser ) {
+                                return (array)$tuser;
+                            }
                         }
                     }
+                }
+                catch( Exception $ex ) {
+                    if( $ex->getCode() != '3106' ) {
+                        throw $ex;
+                    }
+
                 }
             }
 
