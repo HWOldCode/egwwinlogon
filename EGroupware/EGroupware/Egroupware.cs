@@ -74,12 +74,12 @@ namespace pGina.Plugin.EGroupware
             // -------------------------------
             // init java updater app
 
-            try {
+            /*try {
                 this.initUpdaterJava();
             }
             catch( System.Exception e ) {
                 EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
-            }
+            }*/
 
             // -------------------------------
             // init egwwinlogon java app

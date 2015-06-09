@@ -7,6 +7,7 @@ import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.events.EgroupwareEventRequest;
 import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
 import egwwinlogon.egroupware.EgroupwareCommand;
+import egwwinlogon.winapi.ProcessList;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -232,6 +233,14 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
         // userapp
         if( this._sessionId != -1 ) {
             if( this._userappProcessId == -1 ) {
+                logger.info("Start Updaterapp...");
+                
+                String cmdUApp = EgwWinLogonUltis.getUpdaterAppCmd();
+                
+                EgroupwareDLL.startProcessInSession(this._sessionId, cmdUApp);
+                
+                // -------------------------------------------------------------
+                
                 logger.info("Start Userapp...");
                 
                 String username = EgroupwareDLL.getUsername(this._sessionId);
@@ -248,13 +257,12 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
                     String.valueOf(this._userappProcessId));
             }
             else {
-                /*try {
-                    if( !ProcessUtils.existProcessById(this._userappProcessId) ) {
-
+                try {
+                    if( !ProcessList.existProcessById(this._userappProcessId) ) {
                         String username = EgroupwareDLL.getUsername(this._sessionId);
                         logger.info("Userapp for username: " + username);
 
-                        String cmdApp = EgwWinLogonThread.getUserAppCmd(username);
+                        String cmdApp = EgwWinLogonUltis.getUserAppCmd(username);
 
                         logger.info("Userapp cmd: " + cmdApp);
 
@@ -268,7 +276,6 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
                 catch( Exception ex ) {
                     logger.error(ex.getMessage());
                 }
-                */
             }
             
             // check can later login

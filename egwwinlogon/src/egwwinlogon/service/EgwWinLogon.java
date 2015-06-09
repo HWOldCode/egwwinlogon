@@ -457,7 +457,7 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetVersion() {
-		return "14.2.5";
+		return "14.2.7";
 	}
 
     /**

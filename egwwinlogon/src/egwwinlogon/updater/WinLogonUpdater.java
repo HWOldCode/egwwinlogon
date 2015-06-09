@@ -6,6 +6,7 @@
 package egwwinlogon.updater;
 
 import egwwinlogon.service.EgwWinLogon;
+import egwwinlogon.service.EgwWinLogonUltis;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -19,9 +20,11 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.swing.JOptionPane;
 
 /**
  * WinLogonUpdater
@@ -32,10 +35,8 @@ import java.util.zip.ZipFile;
 public class WinLogonUpdater extends Thread {
     
     private final static String _versionURL     = "https://www.hw-softwareentwicklung.de/egwwinlogon_updater/version.html";
-    private final static String _historyURL     = "https://www.hw-softwareentwicklung.de/egwwinlogon_updater/history.html";
-    private final static String _downloadURL    = "https://www.hw-softwareentwicklung.de/egwwinlogon_updater/url.html";
     
-    private final String _root                  = "update/";
+    private String _root                  = "update/";
     
     /**
      * version old
@@ -48,9 +49,15 @@ public class WinLogonUpdater extends Thread {
     private String _newVersion  = "";
     
     /**
+     * Dialog
+     */
+    private WinLogonUpdaterDialog _dlg = null;
+    
+    /**
      * constructor
      */
     public WinLogonUpdater() {
+        this._dlg = new WinLogonUpdaterDialog();
         this.run();
     }
 
@@ -68,28 +75,40 @@ public class WinLogonUpdater extends Thread {
     @Override
     public void run() {
         try {
-            //new WinLogonUpdaterDialog();
+            String decodedPath = EgwWinLogonUltis.getCurrentJarPath();
             
-            //File jardir = WinLogonUpdater.getJarDir(WinLogonUpdater.class);
-            //System.out.println(jardir.toString());
-            //System.exit(1);
+            this._root = decodedPath + this._root;
+            
             String lastVersion  = WinLogonUpdater.getLatestVersion();
             EgwWinLogon wl      = new EgwWinLogon();
+            
+            //JOptionPane.showMessageDialog(null, "ELogin Version: " + wl.egwGetVersion() + ", yes we scan!");
             
             if( !wl.egwGetVersion().equals(lastVersion) ) {
                 this._newVersion = lastVersion;
                 this._oldVersion = wl.egwGetVersion();
                 
+                //JOptionPane.showMessageDialog(null, "ELogin Download is start! ");
+                this._dlg.showDialog();
+                
                 this._downloadFile(this._getDownloadLinkFromHost());
                 this._unzip();
                 this._copyFiles(
                     new File(this._root), 
-                    new File("").getAbsolutePath()
+                    decodedPath//new File("").getAbsolutePath()
                     );
+                
+                JOptionPane.showMessageDialog(null, "ELogin Update finish! Please Reboot your System.");
             }
             else {
                 this._oldVersion = wl.egwGetVersion();
                 this._newVersion = this._oldVersion;
+            }
+            
+            if( this._dlg != null ) {
+                Thread.sleep(250);
+                this._dlg.close();
+                System.exit(0);
             }
         }
         catch (Exception ex) {
@@ -115,7 +134,7 @@ public class WinLogonUpdater extends Thread {
      * @throws Exception 
      */
     static public String getWhatsNew() throws Exception {
-        String data = WinLogonUpdater.getData(WinLogonUpdater._historyURL);
+        String data = WinLogonUpdater.getData(WinLogonUpdater._versionURL);
         return data.substring(data.indexOf("[history]")+9, data.indexOf("[/history]"));
     }
     
@@ -146,8 +165,18 @@ public class WinLogonUpdater extends Thread {
      * @throws Exception 
      */
     private String _getDownloadLinkFromHost() throws Exception {
-        String data = WinLogonUpdater.getData(WinLogonUpdater._downloadURL);
+        String data = WinLogonUpdater.getData(WinLogonUpdater._versionURL);
         return data.substring(data.indexOf("[url]")+5, data.indexOf("[/url]"));
+    }
+    
+    /**
+     * _getDownloadFileSize
+     * @return
+     * @throws Exception 
+     */
+    private String _getDownloadFileSize() throws Exception {
+        String data = WinLogonUpdater.getData(WinLogonUpdater._versionURL);
+        return data.substring(data.indexOf("[filesize]")+10, data.indexOf("[/filesize]"));
     }
     
     /**
@@ -157,11 +186,17 @@ public class WinLogonUpdater extends Thread {
      * @throws MalformedURLException
      * @throws IOException 
      */
-    private void _downloadFile(String link) throws MalformedURLException, IOException {
+    private void _downloadFile(String link) throws MalformedURLException, IOException, Exception {
         URL url             = new URL(link);
         URLConnection conn  = url.openConnection();
         InputStream is      = conn.getInputStream();
         long max            = conn.getContentLength();
+        int filesize        = Integer.parseInt(this._getDownloadFileSize());
+        
+        if( filesize == 0 ) {
+            return;
+        }
+        
         //outText.setText(outText.getText()+"\n"+"Downloding file...\nUpdate Size(compressed): "+max+" Bytes");
         BufferedOutputStream fOut = new BufferedOutputStream(
             new FileOutputStream(new File("update.zip")));
@@ -173,6 +208,11 @@ public class WinLogonUpdater extends Thread {
         while( (bytesRead = is.read(buffer)) != -1 ) {
             in += bytesRead;
             fOut.write(buffer, 0, bytesRead);
+            
+            if( this._dlg != null ) {
+                int percent = (in * 100 / filesize);
+                this._dlg.setProgressBarValue(percent);
+            }
         }
         
         fOut.flush();

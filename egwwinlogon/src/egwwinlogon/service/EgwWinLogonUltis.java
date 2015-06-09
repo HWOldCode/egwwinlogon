@@ -7,8 +7,11 @@ package egwwinlogon.service;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
+import egwwinlogon.updater.WinLogonUpdater;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 import org.apache.log4j.Logger;
 
 /**
@@ -77,6 +80,27 @@ public class EgwWinLogonUltis {
     }
     
     /**
+     * getUpdaterAppCmd
+     * @return 
+     */
+    static public String getUpdaterAppCmd() {
+        String appDir = "";
+        
+        try {
+            appDir = EgroupwareDLL.getAppDir();
+        }
+        catch( Exception ex ) {
+            logger.error("Error getUserAppCmd: " + ex.getMessage());
+        }
+        
+        String appCmd = "\"" + EgwWinLogonUltis.getJavaInstallationPath() + 
+            "\\bin\\javaw.exe\" -cp \"" + appDir + 
+            "egwwinlogon.jar\" egwwinlogon.updater.WinLogonUpdater ";
+        
+        return appCmd;
+    }
+    
+    /**
      * getProtocolAppCmd
      * @return 
      */
@@ -118,5 +142,19 @@ public class EgwWinLogonUltis {
         catch( Exception e ) {
             return false;
         }
+    }
+    
+    /**
+     * getCurrentJarPath
+     * @return
+     * @throws UnsupportedEncodingException 
+     */
+    static public String getCurrentJarPath() throws UnsupportedEncodingException {
+        String path = WinLogonUpdater.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String decodedPath = URLDecoder.decode(path, "UTF-8");
+        decodedPath = decodedPath.replace("egwwinlogon.jar", "");
+        decodedPath = decodedPath.substring(1);
+        
+        return decodedPath;
     }
 }

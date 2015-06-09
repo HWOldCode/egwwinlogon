@@ -6,6 +6,9 @@
 package egwwinlogon.updater;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,48 +20,64 @@ import javax.swing.JProgressBar;
  */
 public class WinLogonUpdaterDialog {
     
+    /**
+     * JFrame
+     */
     protected JFrame _parentFrame = null;
     
+    protected int _size = 500;
+    
+    protected JProgressBar _dpb = null;
+    
+    /**
+     * WinLogonUpdaterDialog
+     */
     public WinLogonUpdaterDialog() {
+    }
+
+    /**
+     * showDialog
+     */
+    public void showDialog() {
         this._parentFrame = new JFrame();
-        this._parentFrame.setSize(500, 150);
+        this._parentFrame.setSize(this._size, 50);
+        this._parentFrame.setTitle("ELogin Updater");
         
-        JLabel jl = new JLabel();
-        jl.setText("Count : 0");
+        try {
+            InputStream input_stream = 
+                ClassLoader.getSystemClassLoader().getResourceAsStream(
+                    "egwwinlogon/user/resources/tileimage128.png");
+
+            Image image = ImageIO.read(input_stream);
+
+            this._parentFrame.setIconImage(image);
+        }
+        catch( Exception e ) {
+            
+        }
         
-        this._parentFrame.add(BorderLayout.CENTER, jl);
+        this._dpb = new JProgressBar(0, this._size);
+        this._parentFrame.add(BorderLayout.CENTER, this._dpb);
         this._parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         this._parentFrame.setVisible(true);
-        
-        final JDialog dlg = new JDialog(this._parentFrame, "Progress Dialog", true);
-        JProgressBar dpb = new JProgressBar(0, 500);
-        dlg.add(BorderLayout.CENTER, dpb);
-        dlg.add(BorderLayout.NORTH, new JLabel("Progress..."));
-        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        dlg.setSize(300, 75);
-        dlg.setLocationRelativeTo(this._parentFrame);
-
-        Thread t = new Thread(new Runnable() {
-          public void run() {
-            dlg.setVisible(true);
-          }
-        });
-        t.start();
-        for (int i = 0; i <= 500; i++) {
-          jl.setText("Count : " + i);
-          dpb.setValue(i);
-          if(dpb.getValue() == 500){
-            dlg.setVisible(false);
-            System.exit(0);
-
-          }
-          try {
-            Thread.sleep(25);
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          }
+    }
+    
+    /**
+     * setProgressBarValue
+     * @param value 
+     */
+    public void setProgressBarValue(int value) {
+        if( this._dpb != null ) {
+            int set = value * this._size / 100;
+            this._dpb.setValue(set);
         }
-        dlg.setVisible(true);
+    }
+    
+    public void close() {
+        if( this._parentFrame != null ) {
+            this._parentFrame.setVisible(false);
+            this._parentFrame.dispose();
+        }
     }
 }
