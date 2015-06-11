@@ -143,6 +143,24 @@
         }
 
         /**
+         * setMachineId
+         *
+         * @param string $id
+         */
+        public function setMachineId($id) {
+            $this->_machine_id = $id;
+        }
+
+        /**
+         * getMachineId
+         *
+         * @return string
+         */
+        public function getMachineId() {
+            return $this->_machine_id;
+        }
+
+        /**
          * setShareSource
          *
          * @param string $sharesource
@@ -182,6 +200,7 @@
          * getCmds
          *
          * @param type $system
+         * @return elogin_cmd_bo|null
          */
         public function getCmd($system=null) {
             if( $system == null ) {
@@ -211,11 +230,11 @@
 
                     $ecmd = new elogin_cmd_bo();
                     $ecmd->setAccountId($us->getUserId());
-                    //$ecmd->setMachineId($us->getProvider()->get)
+                    $ecmd->setMachineId($this->getMachineId());
                     $ecmd->setCommand($cmd);
                     $ecmd->setSystem($system);
-                    //TODO
-                    return $cmd;
+
+                    return $ecmd;
                 }
             }
 

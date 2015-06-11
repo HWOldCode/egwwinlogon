@@ -17,6 +17,7 @@
 	jquery.jquery;
     jquery.jquery-ui;
     /elogin/js/et2_widget_elogin_mountlist.js;
+    /elogin/js/et2_widget_elogin_commands.js;
 */
 
 /**
@@ -67,6 +68,93 @@ if( typeof app != 'undefined' ) {
          */
         et2_ready: function(et2, menuaction) {
             this.et2_obj = et2;
+        },
+
+        /**
+         * _openEgwWindow
+         *
+         * @param string url
+         * @param function onCloseFunction
+         * @param string windowname
+         * @returns
+         */
+        _openEgwWindow: function(url, onCloseFunction, windowname) {
+            var self = this;
+
+            if( typeof windowname === 'undefined' ) {
+                windowname = 'elogin';
+            }
+
+            var self = this;
+            var dialog = egw.openPopup(
+                url,
+                750,
+                600,
+                windowname,
+                'elogin',
+                true,
+                'yes'
+                );
+
+            var onClose = function() {
+                if( typeof onCloseFunction === 'function' ) {
+                    onCloseFunction();
+                }
+                else {
+
+                }
+            };
+
+            var windowcheck = function() {
+                if( dialog === null ) {
+                    if( onClose !== null ) {
+                        onClose();
+                    }
+
+                    return;
+                }
+
+                if( dialog.closed === true ) {
+                    if( onClose !== null ) {
+                        onClose();
+                    }
+
+                    return;
+                }
+
+                setTimeout(windowcheck, 50);
+            };
+
+            setTimeout(windowcheck, 50);
+
+            return dialog;
+        },
+
+        /**
+         * elogin_machine_list_actions
+         */
+        elogin_machine_list_actions: function(_action, _senders) {
+            var self = this;
+
+			switch( _action.id ) {
+                case 'settinglist':
+                    for( var i=0; i<_senders.length; i++) {
+                        var id = _senders[i].id;
+                        var idparts = id.split('::');
+
+                        var url = window.egw_webserverUrl +
+                            '/index.php?menuaction=' +
+                            'elogin.elogin_machine_ui.settings&machineid=' +
+                            idparts[1];
+
+						this._openEgwWindow(url, function(){
+                            var nm = self.et2_obj.getWidgetById('nm');
+                            nm.dataview.updateColumns();
+                        }, 'elogin_setting');
+                    }
+
+                    break;
+            }
         }
     });
 }

@@ -31,7 +31,7 @@
          *
          * @param array $content
          */
-        public function logging_list($content) {
+        public function logging_list($content=null) {
             if( !$GLOBALS['egw_info']['user']['apps']['admin'] ) {
                 die("Only for Admins!");
             }

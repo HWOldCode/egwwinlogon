@@ -52,4 +52,15 @@
 
             return egw_json_response::get()->data(array('status' => 'error'));
         }
+
+        /**
+         * get_rows_commands
+         *
+         * @param array $query
+         * @param array $rows
+         * @param array $readonlys
+         */
+        public function get_rows_commands(&$query, &$rows, &$readonlys) {
+            var_dump("drin");
+        }
     }

@@ -22,6 +22,7 @@
          */
         public $public_functions = array(
             'machine_list'          => true,
+            'settings'              => true,
             'get_rows_machine'      => true,
             'ajax_machine_info'     => true,
             );
@@ -31,7 +32,7 @@
          *
          * @param array $content
          */
-        public function machine_list($content) {
+        public function machine_list($content=null) {
             if( !$GLOBALS['egw_info']['user']['apps']['admin'] ) {
                 die("Only for Admins!");
             }
@@ -150,5 +151,60 @@
             }
 
             return egw_json_response::get()->data(array('status' => 'ok'));
+        }
+
+        /**
+         *
+         * @param array $contentsettings
+         * @param array $content
+         */
+        public function settings($content=array()) {
+            if( !$GLOBALS['egw_info']['user']['apps']['admin'] ) {
+                die("Only for Admins!");
+            }
+
+            if( $content == null ) {
+                $content = array();
+            }
+
+            $preserv    = array();
+            $option_sel = array();
+            $readonlys  = array();
+
+            $muid = ( isset($content['machineid']) ? $content['machineid'] : null);
+			$muid = ( $muid == null ? (isset($_GET['machineid']) ? $_GET['machineid'] : null) : $muid);
+
+            if( $muid == null ) {
+                die("Unknow Machine id");
+            }
+
+            $machine = new elogin_machine_bo($muid);
+
+            if( !$machine->getIsInDb() ) {
+                die("Unknow Machine");
+            }
+
+            $content['machine_name']    = $machine->getName();
+            $content['pcname']          = $machine->getName();
+
+            $content['commands']       = array(
+                'unid' => $muid
+                );
+            /*
+             * TODO
+
+            $content['mountlist']       = array(
+                'unid' => $uid
+                );
+            */
+
+            $tpl = new etemplate_new('elogin.machine_setting.dialog');
+			$tpl->exec(
+                'elogin.elogin_machine_ui.settings',
+                $content,
+                $option_sel,
+                $readonlys,
+                $preserv,
+                0);
         }
     }

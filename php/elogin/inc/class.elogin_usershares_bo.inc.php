@@ -357,6 +357,7 @@
         /**
          * getCmds
          * @param string $system
+         * @return array of elogin_cmd_bo
          */
         public function getCmds($system=null) {
             $cmds = array();

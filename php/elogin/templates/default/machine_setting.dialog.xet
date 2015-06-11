@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+	<template id="elogin.machine_setting.dialog" template="" lang="" group="0" version="">
+        <grid width="100%">
+			<columns>
+				<column/>
+			</columns>
+			<rows>
+                <row>
+                    <grid width="100%">
+                        <columns>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row class="dialogHeader">
+                                <appicon src="elogin"/>
+                                <description value="Machine"/>
+                                <textbox id="machine_name" span="4" readonly="true" class="et2_fullWidth et2_required"/>
+                            </row>
+                        </rows>
+					</grid>
+                </row>
+				<row height="400px">
+                    <grid width="100%" height="400px">
+                        <columns>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row>
+                                <tabbox id="tabs" tab_height="390px">
+                                    <tabs>
+                                        <tab id="systeminfo" label="System Info"/>
+                                        <tab id="settings" label="Settings"/>
+                                        <tab id="commands" label="Commands"/>
+                                        <!--<tab id="usershares" label="Usershares"/>-->
+                                    </tabs>
+                                    <tabpanels>
+                                        <grid width="100%">
+                                            <columns>
+                                                <column/>
+                                                <column/>
+                                            </columns>
+                                            <rows>
+                                                <row class="th">
+                                                    <description span="2" value="System"/>
+                                                </row>
+                                                <row>
+                                                    <description value="PC-Name"/>
+                                                    <description id="pcname"/>
+                                                </row>
+                                                <row>
+                                                    <description value="Session-ID"/>
+                                                    <description id="sessionid"/>
+                                                </row>
+                                                <row>
+                                                    <description value="Last-ELogin-Request"/>
+                                                    <description id="last_request_date"/>
+                                                </row>
+                                                <row class="th">
+                                                    <description span="2" value="Userlist"/>
+                                                </row>
+                                            </rows>
+                                        </grid>
+                                        <grid width="100%">
+                                            <columns>
+                                                <column/>
+                                            </columns>
+                                            <rows>
+                                                <row>
+                                                    <elogin-machinesetting id="machinesetting" width="100%" height="300px" overflow="hidden" />
+                                                </row>
+                                            </rows>
+                                        </grid>
+                                        <grid width="100%">
+                                            <columns>
+                                                <column/>
+                                            </columns>
+                                            <rows>
+                                                <row>
+                                                    <elogin-commands id="commands" width="100%" height="300px" overflow="hidden" />
+                                                </row>
+                                            </rows>
+                                        </grid>
+                                        <!--<grid width="100%">
+                                            <columns>
+                                                <column/>
+                                            </columns>
+                                            <rows>
+                                                <row>
+                                                    <elogin-mountlist id="mountlist" width="100%" height="300px" overflow="hidden" />
+                                                </row>
+                                            </rows>
+                                        </grid>-->
+                                    </tabpanels>
+                                </tabbox>
+                            </row>
+                        </rows>
+                    </grid>
+                </row>
+                <row class="dialogFooterToolbar">
+                    <hbox span="all">
+                        <button statustext="closes the window without saving the changes" label="Cancel" id="button[cancel]" onclick="window.close();" image="cancel" background_image="1"/>
+					</hbox>
+                </row>
+            </rows>
+        </grid>
+	</template>
+</overlay>
