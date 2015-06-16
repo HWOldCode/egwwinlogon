@@ -154,7 +154,7 @@
         }
 
         /**
-         *
+         * settings
          * @param array $contentsettings
          * @param array $content
          */
@@ -184,6 +184,7 @@
                 die("Unknow Machine");
             }
 
+            $content['muid']            = $machine->getId();
             $content['machine_name']    = $machine->getName();
             $content['pcname']          = $machine->getName();
 
@@ -205,6 +206,6 @@
                 $option_sel,
                 $readonlys,
                 $preserv,
-                0);
+                2);
         }
     }

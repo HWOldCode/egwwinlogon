@@ -150,6 +150,21 @@
         }
 
         /**
+         * getCmds
+         * @return array of elogin_cmd_bo
+         */
+        public function getCmds() {
+            $list = elogin_cmd_bo::getAllByMachineId($this->_id);
+            $list_all = elogin_cmd_bo::getAllByMachineId('all');
+
+            foreach( $list_all as $entry ) {
+                $list[] = $entry;
+            }
+
+            return $list;
+        }
+
+        /**
          * read
          *
          * @param string $id

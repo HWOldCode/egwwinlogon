@@ -83,6 +83,12 @@
                                             </columns>
                                             <rows>
                                                 <row>
+                                                    <hbox align="left">
+                                                        <description value="Add:" class="elogin_headertext"/>
+                                                        <button statustext="Add a Cmd" label="Add" id="add" onclick="app.elogin._openEgwWindow(egw::link('/index.php','menuaction=elogin.elogin_cmd_ui.cmd_edit&amp;muid=$cont[muid]'), null, '_blank'); return false;" image="task"/>
+                                                    </hbox>
+                                                </row>
+                                                <row>
                                                     <elogin-commands id="commands" width="100%" height="300px" overflow="hidden" />
                                                 </row>
                                             </rows>

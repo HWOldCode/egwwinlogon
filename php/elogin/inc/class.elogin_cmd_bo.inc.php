@@ -122,6 +122,14 @@
         }
 
         /**
+         * getId
+         * @return string
+         */
+        public function getId() {
+            return $this->_id;
+        }
+
+        /**
          * setMachineId
          *
          * @param string $id
@@ -264,7 +272,7 @@
             $data['el_type']        = $this->_type;
             $data['el_event']       = $this->_event;
             // TODO
-            
+
             $return = self::_write($data);
 
             if( $return ) {
@@ -329,6 +337,68 @@
             }
 
             return $data['el_unid'];
+        }
+
+        /**
+         * get_rows
+         *
+         * @param type $query
+         * @param type $rows
+         * @param type $readonlys
+         * @return type
+         */
+        static public function get_rows(&$query, &$rows, &$readonlys) {
+            $where = array();
+            $cols = array(self::TABLE . '.*');
+            $join = '';
+
+            if( key_exists('col_filter', $query) ) {
+                if( isset($query['col_filter']['machine_id']) ) {
+                    $where['el_machine_id'] = $query['col_filter']['machine_id'];
+                }
+            }
+
+            if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+                false, '', false, -1, $join)))
+            {
+                return array();
+            }
+
+            $rows = array();
+
+            foreach( $rs as $row ) {
+				$row = (array) $row;
+                $rows[] = $row;
+            }
+
+            return count($rows);
+        }
+
+        /**
+         * getAllByMachineId
+         *
+         * @param type $machineid
+         * @return array of elogin_cmd_bo
+         */
+        static public function getAllByMachineId($machineid) {
+            $query = array(
+                'col_filter' => array(
+                    'machine_id' => $machineid,
+                    )
+                );
+
+            $rows = array();
+            $readonlys = array();
+
+            self::get_rows($query, $rows, $readonlys);
+
+            $list = array();
+
+            foreach( $rows as $row ) {
+                $list[] = new elogin_cmd_bo($row['el_unid']);
+            }
+
+            return $list;
         }
 
         /**

@@ -69,35 +69,36 @@ var elogin_commands = et2_valueWidget.extend([et2_IDataProvider], {
 		var self = this;
 
 
-        var menu_mount_dialog = function(menu_item) {
+        var menu_cmd_dialog = function(menu_item) {
+            app.elogin._openEgwWindow(
+                egw.link(
+                    '/index.php',
+                    'menuaction=elogin.elogin_cmd_ui.cmd_edit&muid=' +
+                        self.options.value.unid + "&uid=" +
+                        self.context.data.el_unid),
+                null,
+                '_blank'
+                );
 
-            var content = {
-                id: self.options.value.unid,
-                action: 'add'
-            };
-
-            var title = self.egw().lang("Add Mount");
-
-            if( menu_item.id === 'editmount' ) {
-                if( typeof self.context.data !== 'undefined' ) {
-                    title = self.egw().lang("Edit Mount");
-                    content = {
-                        mountid: self.context.data.el_unid,
-                        id: self.options.value.unid,
-                        mount_name: self.context.data.el_mount_name,
-                        action: 'edit'
+            /*var content = {
+                    machineid: self.options.value.unid,
+                    action: 'add'
                     };
+
+            var title = self.egw().lang("Add Command");
+
+            if( menu_item.id === 'editcmd' ) {
+                if( typeof self.context.data !== 'undefined' ) {
+                    title = self.egw().lang("Edit Command");
+                    content = {
+                        cmdid: self.context.data.el_unid,
+                        machineid: self.options.value.unid,
+                        action: 'edit'
+                        };
                 }
             }
-            else if( menu_item.id === 'deleteparam' ) {
-                content = {
-                    mountid: self.options.value.unid,
-					id: self.context.data.id,
-                    action: 'delete'
-                };
-            }
 
-            self.show_prompt_mount(
+            self.show_prompt_cmd(
 				function(button, _value) {
                     if(button != et2_dialog.OK_BUTTON) return;
 
@@ -113,17 +114,40 @@ var elogin_commands = et2_valueWidget.extend([et2_IDataProvider], {
                 },
                 title,
                 content
-                );
+                );*/
         };
 
         this.context = new egwMenu();
-
         this.context.addItem(
-            "editmount",
-            this.egw().lang("Edit Mount"),
+            "editcmd",
+            this.egw().lang("Edit Command"),
             this.egw().image("edit"),
-            menu_mount_dialog
+            menu_cmd_dialog
             );
+
+        /*this.context.addItem(
+            "addcmd",
+            this.egw().lang("Add Command"),
+            this.egw().image("new"),
+            menu_cmd_dialog
+            );
+
+        // ---------------------------------------------------------------------
+        this.mcontext = new egwMenu();
+        this.mcontext.addItem(
+            "addcmd",
+            this.egw().lang("Add Command"),
+            this.egw().image("new"),
+            menu_cmd_dialog
+            );
+
+        $j(this.div).bind("contextmenu", function(e) {
+            if( self.context.instance === null ) {
+                self.mcontext.showAt(e.pageX, e.pageY, true);
+            }
+
+            e.preventDefault();
+		});*/
     },
 
     /**
@@ -393,7 +417,17 @@ var elogin_commands = et2_valueWidget.extend([et2_IDataProvider], {
 		return tr;
 	},
 
-    show_prompt_mount: function(_callback, _title, _content, _buttons, _egw_or_appname) {
+    /**
+     * show_prompt_cmd
+     *
+     * @param {type} _callback
+     * @param {type} _title
+     * @param {type} _content
+     * @param {type} _buttons
+     * @param {type} _egw_or_appname
+     * @returns {unresolved}
+     */
+    show_prompt_cmd: function(_callback, _title, _content, _buttons, _egw_or_appname) {
 
         var callback = _callback;
 
@@ -410,7 +444,7 @@ var elogin_commands = et2_valueWidget.extend([et2_IDataProvider], {
 			value: {
 				content: _content
 			},
-			template: egw.webserverUrl + '/elogin/templates/default/prompt.usershare_mount.xet',
+			template: egw.webserverUrl + '/elogin/templates/default/cmd.dialog.xet',
 			class: "et2_prompt"
 		}, et2_dialog._create_parent(_egw_or_appname));
     }

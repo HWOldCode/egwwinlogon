@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+	<template id="elogin.cmd.dialog" template="" lang="" group="0" version="">
+        <grid width="100%">
+			<columns>
+				<column/>
+			</columns>
+			<rows>
+                <row>
+                    <grid width="100%">
+                        <columns>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row class="dialogHeader">
+                                <appicon src="elogin"/>
+                                <description value="Command"/>
+                                <textbox id="command" span="4" class="et2_fullWidth et2_required"/>
+                            </row>
+                        </rows>
+					</grid>
+                </row>
+				<row>
+                    <grid width="100%">
+                        <columns>
+                            <column/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row>
+                                <description value="Machine"/>
+                                <menulist>
+                                    <menupopup id="machine"/>
+                                </menulist>
+                            </row>
+                            <row>
+                                <description value="Account"/>
+                                <menulist>
+                                    <menupopup type="select-account" id="account" multiple="true" no_lang="1" tags="true" account_type="both" empty_label="User or group"/>
+                                </menulist>
+                            </row>
+                            <row>
+                                <description value="System"/>
+                                <menulist>
+                                    <menupopup id="system"/>
+                                </menulist>
+                            </row>
+                            <row>
+                                <description value="Order"/>
+                                <menulist>
+                                    <menupopup id="order"/>
+                                </menulist>
+                            </row>
+                            <row>
+                                <description value="Execute Type"/>
+                                <menulist>
+                                    <menupopup id="type"/>
+                                </menulist>
+                            </row>
+                            <row>
+                                <description value="Event"/>
+                                <menulist>
+                                    <menupopup id="event"/>
+                                </menulist>
+                            </row>
+                        </rows>
+                    </grid>
+                </row>
+                <row class="dialogFooterToolbar">
+                    <hbox span="all">
+						<button statustext="Saves the changes made" label="Save" id="button[save]" image="save" background_image="1"/>
+                        <button statustext="closes the window without saving the changes" label="Cancel" id="button[cancel]" onclick="window.close();" image="cancel" background_image="1"/>
+					</hbox>
+                </row>
+            </rows>
+        </grid>
+	</template>
+</overlay>
