@@ -35,7 +35,7 @@
 
                 if( $machine->getIsInDb() ) {
                     $usersahres = $machine->getCurrentUserShares();
-                    $cmds = array();
+                    $cmds = $machine->getCmds();
 
                     foreach( $usersahres as $usersahre ) {
                         $tcmds = $usersahre->getCmds();
@@ -45,9 +45,17 @@
                         }
                     }
 
+                    $list = array();
+
+                    foreach( $cmds as $tcmd ) {
+                        if( $tcmd instanceof elogin_cmd_bo ) {
+                            $list[] = $tcmd->toArray();
+                        }
+                    }
+
                     return egw_json_response::get()->data(array(
                         'status' => 'ok',
-                        'cmds' => $cmds));
+                        'cmds' => $list));
                 }
             }
 

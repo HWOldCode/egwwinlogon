@@ -409,10 +409,10 @@
             return array(
                 'id'            => $this->_id,
                 'machine_id'    => $this->_machine_id,
-                'account_id'    => $this->_account_id,
+                'account_id'    => strval($this->_account_id),
                 'command'       => $this->_command,
                 'system'        => $this->_system,
-                'order'         => $this->_order,
+                'order'         => strval($this->_order),
                 'type'          => $this->_type,
                 'event'         => $this->_event
                 );

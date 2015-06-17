@@ -228,9 +228,12 @@
                     $cmd = str_replace('<username>', $username, $cmd);
                     $cmd = str_replace('<password>', $sharepassword, $cmd);
 
-                    $ecmd = new elogin_cmd_bo();
+                    $ecmd = new elogin_cmd_bo('');
                     $ecmd->setAccountId($us->getUserId());
-                    $ecmd->setMachineId($this->getMachineId());
+
+                    $mid = $this->getMachineId();
+
+                    $ecmd->setMachineId(($mid == null ? 'all' : $mid));
                     $ecmd->setCommand($cmd);
                     $ecmd->setSystem($system);
 
