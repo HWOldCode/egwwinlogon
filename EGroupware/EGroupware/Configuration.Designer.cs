@@ -29,6 +29,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Configuration));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBoxJavaLogFile = new System.Windows.Forms.CheckBox();
             this.checkBoxJVMDB = new System.Windows.Forms.CheckBox();
             this.textEgroupwareDomain = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -41,6 +42,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBoxJavaLogFile);
             this.groupBox1.Controls.Add(this.checkBoxJVMDB);
             this.groupBox1.Controls.Add(this.textEgroupwareDomain);
             this.groupBox1.Controls.Add(this.label1);
@@ -48,10 +50,20 @@
             this.groupBox1.Controls.Add(this.labelEgroupwareUrl);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(360, 126);
+            this.groupBox1.Size = new System.Drawing.Size(360, 147);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Egroupware";
+            // 
+            // checkBoxJavaLogFile
+            // 
+            this.checkBoxJavaLogFile.AutoSize = true;
+            this.checkBoxJavaLogFile.Location = new System.Drawing.Point(14, 116);
+            this.checkBoxJavaLogFile.Name = "checkBoxJavaLogFile";
+            this.checkBoxJavaLogFile.Size = new System.Drawing.Size(111, 17);
+            this.checkBoxJavaLogFile.TabIndex = 7;
+            this.checkBoxJavaLogFile.Text = "Write Java Logfile";
+            this.checkBoxJavaLogFile.UseVisualStyleBackColor = true;
             // 
             // checkBoxJVMDB
             // 
@@ -97,7 +109,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(297, 144);
+            this.button1.Location = new System.Drawing.Point(297, 165);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 3;
@@ -107,7 +119,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(216, 144);
+            this.button2.Location = new System.Drawing.Point(216, 165);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 4;
@@ -119,7 +131,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 177);
+            this.ClientSize = new System.Drawing.Size(384, 200);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox1);
@@ -142,5 +154,6 @@
         private System.Windows.Forms.TextBox textEgroupwareDomain;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBoxJVMDB;
+        private System.Windows.Forms.CheckBox checkBoxJavaLogFile;
     }
 }

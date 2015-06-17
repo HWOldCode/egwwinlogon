@@ -8,7 +8,9 @@ package egwwinlogon.egroupware;
 import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.core.EgroupwareAuth;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
+import egwwinlogon.service.EgroupwarePGina;
 import egwwinlogon.service.EgwWinLogon;
+import egwwinlogon.service.EgwWinLogonUltis;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -392,10 +394,25 @@ public class EgroupwareELoginCache extends EgroupwareJson {
     static public EgroupwareELoginCache loadByFile(String file) {
         try {
             String content = new String(Files.readAllBytes(Paths.get(file)));
+            
+            content = EgwWinLogonUltis.getStrDecode(
+                content,
+                EgroupwarePGina.getDLLHash() + EgroupwarePGina.getSysFingerprint()
+                );
+            
+            //EgroupwarePGina.logInfo("loadByFile Cache: " + content);
+            
             return EgroupwareELoginCache.fromSerializableString(content);
         }
         catch( Exception ex ) {
-            java.util.logging.Logger.getLogger(EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
+            EgroupwarePGina.logError(
+                "EgroupwareELoginCache.loadByFile:" + ex.getMessage() + 
+                " File: " + file
+                );
+            
+            java.util.logging.Logger.getLogger(
+                EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
+            
             return null;
         }
     }
@@ -409,10 +426,23 @@ public class EgroupwareELoginCache extends EgroupwareJson {
     static public Boolean saveToFile(EgroupwareELoginCache cache, String file) {
         try {
             String content = EgroupwareELoginCache.toSerializableString(cache);
+            
+            content = EgwWinLogonUltis.getStrEncode(
+                content,
+                EgroupwarePGina.getDLLHash() + EgroupwarePGina.getSysFingerprint()
+                );
+            
             Files.write(Paths.get(file), content.getBytes());
         }
         catch( Exception ex ) {
-            java.util.logging.Logger.getLogger(EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
+            EgroupwarePGina.logError(
+                "EgroupwareELoginCache.saveToFile:" + ex.getMessage() + 
+                " File: " + file
+                );
+            
+            java.util.logging.Logger.getLogger(
+                EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
+            
             return false;
         }
 

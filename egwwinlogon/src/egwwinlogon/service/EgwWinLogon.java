@@ -8,7 +8,6 @@ import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.egroupware.EgroupwareMachineInfo;
 import egwwinlogon.egroupware.EgroupwareMachineLogging;
-import egwwinlogon.egroupware.EgroupwareSettings;
 import egwwinlogon.http.LogonHttpServer;
 import egwwinlogon.protocol.EgwWinLogonProtocol;
 import java.io.IOException;
@@ -53,7 +52,7 @@ public class EgwWinLogon {
      * EgroupwareELoginCache
      */
     protected EgroupwareELoginCache _eLoginCache = null;
-
+    
     /**
      * EgwWinLogonDb
      */
@@ -64,11 +63,11 @@ public class EgwWinLogon {
      *
      */
     public void initEgroupware() {
-        if( false ) {
+        if( EgroupwarePGina.isJavaLoggingFile() ) {
             try {
                 SimpleLayout layout = new SimpleLayout();
                 FileAppender fileAppender = new FileAppender(layout,
-                    "C:/MeineLogDatei.log", 
+                    EgroupwarePGina.getAppDir() + "/log/egwWinLogon.log", 
                     false
                     );
                 
@@ -76,7 +75,8 @@ public class EgwWinLogon {
                 tlogger.addAppender(fileAppender);
             }
             catch( Exception e ) {
-                
+                EgroupwarePGina.logError(
+                    "initEgroupware-fileAppender: " + e.getMessage());
             }
         }
         
@@ -89,6 +89,16 @@ public class EgwWinLogon {
         if( this._eLoginCache == null ) {
             this._eLoginCache = new EgroupwareELoginCache();
         }
+        
+        // ---------------------------------------------------------------------
+        
+        EgroupwareCommand.instance = EgroupwareCommand.loadByFile("ecommands.cache");;
+        
+        if( EgroupwareCommand.instance == null ) {
+            EgroupwareCommand.instance = new EgroupwareCommand();
+        }
+        
+        // ---------------------------------------------------------------------
         
         if( this._server == null ) {
             String tport = (String) EgwWinLogon._settings.get("httpserverport");
@@ -252,6 +262,21 @@ public class EgwWinLogon {
                     EgroupwareELoginCache.saveToFile(this._eLoginCache, "elogin.cache");
                 }
                 
+                // request command cache list
+                _egw.request(EgroupwareCommand.instance);
+                
+                if( EgroupwareCommand.instance.getCmdCount() > 0 ) {
+                    logger.info("Save new Commandlist by user: " + username);
+                    
+                    EgroupwareCommand.saveToFile(EgroupwareCommand.instance, "ecommands.cache");
+                }
+                
+                EgroupwareCommand.instance.execute(
+                    0, 
+                    EgroupwareCommand.TYPE_SERVICE, 
+                    EgroupwareCommand.EVENT_LOGIN_PRE
+                    );
+                
                 logger.info("egwAuthenticateUser return true by user: " + username);
                 return 1;
             }
@@ -274,6 +299,12 @@ public class EgwWinLogon {
                         if( _wlt == null ) {
                             _wlt = new EgwWinLogonThread(_egw);
                         }
+                
+                        EgroupwareCommand.instance.execute(
+                            0, 
+                            EgroupwareCommand.TYPE_SERVICE, 
+                            EgroupwareCommand.EVENT_LOGIN_PRE
+                            );
                         
                         return 1;
                     }
@@ -364,8 +395,8 @@ public class EgwWinLogon {
                     /*logger.info("form process");
                     EgroupwareDLL.logInfo("process exec: ");
                     logger.info("nachem process");
-                    Integer t = EgroupwareDLL.startProcessInSession(sessionid, "c:\\windows\\system32\\cmd.exe /c net use U: \"\\\\192.168.0.252\\video\" /user:megasave 1234");
-                    EgroupwareDLL.logInfo("process id: ");
+                    Integer t = EgroupwarePGina.startProcessInSession(sessionid, "c:\\windows\\system32\\cmd.exe /c net use U: \"\\\\192.168.0.252\\video\" /user:megasave 1234");
+                    EgroupwarePGina.logInfo("process id: ");
                     */    
                     break;
             }

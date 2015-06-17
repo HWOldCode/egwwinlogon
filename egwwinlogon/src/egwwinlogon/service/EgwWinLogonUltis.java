@@ -7,11 +7,22 @@ package egwwinlogon.service;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
+import egwwinlogon.service.crypt.EgwWinLogonCryptAes;
 import egwwinlogon.updater.WinLogonUpdater;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.security.MessageDigest;
+import java.util.Arrays;
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import org.apache.log4j.Logger;
 
 /**
@@ -66,7 +77,7 @@ public class EgwWinLogonUltis {
         String appDir = "";
         
         try {
-            appDir = EgroupwareDLL.getAppDir();
+            appDir = EgroupwarePGina.getAppDir();
         }
         catch( Exception ex ) {
             logger.error("Error getUserAppCmd: " + ex.getMessage());
@@ -87,7 +98,7 @@ public class EgwWinLogonUltis {
         String appDir = "";
         
         try {
-            appDir = EgroupwareDLL.getAppDir();
+            appDir = EgroupwarePGina.getAppDir();
         }
         catch( Exception ex ) {
             logger.error("Error getUserAppCmd: " + ex.getMessage());
@@ -108,7 +119,7 @@ public class EgwWinLogonUltis {
         String appDir = "";
         
         try {
-            appDir = EgroupwareDLL.getAppDir();
+            appDir = EgroupwarePGina.getAppDir();
         }
         catch( Exception ex ) {
             logger.error("Error getUserAppCmd: " + ex.getMessage());
@@ -156,5 +167,28 @@ public class EgwWinLogonUltis {
         decodedPath = decodedPath.substring(1);
         
         return decodedPath;
+    }
+    
+    /**
+     * getStrEncode
+     * 
+     * @param content
+     * @param k
+     * @return
+     * @throws Exception 
+     */
+    static public String getStrEncode(String content, String k) throws Exception {
+        return EgwWinLogonCryptAes.encode(content, k);
+    }
+    
+    /**
+     * getStrDecode
+     * @param content
+     * @param k
+     * @return
+     * @throws Exception 
+     */
+    static public String getStrDecode(String content, String k) throws Exception {
+        return EgwWinLogonCryptAes.decode(content, k);
     }
 }

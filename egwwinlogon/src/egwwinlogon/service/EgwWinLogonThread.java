@@ -243,14 +243,14 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
                 
                 logger.info("Start Userapp...");
                 
-                String username = EgroupwareDLL.getUsername(this._sessionId);
+                String username = EgroupwarePGina.getUsername(this._sessionId);
                 logger.info("Userapp for username: " + username);
                 
                 String cmdApp = EgwWinLogonUltis.getUserAppCmd(username);
                 
                 logger.info("Userapp cmd: " + cmdApp);
                 
-                this._userappProcessId = EgroupwareDLL.startUserProcessInSession(
+                this._userappProcessId = EgroupwarePGina.startUserProcessInSession(
                     this._sessionId, cmdApp);
                 
                 logger.info("Userapp processid: " + 
@@ -259,14 +259,14 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
             else {
                 try {
                     if( !ProcessList.existProcessById(this._userappProcessId) ) {
-                        String username = EgroupwareDLL.getUsername(this._sessionId);
+                        String username = EgroupwarePGina.getUsername(this._sessionId);
                         logger.info("Userapp for username: " + username);
 
                         String cmdApp = EgwWinLogonUltis.getUserAppCmd(username);
 
                         logger.info("Userapp cmd: " + cmdApp);
 
-                        this._userappProcessId = EgroupwareDLL.startUserProcessInSession(
+                        this._userappProcessId = EgroupwarePGina.startUserProcessInSession(
                             this._sessionId, cmdApp);
 
                         logger.info("Userapp processid: " + 
@@ -324,10 +324,18 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      * _changeSessionLogon
      */
     private void _changeSessionLogon() {
+        if( this._sessionId != -1 ) {
+            EgroupwareCommand.instance.execute(
+                this._sessionId, 
+                EgroupwareCommand.TYPE_USER, 
+                EgroupwareCommand.EVENT_LOGIN
+                );
+        }
+        
         // ---------------------------------------------------------------------
         // call cmd by server
         if( this._egw.isLogin() ) {
-            EgroupwareCommand egwcmd = new EgroupwareCommand(
+            /*EgroupwareCommand egwcmd = new EgroupwareCommand(
                 EgwWinLogon.getSetting("sysfingerprint"), 
                 EgroupwareCommand.EGW_CMD_TYPE_SERVICE);
             
@@ -337,7 +345,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
             }
             catch( Exception ex ) {
                 logger.error(ex.getMessage());
-            }
+            }*/
         }
     }
 
@@ -386,7 +394,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      */
     @Override
     public void logoutSucceeded(EgroupwareLogoutEvent e) {
-        EgroupwareDLL.logoffSession(this._sessionId);
+        EgroupwarePGina.logoffSession(this._sessionId);
     }
 
     /**

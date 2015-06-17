@@ -6,32 +6,21 @@
 package egwwinlogon.user;
 
 import com.jegroupware.egroupware.Egroupware;
-import com.jegroupware.egroupware.EgroupwareBrowser;
 import com.jegroupware.egroupware.EgroupwareJson;
-import com.jegroupware.egroupware.dialogs.EgroupwareMainWebDialog;
 import com.jegroupware.egroupware.events.EgroupwareAuthentifiactionEvent;
 import com.jegroupware.egroupware.events.EgroupwareEvent;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.events.EgroupwareEventRequest;
 import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
 import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.WinReg;
-import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginBrowser;
 import egwwinlogon.egroupware.EgroupwareMachineLogging;
-import egwwinlogon.service.EgroupwareDLL;
-import egwwinlogon.protocol.EgwWinLogonProtocol;
-import egwwinlogon.service.EgwWinLogonUltis;
-import egwwinlogon.winapi.ProcessList;
-import egwwinlogon.winapi.mpr.MprHelper;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.UnsupportedEncodingException;
-import java.util.TreeMap;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
@@ -315,6 +304,9 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
             try {
                 if( this._egw.isLogin() ) {
                     EgroupwareELoginBrowser.open(this._egw);
+                }
+                else {
+                    this._trayer.displayMsgError("Error", "Egroupware is offline!");
                 }
             }
             catch( Exception ex ) {

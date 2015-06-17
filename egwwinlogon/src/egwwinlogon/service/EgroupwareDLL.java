@@ -22,6 +22,12 @@ public class EgroupwareDLL {
     static public native boolean isRunAsService();
     
     /**
+     * isJavaLoggingFile
+     * @return 
+     */
+    static public native boolean isJavaLoggingFile();
+    
+    /**
      * getAppDir
      * get pGina App dir of Egroupware.dll
      * 
@@ -40,8 +46,8 @@ public class EgroupwareDLL {
     static public native int startProcessInSession(int sessionId, String cmdLine);
     
     /**
-     * startProcessInSession
-     * start a process in a session
+     * startUserProcessInSession
+     * start a user process in a session
      * 
      * @param sessionId
      * @param cmdLine
