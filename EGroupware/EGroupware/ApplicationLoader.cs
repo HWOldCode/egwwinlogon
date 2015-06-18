@@ -119,7 +119,7 @@ namespace EGroupware {
         /// <param name="applicationName">The name of the application to launch</param>
         /// <param name="procInfo">Process information regarding the launched application that gets returned to the caller</param>
         /// <returns></returns>
-        public static bool StartProcessAndBypassUAC(String applicationName, out PROCESS_INFORMATION procInfo)
+        public static bool StartProcessAndBypassUAC(String applicationName, int desktopId, out PROCESS_INFORMATION procInfo)
         {
             uint winlogonPid = 0;
             IntPtr hUserTokenDup = IntPtr.Zero, hPToken = IntPtr.Zero, hProcess = IntPtr.Zero;            
@@ -170,10 +170,20 @@ namespace EGroupware {
             // interaction with the new process.
             STARTUPINFO si = new STARTUPINFO();
             si.cb = (int)Marshal.SizeOf(si);
-            si.lpDesktop = @"winsta0\default"; // interactive window station parameter; basically this indicates that the process created can display a GUI on the desktop
+
+            switch( desktopId ) {
+                case 1:
+                    // process on winlogon desktop
+                    si.lpDesktop = @"winsta0\winlogon";
+                    break;
+                default:
+                    // interactive window station parameter; basically this indicates that the process created can display a GUI on the desktop
+                    si.lpDesktop = @"winsta0\default";
+                    break;
+            }
 
             // flags that specify the priority and creation method of the process
-            int dwCreationFlags = NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW;
+            int dwCreationFlags = NORMAL_PRIORITY_CLASS | CREATE_NEW_CONSOLE;
 
             // create a new process in the current user's logon session
             bool result = CreateProcessAsUser(

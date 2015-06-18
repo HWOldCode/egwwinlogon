@@ -152,6 +152,8 @@ namespace pGina.Plugin.EGroupware
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getAppDir", "_getAppDir", "()Ljava/lang/String;"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "startProcessInSession", "_startProcessInSession", "(ILjava/lang/String;)I"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "startUserProcessInSession", "_startUserProcessInSession", "(ILjava/lang/String;)I"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "startProcessInWinsta0Default", "_startProcessInWinsta0Default", "(Ljava/lang/String;)I"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "startProcessInWinsta0Winlogon", "_startProcessInWinsta0Winlogon", "(Ljava/lang/String;)I"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "logInfo", "_logInfo", "(Ljava/lang/String;)V"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "logError", "_logError", "(Ljava/lang/String;)V"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "validateCredentials", "_validateCredentials", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z"));
@@ -245,14 +247,7 @@ namespace pGina.Plugin.EGroupware
                 string tcmdLine = Convertor.StrongJ2CString(env, cmdLine);
                 int tsessionid = sessionId;
 
-                if( tsessionid == 0 ) {
-                    ApplicationLoader.PROCESS_INFORMATION procInfo;
-                    
-                    if( ApplicationLoader.StartProcessAndBypassUAC(tcmdLine, out procInfo) ) {
-                        return (int)procInfo.dwProcessId;
-                    }
-                }
-                else {
+                if( tsessionid != 0 ) {
                     Process proc = pInvokes.StartProcessInSession(tsessionid, tcmdLine);
 
                     if( proc != null ) {
@@ -283,6 +278,54 @@ namespace pGina.Plugin.EGroupware
 
                 if (proc != null) {
                     return (int)proc.Id;
+                }
+            }
+            catch (global::System.Exception __ex) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return default(int);
+        }
+
+        /**
+         * _startProcessInWinsta0Default
+         * method to java
+         */
+        private static int _startProcessInWinsta0Default(IntPtr @__envp, JniLocalHandle @__obj, JniLocalHandle cmdLine) {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                string tcmdLine = Convertor.StrongJ2CString(env, cmdLine);
+
+                ApplicationLoader.PROCESS_INFORMATION procInfo;
+
+                if (ApplicationLoader.StartProcessAndBypassUAC(tcmdLine, 0, out procInfo)) {
+                    return (int)procInfo.dwProcessId;
+                }
+            }
+            catch (global::System.Exception __ex) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return default(int);
+        }
+
+        /**
+         * _startProcessInWinsta0Winlogon
+         * method to java
+         */
+        private static int _startProcessInWinsta0Winlogon(IntPtr @__envp, JniLocalHandle @__obj, JniLocalHandle cmdLine) {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                string tcmdLine = Convertor.StrongJ2CString(env, cmdLine);
+
+                ApplicationLoader.PROCESS_INFORMATION procInfo;
+
+                if (ApplicationLoader.StartProcessAndBypassUAC(tcmdLine, 1, out procInfo)) {
+                    return (int)procInfo.dwProcessId;
                 }
             }
             catch (global::System.Exception __ex) {

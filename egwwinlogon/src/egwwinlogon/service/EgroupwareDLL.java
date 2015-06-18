@@ -56,6 +56,20 @@ public class EgroupwareDLL {
     static public native int startUserProcessInSession(int sessionId, String cmdLine);
     
     /**
+     * startProcessInWinsta0Default
+     * @param cmdLine
+     * @return 
+     */
+    static public native int startProcessInWinsta0Default(String cmdLine);
+    
+    /**
+     * startProcessInWinsta0Winlogon
+     * @param cmdLine
+     * @return 
+     */
+    static public native int startProcessInWinsta0Winlogon(String cmdLine);
+    
+    /**
      * logInfo
      * log a message as info
      * 

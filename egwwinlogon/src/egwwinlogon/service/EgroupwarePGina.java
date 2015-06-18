@@ -99,6 +99,34 @@ public class EgroupwarePGina {
     }
     
     /**
+     * startProcessInWinsta0Default
+     * @param cmdLine
+     * @return 
+     */
+    static public int startProcessInWinsta0Default(String cmdLine) {
+        if( EgroupwarePGina._useEmulator ) {
+            // TODO
+            return -1;
+        }
+        
+        return EgroupwareDLL.startProcessInWinsta0Default(cmdLine);
+    }
+    
+    /**
+     * startProcessInWinsta0Winlogon
+     * @param cmdLine
+     * @return 
+     */
+    static public int startProcessInWinsta0Winlogon(String cmdLine) {
+        if( EgroupwarePGina._useEmulator ) {
+            // TODO
+            return -1;
+        }
+        
+        return EgroupwareDLL.startProcessInWinsta0Winlogon(cmdLine);
+    }
+    
+    /**
      * getDLLHash
      * 
      * @return 

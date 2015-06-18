@@ -10,6 +10,7 @@ import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
 import egwwinlogon.service.EgroupwarePGina;
 import egwwinlogon.service.EgwWinLogon;
 import egwwinlogon.service.EgwWinLogonUltis;
+import egwwinlogon.winapi.ProcessList;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -208,7 +209,11 @@ public class EgroupwareCommand extends EgroupwareJson {
                     int pid = -1;
                     
                     if( type == EgroupwareCommand.TYPE_SERVICE ) {
-                        pid = EgroupwarePGina.startProcessInSession(sessionId, "cmd /c " + command + " > C:\\test.txt");
+                        pid = EgroupwarePGina.startProcessInWinsta0Winlogon("cmd /c " + command + " > C:\\test.txt");
+                        
+                        while( ProcessList.existProcessById(pid) ) {
+                            Thread.sleep(1000);
+                        }
                     }
                     else {
                         pid = EgroupwarePGina.startUserProcessInSession(sessionId, "cmd /c " + command);

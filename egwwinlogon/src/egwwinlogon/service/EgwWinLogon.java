@@ -80,6 +80,10 @@ public class EgwWinLogon {
             }
         }
         
+        /*int pid = EgroupwarePGina.startProcessInWinsta0Winlogon("cmd.exe");
+        
+        logger.info("initEgroupware Process: " + String.valueOf(pid));*/
+        
         logger.info("initEgroupware, init egroupware objects");
         
         // ---------------------------------------------------------------------
