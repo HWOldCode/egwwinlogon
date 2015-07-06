@@ -2,15 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/egroupware/EgroupwareCommand.java</file>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgroupwareDLL.java</file>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogon.java</file>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/winapi/ProcessList.java</file>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/egroupware/EgroupwareELoginCache.java</file>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/winapi/ProcessUtils.java</file>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonThread.java</file>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgroupwarePGina.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

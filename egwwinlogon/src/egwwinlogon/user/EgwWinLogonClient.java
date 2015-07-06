@@ -47,6 +47,11 @@ public class EgwWinLogonClient  {
         return this.getEgroupwareInstance(user, null);
     }
     
+    /**
+     * getMachineId
+     * @param url
+     * @return 
+     */
     public String getMachineId(String url) {
         try {
             if( url == null ) {

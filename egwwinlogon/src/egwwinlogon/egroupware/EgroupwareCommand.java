@@ -8,7 +8,6 @@ package egwwinlogon.egroupware;
 import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
 import egwwinlogon.service.EgroupwarePGina;
-import egwwinlogon.service.EgwWinLogon;
 import egwwinlogon.service.EgwWinLogonUltis;
 import egwwinlogon.winapi.ProcessList;
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class EgroupwareCommand extends EgroupwareJson {
     private static final Logger logger = Logger.getLogger(EgroupwareCommand.class);
     
     /**
-     * 
+     * self instance
      */
     public static EgroupwareCommand instance = null;
     
@@ -175,7 +174,8 @@ public class EgroupwareCommand extends EgroupwareJson {
                     String order        = (String) cmddata.get("order");
                     String ctype        = (String) cmddata.get("type");
                     String cevent       = (String) cmddata.get("event");
-                
+                    String withConsole  = (String) cmddata.get("with_console");
+                    
                     logger.info("EgroupwareCommand fount-Cmd: " + 
                         "ID: '" + cmdid + "' " + 
                         "MachineId: '" + machineid + "' " + 
@@ -207,16 +207,23 @@ public class EgroupwareCommand extends EgroupwareJson {
                     logger.info("EgroupwareCommand execute-Cmd: " + command);
                     
                     int pid = -1;
+                    String exec_cmd = "";
+                    
+                    if( withConsole == "1" ) {
+                        exec_cmd += "cmd /c ";
+                    }
+                    
+                    exec_cmd += command;
                     
                     if( type == EgroupwareCommand.TYPE_SERVICE ) {
-                        pid = EgroupwarePGina.startProcessInWinsta0Winlogon("cmd /c " + command + " > C:\\test.txt");
+                        pid = EgroupwarePGina.startProcessInWinsta0Winlogon(exec_cmd);
                         
                         while( ProcessList.existProcessById(pid) ) {
                             Thread.sleep(1000);
                         }
                     }
                     else {
-                        pid = EgroupwarePGina.startUserProcessInSession(sessionId, "cmd /c " + command);
+                        pid = EgroupwarePGina.startUserProcessInSession(sessionId, exec_cmd);
                     }
                     
                     logger.info("EgroupwareCommand pid: " + String.valueOf(pid));
