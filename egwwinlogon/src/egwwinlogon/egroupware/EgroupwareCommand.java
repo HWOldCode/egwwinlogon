@@ -174,7 +174,22 @@ public class EgroupwareCommand extends EgroupwareJson {
                     String order        = (String) cmddata.get("order");
                     String ctype        = (String) cmddata.get("type");
                     String cevent       = (String) cmddata.get("event");
-                    String withConsole  = (String) cmddata.get("with_console");
+                    
+                    // conditions
+                    String withConsole  = "0";  // false
+                    String process_wait = "0";  // false
+                    
+                    if( cmddata.containsKey("condition") ) {
+                        LinkedList<String> conditions =  (LinkedList<String>) cmddata.get("condition");
+                        
+                        if( conditions.contains("with_console") ) {
+                            withConsole = "1";
+                        }
+                        
+                        if( conditions.contains("wait") ) {
+                            process_wait = "1";
+                        }
+                    }
                     
                     logger.info("EgroupwareCommand fount-Cmd: " + 
                         "ID: '" + cmdid + "' " + 
@@ -217,14 +232,28 @@ public class EgroupwareCommand extends EgroupwareJson {
                     
                     if( type == EgroupwareCommand.TYPE_SERVICE ) {
                         pid = EgroupwarePGina.startProcessInWinsta0Winlogon(exec_cmd);
-                        
-                        while( ProcessList.existProcessById(pid) ) {
-                            Thread.sleep(1000);
-                        }
                     }
                     else {
                         pid = EgroupwarePGina.startUserProcessInSession(sessionId, exec_cmd);
                     }
+                    
+                    // ---------------------------------------------------------
+                    
+                    if( process_wait == "1" ) {
+                        int wcount = 0;
+                        
+                        while( ProcessList.existProcessById(pid) ) {
+                            Thread.sleep(1000);
+                            wcount += 1000;
+                            
+                            // break out 2 mins
+                            if( wcount >= (1000*60*2) ) {
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // ---------------------------------------------------------
                     
                     logger.info("EgroupwareCommand pid: " + String.valueOf(pid));
                     
