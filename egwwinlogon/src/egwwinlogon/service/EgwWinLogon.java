@@ -8,7 +8,6 @@ import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.egroupware.EgroupwareMachineInfo;
 import egwwinlogon.egroupware.EgroupwareMachineLogging;
-import egwwinlogon.egroupware.EgroupwareSettings;
 import egwwinlogon.http.LogonHttpServer;
 import egwwinlogon.protocol.EgwWinLogonProtocol;
 import java.io.IOException;
@@ -53,7 +52,7 @@ public class EgwWinLogon {
      * EgroupwareELoginCache
      */
     protected EgroupwareELoginCache _eLoginCache = null;
-
+    
     /**
      * EgwWinLogonDb
      */
@@ -64,11 +63,11 @@ public class EgwWinLogon {
      *
      */
     public void initEgroupware() {
-        if( false ) {
+        if( EgroupwarePGina.isJavaLoggingFile() ) {
             try {
                 SimpleLayout layout = new SimpleLayout();
                 FileAppender fileAppender = new FileAppender(layout,
-                    "C:/MeineLogDatei.log", 
+                    EgroupwarePGina.getAppDir() + "/log/egwWinLogon.log", 
                     false
                     );
                 
@@ -76,7 +75,8 @@ public class EgwWinLogon {
                 tlogger.addAppender(fileAppender);
             }
             catch( Exception e ) {
-                
+                EgroupwarePGina.logError(
+                    "initEgroupware-fileAppender: " + e.getMessage());
             }
         }
         
@@ -89,6 +89,16 @@ public class EgwWinLogon {
         if( this._eLoginCache == null ) {
             this._eLoginCache = new EgroupwareELoginCache();
         }
+        
+        // ---------------------------------------------------------------------
+        
+        EgroupwareCommand.instance = EgroupwareCommand.loadByFile("ecommands.cache");;
+        
+        if( EgroupwareCommand.instance == null ) {
+            EgroupwareCommand.instance = new EgroupwareCommand();
+        }
+        
+        // ---------------------------------------------------------------------
         
         if( this._server == null ) {
             String tport = (String) EgwWinLogon._settings.get("httpserverport");
@@ -179,105 +189,146 @@ public class EgwWinLogon {
             _egw.addListener(egwListener);
         }
         
-        try {
-            _egw.login();
-
-            if( _egw.isLogin() ) {
+        try{
+            try {
                 try {
-                    // ---------------------------------------------------------
-                    logger.info("Send MachineInfo ...");
-                    
-                    // machine info send
-                    EgroupwareMachineInfo mi = new EgroupwareMachineInfo(
-                        (String) EgwWinLogon._settings.get("sysfingerprint"));
-
-                    mi.setMachineName((String) EgwWinLogon._settings.get("machinename"));
-                    _egw.request(mi);
-                    // ---------------------------------------------------------
-                    
-                    logger.info("Set Machine Logging ...");
-                    
-                    EgroupwareMachineLogging egwlog = new EgroupwareMachineLogging(
-                        (String) EgwWinLogon._settings.get("sysfingerprint"),
-                        config
-                        );
-                    
-                    // set logger
-                    Logger tlogger = Logger.getRootLogger();
-                    tlogger.addAppender(egwlog);
-
-                    // ---------------------------------------------------------
-                    
-                    // register machine logger to http logger
-                    EgwWinLogonHttpHandlerLogger httpLogger = 
-                        (EgwWinLogonHttpHandlerLogger) this._server.getHandler(
-                            EgwWinLogonHttpHandlerLogger.class.getName());
-                    
-                    if( httpLogger != null ) {
-                        httpLogger.setMachineLogger(egwlog);
-                    }
-                    
-                    // ---------------------------------------------------------
-                    
-                    logger.info("Login by user: " + username + "@" + domain);
-                    // ---------------------------------------------------------
-
-                    // final init wlt
-                    EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(username);
-                    
-                    if( _wlt == null ) {
-                        _wlt = new EgwWinLogonThread(_egw);
-                    }
-                    
-                    // ---------------------------------------------------------
+                    _egw.login();
                 }
-                catch( Exception ec ) {
-                    // nothing
-                    logger.error("EgroupwareMachineInfo: " + ec.getMessage() + 
-                        " <> " + ec.getLocalizedMessage());
+                catch( Exception te ) {
+                    throw new EgwWinLogonException(
+                        EgwWinLogonException.EC_SERVER_CONNECTION);
                 }
 
-                logger.info("Load new Cachelist by user: " + username);
-                
-                // request login cache list
-                _egw.request(this._eLoginCache);
+                if( _egw.isLogin() ) {
+                    try {
+                        // ---------------------------------------------------------
+                        logger.info("Send MachineInfo ...");
 
-                if( this._eLoginCache.countAccounts() > 0 ) {
-                    logger.info("Save new Cachelist by user: " + username);
-                    //EgwWinLogonDbConnection _con = this._db.getNewConnection();
+                        // machine info send
+                        EgroupwareMachineInfo mi = new EgroupwareMachineInfo(
+                            (String) EgwWinLogon._settings.get("sysfingerprint"));
 
-                    //_con.query("drop table barcodes if exists;");
-                    //_con.query("create table barcodes (id integer, barcode varchar(20) not null);");
-                    //_con.query("insert into barcodes (id, barcode) values (1, '12345566');");
-                    EgroupwareELoginCache.saveToFile(this._eLoginCache, "elogin.cache");
-                }
-                
-                logger.info("egwAuthenticateUser return true by user: " + username);
-                return 1;
-            }
-        }
-        catch( 
-            java.net.SocketTimeoutException | 
-            java.net.UnknownHostException | 
-            java.net.NoRouteToHostException e ) 
-        {
-            // login by offline mode, username + password check by cachelist
-            if( this._eLoginCache.countAccounts() > 0 ) {
-                // is activ and expries
-                if( this._eLoginCache.isStatusA(username) && this._eLoginCache.isAccountExpires(username) ) {
-                    // check password
-                    if( this._eLoginCache.compareUsernamePassword(username, password) ) {
-                        
+                        mi.setMachineName((String) EgwWinLogon._settings.get("machinename"));
+                        _egw.request(mi);
+                        // ---------------------------------------------------------
+
+                        logger.info("Set Machine Logging ...");
+
+                        EgroupwareMachineLogging egwlog = new EgroupwareMachineLogging(
+                            (String) EgwWinLogon._settings.get("sysfingerprint"),
+                            config
+                            );
+
+                        // set logger
+                        Logger tlogger = Logger.getRootLogger();
+                        tlogger.addAppender(egwlog);
+
+                        // ---------------------------------------------------------
+
+                        // register machine logger to http logger
+                        EgwWinLogonHttpHandlerLogger httpLogger = 
+                            (EgwWinLogonHttpHandlerLogger) this._server.getHandler(
+                                EgwWinLogonHttpHandlerLogger.class.getName());
+
+                        if( httpLogger != null ) {
+                            httpLogger.setMachineLogger(egwlog);
+                        }
+
+                        // ---------------------------------------------------------
+
+                        logger.info("Login by user: " + username + "@" + domain);
+                        // ---------------------------------------------------------
+
                         // final init wlt
                         EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(username);
 
                         if( _wlt == null ) {
                             _wlt = new EgwWinLogonThread(_egw);
                         }
+
+                        // ---------------------------------------------------------
+                    }
+                    catch( Exception ec ) {
+                        // nothing
+                        logger.error("EgroupwareMachineInfo: " + ec.getMessage() + 
+                            " <> " + ec.getLocalizedMessage());
+                    }
+
+                    logger.info("Load new Cachelist by user: " + username);
+
+                    // request login cache list
+                    _egw.request(this._eLoginCache);
+
+                    if( this._eLoginCache.countAccounts() > 0 ) {
+                        logger.info("Save new Cachelist by user: " + username);
                         
-                        return 1;
+                        EgroupwareELoginCache.saveToFile(this._eLoginCache, "elogin.cache");
+                    }
+
+                    // request command cache list
+                    _egw.request(EgroupwareCommand.instance);
+
+                    if( EgroupwareCommand.instance.getCmdCount() > 0 ) {
+                        logger.info("Save new Commandlist by user: " + username);
+
+                        EgroupwareCommand.saveToFile(EgroupwareCommand.instance, "ecommands.cache");
+                    }
+
+                    EgroupwareCommand.instance.execute(
+                        0, 
+                        EgroupwareCommand.TYPE_SERVICE, 
+                        EgroupwareCommand.EVENT_LOGIN_PRE
+                        );
+
+                    logger.info("egwAuthenticateUser return true by user: " + username);
+                    return 1;
+                }
+                else {
+                    // login false
+                    throw new EgwWinLogonException(
+                        EgwWinLogonException.EC_LOGIN_FALSE);
+                }
+            }
+            catch( 
+                java.net.SocketTimeoutException | 
+                java.net.UnknownHostException | 
+                java.net.NoRouteToHostException |
+                EgwWinLogonException e )
+            {
+                if( e instanceof EgwWinLogonException ) {
+                    if( ((EgwWinLogonException)e).getErrorCode() != 
+                        EgwWinLogonException.EC_SERVER_CONNECTION ) {
+                        throw e; // move up
                     }
                 }
+
+                // login by offline mode, username + password check by cachelist
+                if( this._eLoginCache.countAccounts() > 0 ) {
+                    // is activ and expries
+                    if( this._eLoginCache.isStatusA(username) && this._eLoginCache.isAccountExpires(username) ) {
+                        // check password
+                        if( this._eLoginCache.compareUsernamePassword(username, password) ) {
+
+                            // final init wlt
+                            EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(username);
+
+                            if( _wlt == null ) {
+                                _wlt = new EgwWinLogonThread(_egw);
+                            }
+
+                            EgroupwareCommand.instance.execute(
+                                0, 
+                                EgroupwareCommand.TYPE_SERVICE, 
+                                EgroupwareCommand.EVENT_LOGIN_PRE
+                                );
+
+                            return 1;
+                        }
+                    }
+                }
+            }
+            catch( Exception e ) {
+                throw e;    // move up
             }
         }
         catch( Exception e ) {
@@ -357,19 +408,7 @@ public class EgwWinLogon {
             }
         }
         
-        try {
-            switch( sessionChangeReason ) {
-                case 5: // SessionLogon
-                   
-                    /*logger.info("form process");
-                    EgroupwareDLL.logInfo("process exec: ");
-                    logger.info("nachem process");
-                    Integer t = EgroupwareDLL.startProcessInSession(sessionid, "c:\\windows\\system32\\cmd.exe /c net use U: \"\\\\192.168.0.252\\video\" /user:megasave 1234");
-                    EgroupwareDLL.logInfo("process id: ");
-                    */    
-                    break;
-            }
-            
+        try {            
             // set session status
             if( _wlt != null ) {
                 _wlt.setSessionStatus(sessionChangeReason);
@@ -457,7 +496,7 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetVersion() {
-		return "14.2.7";
+		return "14.2.8";
 	}
 
     /**

@@ -34,8 +34,14 @@ import javax.swing.JOptionPane;
  */
 public class WinLogonUpdater extends Thread {
     
+    /**
+     * request url
+     */
     private final static String _versionURL     = "https://www.hw-softwareentwicklung.de/egwwinlogon_updater/version.html";
     
+    /**
+     * dir for updater
+     */
     private String _root                  = "update/";
     
     /**

@@ -30,6 +30,7 @@ namespace EGroupware
             string url = Settings.Store.url;
             string domain = Settings.Store.domain;
             string jvmdb = Settings.Store.jvmdb;
+            string jlogfile = Settings.Store.jlogfile;
 
             this.textEgroupwareUrl.Text = url;
             this.textEgroupwareDomain.Text = domain;
@@ -37,6 +38,11 @@ namespace EGroupware
             if (jvmdb == "1")
             {
                 this.checkBoxJVMDB.Checked = true;
+            }
+
+            if (jlogfile == "1")
+            {
+                this.checkBoxJavaLogFile.Checked = true;
             }
         }
 
@@ -55,6 +61,15 @@ namespace EGroupware
             else
             {
                 Settings.Store.jvmdb = "0";
+            }
+
+            if (this.checkBoxJavaLogFile.Checked)
+            {
+                Settings.Store.jlogfile = "1";
+            }
+            else
+            {
+                Settings.Store.jlogfile = "0";
             }
         }
 

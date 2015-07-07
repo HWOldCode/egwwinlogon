@@ -36,6 +36,7 @@ public class EgroupwareELoginBrowser extends EgroupwareBrowser {
                 String url = egw.createBrowserLink(menuaction);
                 
                 String[] _browsers = {
+                    "C:\\Program Files (x86)\\Chromium\\Chrome\\chrome.exe",
                     "C:\\Program Files (x86)\\Comodo\\Dragon\\dragon.exe",
                     "C:\\Program Files (x86)\\Comodo\\Chromodo\\chromodo.exe",
                     "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
