@@ -104,18 +104,20 @@
                 $cmd->setSystem($content['system']);
                 $cmd->setType($content['type']);
                 $cmd->setEvent($content['event']);
+                $cmd->setCondition($content['condition']);
                 $cmd->save();
             }
 
             if( $cmd != null ) {
-                $content['command'] = $cmd->getCommand();
-                $content['machine'] = $cmd->getMachineId();
-                $content['account'] = $cmd->getAccountId();
-                $content['system']  = $cmd->getSystem();
-                $content['order']   = $cmd->getOrder();
-                $content['type']    = $cmd->getType();
-                $content['event']   = $cmd->getEvent();
-                $preserv['uid']     = $cmd->getId();
+                $content['command']     = $cmd->getCommand();
+                $content['machine']     = $cmd->getMachineId();
+                $content['account']     = $cmd->getAccountId();
+                $content['system']      = $cmd->getSystem();
+                $content['order']       = $cmd->getOrder();
+                $content['type']        = $cmd->getType();
+                $content['event']       = $cmd->getEvent();
+                $content['condition']   = $cmd->getCondition();
+                $preserv['uid']         = $cmd->getId();
             }
 
             // machine ---------------------------------------------------------
@@ -158,6 +160,12 @@
                 elogin_cmd_bo::EVENT_LOGIN_AFTER    => lang('Login After (Destop is show)'),
                 );
 
+            // condition -------------------------------------------------------
+            $option_sel['condition'] = array(
+                elogin_cmd_bo::CONDITION_WITH_CONSOLE   => 'With console',
+                elogin_cmd_bo::CONDITION_WAIT           => 'Wait process is end',
+                elogin_cmd_bo::CONDITION_LOGGING        => 'Logging',
+                );
 
             $tpl = new etemplate_new('elogin.cmd.dialog');
 			$tpl->exec(

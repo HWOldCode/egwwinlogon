@@ -88,7 +88,8 @@ $phpgw_baseline = array(
 			'el_system' => array('type' => 'varchar','precision' => '128'),
 			'el_order' => array('type' => 'int','precision' => '4'),
 			'el_type' => array('type' => 'varchar','precision' => '128'),
-			'el_event' => array('type' => 'varchar','precision' => '128')
+			'el_event' => array('type' => 'varchar','precision' => '128'),
+			'el_condition' => array('type' => 'text')
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),

@@ -69,6 +69,10 @@
                                     <menupopup id="event"/>
                                 </menulist>
                             </row>
+                            <row>
+                                <description value="Condition"/>
+                                <listbox id="condition" rows="9" />
+                            </row>
                         </rows>
                     </grid>
                 </row>

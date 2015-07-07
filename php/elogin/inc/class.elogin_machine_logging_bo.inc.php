@@ -296,7 +296,7 @@
             $join = '';
 
             if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                false, ' ORDER BY ' . self::TABLE . '.el_logdate ', false, -1, $join)))
+                false, ' ORDER BY ' . self::TABLE . '.el_logdate ', false, 20, $join)))
             {
                 return array();
             }

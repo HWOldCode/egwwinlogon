@@ -29,6 +29,14 @@
         const EVENT_LOGIN       = 'login';
         const EVENT_LOGIN_AFTER = 'login_after';
 
+        // seperator
+        const SEP_CONDITION = ',';
+
+        // condition`s
+        const CONDITION_WITH_CONSOLE    = 'with_console';
+        const CONDITION_WAIT            = 'wait';
+        const CONDITION_LOGGING         = 'logging';
+
         /**
          * Reference to global db object
          *
@@ -86,9 +94,9 @@
 
         /**
          * condition
-         * @var string
+         * @var array
          */
-        protected $_condition = '';
+        protected $_condition = array();
 
         /**
          * Init our static properties
@@ -114,7 +122,8 @@
                     $this->_order       = $data['el_order'];
                     $this->_type        = $data['el_type'];
                     $this->_event       = $data['el_event'];
-                    // TODO
+
+                    $this->_condition   = explode(self::SEP_CONDITION, $data['el_condition']);
                 }
             }
 
@@ -255,6 +264,24 @@
         }
 
         /**
+         * setCondition
+         * @param array $condition
+         */
+        public function setCondition($condition) {
+            if( is_array($condition) ) {
+                $this->_condition = $condition;
+            }
+        }
+
+        /**
+         * getCondition
+         * @return array
+         */
+        public function getCondition() {
+            return $this->_condition;
+        }
+
+        /**
          * save
          */
         public function save() {
@@ -271,7 +298,8 @@
             $data['el_order']       = $this->_order;
             $data['el_type']        = $this->_type;
             $data['el_event']       = $this->_event;
-            // TODO
+            $data['el_condition']   = implode(
+                self::SEP_CONDITION, $this->_condition);
 
             $return = self::_write($data);
 
@@ -414,7 +442,8 @@
                 'system'        => $this->_system,
                 'order'         => strval($this->_order),
                 'type'          => $this->_type,
-                'event'         => $this->_event
+                'event'         => $this->_event,
+                'condition'     => $this->_condition
                 );
         }
 
