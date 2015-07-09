@@ -72,7 +72,7 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
     /**
      * Appender EventsList
      */
-    ArrayList<LoggingEvent> _appender_eventsList = new ArrayList();
+    protected ArrayList<LoggingEvent> _appender_eventsList = new ArrayList();
     
     /**
      * Egroupwar Config by User (for sending report)

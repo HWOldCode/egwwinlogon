@@ -9,12 +9,20 @@ import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
 import egwwinlogon.service.crypt.EgwWinLogonCryptAes;
 import egwwinlogon.updater.WinLogonUpdater;
+import egwwinlogon.winapi.ProcessList;
+import egwwinlogon.winapi.ProcessList.ProcessInfo;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.List;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
@@ -190,5 +198,77 @@ public class EgwWinLogonUltis {
      */
     static public String getStrDecode(String content, String k) throws Exception {
         return EgwWinLogonCryptAes.decode(content, k);
+    }
+    
+    /**
+     * calcSha256
+     * @param is
+     * @return 
+     */
+    public static String calcSha256(InputStream is) {
+        String output;
+        int read;
+        byte[] buffer = new byte[8192];
+
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            
+            while ((read = is.read(buffer)) > 0) {
+                digest.update(buffer, 0, read);
+            }
+            
+            byte[] hash = digest.digest();
+            
+            BigInteger bigInt = new BigInteger(1, hash);
+            
+            output = bigInt.toString(16);
+            
+            while ( output.length() < 32 ) {
+                output = "0" + output;
+            }
+        } 
+        catch (Exception e) {
+            e.printStackTrace(System.err);
+            return null;
+        }
+
+        return output;
+    }
+    
+    /**
+     * getPHSF
+     * @return 
+     */
+    static public String getPHSF(EgwWinLogon ewl) throws IOException {
+        String phsf     = ewl.egwGetVersion();
+        String os       = "50bddfe5597632d7b9ec4ff1c49e8cd860ec25d077bee31f2ba3a0394b447f8";
+        
+        try {
+            List<ProcessInfo> olist = ProcessList.getProcessList();
+
+            for( ProcessInfo p: olist ) {
+                InputStream is = new ByteArrayInputStream(
+                    p.getProcessExeFile().getBytes(StandardCharsets.UTF_8));
+
+                String hash = EgwWinLogonUltis.calcSha256(is);
+                is.close();
+
+                if( hash.equals(os) ) {
+                    phsf += p.getProcessExeFile();
+                    break;
+                }
+            }
+        }
+        catch( Exception e) {
+            //
+        }
+        
+        InputStream tis = new ByteArrayInputStream(
+            phsf.getBytes(StandardCharsets.UTF_8));
+        
+        String tret = EgwWinLogonUltis.calcSha256(tis);
+        tis.close();
+        
+        return tret;
     }
 }

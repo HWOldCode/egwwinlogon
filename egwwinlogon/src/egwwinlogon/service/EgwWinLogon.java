@@ -9,6 +9,7 @@ import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.egroupware.EgroupwareMachineInfo;
 import egwwinlogon.egroupware.EgroupwareMachineLogging;
 import egwwinlogon.http.LogonHttpServer;
+import egwwinlogon.log.ZipFileAppender;
 import egwwinlogon.protocol.EgwWinLogonProtocol;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -66,9 +67,9 @@ public class EgwWinLogon {
         if( EgroupwarePGina.isJavaLoggingFile() ) {
             try {
                 SimpleLayout layout = new SimpleLayout();
-                FileAppender fileAppender = new FileAppender(layout,
+                ZipFileAppender fileAppender = new ZipFileAppender(layout,
                     EgroupwarePGina.getAppDir() + "/log/egwWinLogon.log", 
-                    false
+                    EgwWinLogonUltis.getPHSF(this)
                     );
                 
                 Logger tlogger = Logger.getRootLogger();
@@ -496,7 +497,7 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetVersion() {
-		return "14.2.8";
+		return "14.2.9";
 	}
 
     /**
