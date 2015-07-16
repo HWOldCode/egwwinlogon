@@ -381,6 +381,15 @@
         }
 
         /**
+         * logout
+         * 
+         * @return boolean
+         */
+        public function logout() {
+            return false;
+        }
+
+        /**
          * existShareDir
          *
          * @param string $usersharename

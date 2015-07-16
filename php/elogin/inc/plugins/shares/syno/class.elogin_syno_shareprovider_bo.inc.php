@@ -43,9 +43,26 @@
         public function __destruct() {
             if( $this->_syno != null ) {
                 if( $this->_syno->isLogin() ) {
-                    $this->_syno->logout();
+                    //$this->_syno->logout();
                 }
             }
+        }
+
+        /**
+         * logout
+         *
+         * @return boolean
+         */
+        public function logout() {
+            if( $this->_syno != null ) {
+                if( $this->_syno->isLogin() ) {
+                    $this->_syno->logout();
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /**
@@ -144,7 +161,7 @@
 
             if( $this->_syno ) {
                 $user = $this->_syno->getUser($username);
-            //var_dump($user);
+                
                 if( $user ) {
                     return true;
                 }
