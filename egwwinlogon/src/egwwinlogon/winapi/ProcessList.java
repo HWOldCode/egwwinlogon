@@ -47,7 +47,9 @@ public class ProcessList {
                         Native.toString(processEntry.szExeFile)
                     ));
                 
-                System.out.println(processEntry.th32ProcessID + "\t" + Native.toString(processEntry.szExeFile));
+                /*System.out.println(
+                    processEntry.th32ProcessID + "\t" + 
+                    Native.toString(processEntry.szExeFile));*/
             }
         }
         finally {
@@ -79,10 +81,19 @@ public class ProcessList {
      */
     public static final class ProcessInfo {
         
+        /**
+         * process id
+         */
         protected int _processid = 0;
         
+        /**
+         * parent process id
+         */
         protected int _parentProcessid = 0;
         
+        /**
+         * exefile
+         */
         protected String _exefile = "";
         
         /**
@@ -104,6 +115,14 @@ public class ProcessList {
          */
         public int getProcessId() {
             return this._processid;
+        }
+        
+        /**
+         * getProcessExeFile
+         * @return 
+         */
+        public String getProcessExeFile() {
+            return _exefile;
         }
     }
 }
