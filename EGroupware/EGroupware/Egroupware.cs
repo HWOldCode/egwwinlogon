@@ -163,6 +163,7 @@ namespace pGina.Plugin.EGroupware
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getUsername", "_getUsername", "(I)Ljava/lang/String;"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getDLLHash", "_getDLLHash", "()Ljava/lang/String;"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getSysFingerprint", "_getSysFingerprint", "()Ljava/lang/String;"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getSystemStr", "_getSystemStr", "()Ljava/lang/String;"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getMachineName", "_getMachineName", "()Ljava/lang/String;"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "setDeviceEnabled", "_setDeviceEnabled", "(Ljava/lang/String;Ljava/lang/String;Z)V"));
 
@@ -510,6 +511,24 @@ namespace pGina.Plugin.EGroupware
 
             try {
                 return Convertor.StrongC2JString(env, SysFingerPrint.Value());
+            }
+            catch( global::System.Exception __ex ) {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return default(JniLocalHandle);
+        }
+
+        /**
+         * _getSystemStr
+         * method to java
+         */
+        private static JniLocalHandle _getSystemStr(IntPtr @__envp, JniLocalHandle @__obj) {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                return Convertor.StrongC2JString(env, SysFingerPrint.getSystemStr());
             }
             catch( global::System.Exception __ex ) {
                 EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);

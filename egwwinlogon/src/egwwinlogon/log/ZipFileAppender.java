@@ -159,13 +159,13 @@ public class ZipFileAppender implements Appender {
              
                 if( !parentDir.exists() && parentDir.mkdirs() ) {
                     // IO
-                } 
+                }
                 else  {
-                    throw new IOException("Can`t create dir.");
+                    //throw new IOException("Can`t create dir: " + parentDir.getPath());
                 }
             }
             else {
-                throw new IOException("Can`t get parentname by file.");
+                throw new IOException("Can`t get parentname by file: " + zipFileName);
             }
         }
         

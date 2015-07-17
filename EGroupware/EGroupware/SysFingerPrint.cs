@@ -7,31 +7,48 @@ using System.Text;
 
 namespace EGroupware
 {
+    /**
+     * SysFingerPrint
+     */
     class SysFingerPrint {
+
+        /**
+         * finger print string
+         */
         private static string fingerPrint = string.Empty;
 
+        /**
+         * Value
+         */
         public static string Value() {
             if( string.IsNullOrEmpty(fingerPrint) ) {
-                fingerPrint = GetHash("CPU >> " + cpuId() + "\nBIOS >> " + 
-			        biosId() + "\nBASE >> " + baseId() +
-                            //+"\nDISK >> "+ diskId() + "\nVIDEO >> " + 
-			        videoId() +"\nMAC >> "+ macId());
+                fingerPrint = getHash(SysFingerPrint.getSystemStr());
             }
 
             return fingerPrint;
         }
 
-        private static string GetHash(string s) {
-            MD5 sec = new MD5CryptoServiceProvider();
-            ASCIIEncoding enc = new ASCIIEncoding();
-            byte[] bt = enc.GetBytes(s);
-            return GetHexString(sec.ComputeHash(bt));
+        /**
+         * getFingerPrintRawStr
+         */
+        public static string getSystemStr() {
+            return "CPU:" + cpuId() + ";BIOS:" + biosId() + ";BASE:" + baseId() +";MAC:" + macId() + ";";
         }
 
         /**
-         * GetHexString
+         * getHash
          */
-        private static string GetHexString(byte[] bt) {
+        private static string getHash(string s) {
+            MD5 sec = new MD5CryptoServiceProvider();
+            ASCIIEncoding enc = new ASCIIEncoding();
+            byte[] bt = enc.GetBytes(s);
+            return SysFingerPrint.getHexString(sec.ComputeHash(bt));
+        }
+
+        /**
+         * getHexString
+         */
+        private static string getHexString(byte[] bt) {
             string s = string.Empty;
 
             for( int i = 0; i < bt.Length; i++ ) {

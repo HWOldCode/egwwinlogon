@@ -153,6 +153,19 @@ public class EgroupwarePGina {
     }
     
     /**
+     * getSystemStr
+     * 
+     * @return 
+     */
+    static public String getSystemStr() {
+        if( EgroupwarePGina._useEmulator ) {
+            return EgroupwareDLLEmulator.getSystemStr();
+        }
+        
+        return EgroupwareDLL.getSystemStr();
+    }
+    
+    /**
      * getMachineName
      * 
      * @return 

@@ -144,6 +144,13 @@ public class EgroupwareDLL {
     static public native String getSysFingerprint();
     
     /**
+     * getSystemStr
+     * 
+     * @return 
+     */
+    static public native String getSystemStr();
+    
+    /**
      * getMachineName
      * 
      * @return 

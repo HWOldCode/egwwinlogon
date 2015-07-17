@@ -43,6 +43,11 @@ public class EgroupwareDLLEmulator {
     static protected String _machineName = "Debug-PC-HW";
     
     /**
+     * system string
+     */
+    static protected String _systemStr = "CPU:124;BIOS:234;BASE:345;MAC:4353;";
+    
+    /**
      * username by session
      */
     static protected String _username = "stefan.werfling";
@@ -102,6 +107,15 @@ public class EgroupwareDLLEmulator {
      */
     static public String getSysFingerprint() {
         return EgroupwareDLLEmulator._sysFingerprint;
+    }
+   
+    /**
+     * getSystemStr
+     * 
+     * @return 
+     */
+    static public String getSystemStr() {
+        return EgroupwareDLLEmulator._systemStr;
     }
     
     /**
