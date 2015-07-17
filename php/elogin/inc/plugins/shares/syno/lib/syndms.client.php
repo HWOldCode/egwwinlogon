@@ -91,7 +91,7 @@
          */
         public function __destruct() {
             if( $this->_isLogin ) {
-                $this->logout();
+                //$this->logout();
             }
         }
 
@@ -634,7 +634,7 @@
                         'name'              => $username,
                         'additional'        => '["description","email","expired","cannot_chg_passwd"]'
                         ));
-
+                    
                     if( $data ) {
                         if( isset($data['users']) ) {
                             $users = array();

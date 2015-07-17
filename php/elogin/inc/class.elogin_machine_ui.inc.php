@@ -102,6 +102,15 @@
                     'enabled'	=> true,
                     'onExecute' => 'javaScript:app.elogin.elogin_machine_list_actions',
                     ),
+                'delete' => array(
+                    'caption'	=> 'Delete',
+                    'group'		=> ++$group,
+                    'default'	=> false,
+                    'icon'		=> 'systemsettings',
+                    'hint'		=> 'delete machine',
+                    'enabled'	=> true,
+                    'onExecute' => 'javaScript:app.elogin.elogin_machine_list_actions',
+                    ),
             );
 
             return $action;

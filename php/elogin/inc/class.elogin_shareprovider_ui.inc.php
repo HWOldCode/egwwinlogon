@@ -31,7 +31,7 @@
          *
          * @param array $content
          */
-        public function share_provider_list($content) {
+        public function share_provider_list($content=null) {
             if( !$GLOBALS['egw_info']['user']['apps']['admin'] ) {
                 die("Only for Admins!");
             }

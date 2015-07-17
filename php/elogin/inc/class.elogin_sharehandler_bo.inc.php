@@ -80,6 +80,14 @@ var_dump('Providerlist: ' . count($tprovider) );
                 );
 
             foreach( $provider_list as $provider ) {
+                if( !$provider->isLogin() ) {
+                    echo $provider->getProviderName() . ": <b>nicht eingelogt!</b><br>";
+                    continue;
+                }
+                else {
+                    echo "Eingelogt: " . $provider->getProviderName() . "<br><br>";
+                }
+
                 foreach( $egw_accounts as $egw_account ) {
         echo "<hr>";
                     if( in_array($egw_account['account_lid'], $ignoruser) ) {
@@ -201,6 +209,8 @@ var_dump('Providerlist: ' . count($tprovider) );
                         }
                     }
                 }
+
+                $provider->logout();
             }
         }
     }
