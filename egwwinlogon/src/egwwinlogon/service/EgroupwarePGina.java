@@ -235,4 +235,19 @@ public class EgroupwarePGina {
         
         return EgroupwareDLL.logoffSession(sessionId);
     }
+    
+    /**
+     * getCredentials
+     * 
+     * @param title
+     * @param message
+     * @return 
+     */
+    static public String getCredentials(String title, String message) {
+        if( EgroupwarePGina._useEmulator ) {
+            return "";
+        }
+        
+        return EgroupwareDLL.getCredentials(title, message);
+    }
 }

@@ -5,6 +5,7 @@
  */
 package egwwinlogon.http;
 
+import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
@@ -19,6 +20,11 @@ import java.util.Map;
 public class LogonHttpServerHandler implements HttpHandler {
 
     /**
+     * http context
+     */
+    protected HttpContext _context = null;
+    
+    /**
      * _getUrl
      * @return
      */
@@ -31,7 +37,7 @@ public class LogonHttpServerHandler implements HttpHandler {
      * @param server
      */
     public void register(LogonHttpServer server) {
-        server.createContext(this._getUrl(), this);
+        this._context = server.createContext(this._getUrl(), this);
     }
 
     /**

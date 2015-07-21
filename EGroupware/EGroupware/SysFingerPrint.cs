@@ -32,7 +32,7 @@ namespace EGroupware
          * getFingerPrintRawStr
          */
         public static string getSystemStr() {
-            return "CPU:" + cpuId() + ";BIOS:" + biosId() + ";BASE:" + baseId() +";MAC:" + macId() + ";";
+            return "CPU:" + cpuId() + ";BIOS:" + biosId() + ";BASE:" + baseId() +/*";MAC:" + macId() +*/ ";";
         }
 
         /**
@@ -165,8 +165,7 @@ namespace EGroupware
         }
 
         //BIOS Identifier
-        private static string biosId()
-        {
+        private static string biosId() {
             return identifier("Win32_BIOS", "Manufacturer")
             + identifier("Win32_BIOS", "SMBIOSBIOSVersion")
             + identifier("Win32_BIOS", "IdentificationCode")
@@ -176,30 +175,29 @@ namespace EGroupware
         }
 
         //Main physical hard drive ID
-        private static string diskId()
-        {
+        private static string diskId() {
             return identifier("Win32_DiskDrive", "Model")
             + identifier("Win32_DiskDrive", "Manufacturer")
             + identifier("Win32_DiskDrive", "Signature")
             + identifier("Win32_DiskDrive", "TotalHeads");
         }
+
         //Motherboard ID
-        private static string baseId()
-        {
+        private static string baseId() {
             return identifier("Win32_BaseBoard", "Model")
             + identifier("Win32_BaseBoard", "Manufacturer")
             + identifier("Win32_BaseBoard", "Name")
             + identifier("Win32_BaseBoard", "SerialNumber");
         }
+
         //Primary video controller ID
-        private static string videoId()
-        {
+        private static string videoId() {
             return identifier("Win32_VideoController", "DriverVersion")
             + identifier("Win32_VideoController", "Name");
         }
+
         //First enabled network card ID
-        private static string macId()
-        {
+        private static string macId() {
             return identifier("Win32_NetworkAdapterConfiguration",
                 "MACAddress", "IPEnabled");
         }

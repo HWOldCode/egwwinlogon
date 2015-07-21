@@ -1,0 +1,3 @@
+net stop pGina
+net start pGina
+"C:/Program Files (x86)/Chromium/Chrome/chrome.exe" --app=http://localhost:8108/firstinstall/

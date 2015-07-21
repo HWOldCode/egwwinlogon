@@ -85,7 +85,8 @@ public class EgwWinLogon {
         
         // ---------------------------------------------------------------------
 
-        this._eLoginCache = EgroupwareELoginCache.loadByFile("elogin.cache");
+        this._eLoginCache = EgroupwareELoginCache.loadByFile(
+            EgroupwarePGina.getAppDir() + "/elogin.cache");
 
         if( this._eLoginCache == null ) {
             this._eLoginCache = new EgroupwareELoginCache();
@@ -93,7 +94,8 @@ public class EgwWinLogon {
         
         // ---------------------------------------------------------------------
         
-        EgroupwareCommand.instance = EgroupwareCommand.loadByFile("ecommands.cache");;
+        EgroupwareCommand.instance = EgroupwareCommand.loadByFile(
+            EgroupwarePGina.getAppDir() + "/ecommands.cache");
         
         if( EgroupwareCommand.instance == null ) {
             EgroupwareCommand.instance = new EgroupwareCommand();
@@ -129,6 +131,9 @@ public class EgwWinLogon {
             session.register(this._server);
             //logger.get
 
+            EgwWinLogonHttpHandlerFirstInstall finstall = new EgwWinLogonHttpHandlerFirstInstall();
+            finstall.register(this._server);
+            
             try {
                 this._server.start();
             } catch (IOException ex) {
@@ -263,7 +268,9 @@ public class EgwWinLogon {
                     if( this._eLoginCache.countAccounts() > 0 ) {
                         logger.info("Save new Cachelist by user: " + username);
                         
-                        EgroupwareELoginCache.saveToFile(this._eLoginCache, "elogin.cache");
+                        EgroupwareELoginCache.saveToFile(
+                            this._eLoginCache, 
+                            EgroupwarePGina.getAppDir() + "/elogin.cache");
                     }
 
                     // request command cache list
@@ -272,7 +279,9 @@ public class EgwWinLogon {
                     if( EgroupwareCommand.instance.getCmdCount() > 0 ) {
                         logger.info("Save new Commandlist by user: " + username);
 
-                        EgroupwareCommand.saveToFile(EgroupwareCommand.instance, "ecommands.cache");
+                        EgroupwareCommand.saveToFile(
+                            EgroupwareCommand.instance, 
+                            EgroupwarePGina.getAppDir() + "/ecommands.cache");
                     }
 
                     EgroupwareCommand.instance.execute(

@@ -46,10 +46,6 @@ public class ProcessList {
                         processEntry.th32ParentProcessID.intValue(),
                         Native.toString(processEntry.szExeFile)
                     ));
-                
-                /*System.out.println(
-                    processEntry.th32ProcessID + "\t" + 
-                    Native.toString(processEntry.szExeFile));*/
             }
         }
         finally {

@@ -4,7 +4,10 @@ import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
+import egwwinlogon.egroupware.settings.EgroupwareSettingDictionary;
+import egwwinlogon.egroupware.settings.IEgroupwareSetting;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 
@@ -111,32 +114,40 @@ public class EgroupwareSettings extends EgroupwareJson {
      */
     public Boolean setSettingsToSystem() {
         try {
-            Advapi32Util.registrySetStringValue(
+            List<String> _settingNames = EgroupwareSettingDictionary.getSupportedSettings();
+            
+            for( String tname: _settingNames ) {
+                IEgroupwareSetting tsetting = EgroupwareSettingDictionary.getSetting(tname);
+                
+                tsetting.setSetting();
+            }
+            
+            /*Advapi32Util.registrySetStringValue(
                WinReg.HKEY_LOCAL_MACHINE, 
                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Authentication\\LogonUI",
                "LastLoggedOnProvider",
                "{25CBB996-92ED-457e-B28C-4774084BD562}"
-               );
+               );*/
             
-            Advapi32Util.registrySetStringValue(
+            /*Advapi32Util.registrySetStringValue(
                 WinReg.HKEY_LOCAL_MACHINE, 
                 "SOFTWARE\\pGina3",
                 "TileImage",
                 "C:\\Program Files\\pGina\\tileimage.bmp"
-                );
+                );*/
             
             // show all tray icons 
-            Advapi32Util.registrySetLongValue(WinReg.HKEY_LOCAL_MACHINE, 
+            /*Advapi32Util.registrySetLongValue(WinReg.HKEY_LOCAL_MACHINE, 
                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer", 
                 "EnableAutoTray", 
-                0);
+                0);*/
                     
-            String value = Advapi32Util.registryGetStringValue(
+            /*String value = Advapi32Util.registryGetStringValue(
                 WinReg.HKEY_LOCAL_MACHINE, 
                 "SOFTWARE\\pGina3",
                 "TileImage");
             
-            logger.info("Value: " + value);
+            logger.info("Value: " + value);*/
         }
         catch( Exception e ) {
             logger.info("Error: " + e.getMessage());
