@@ -26,10 +26,25 @@ public class EgroupwareELoginBrowser extends EgroupwareBrowser {
         EgroupwareELoginBrowser.open(egw, "");
     }
 
+    /**
+     * open
+     * 
+     * @param egw
+     * @param browser
+     * @throws Exception 
+     */
     static public void open(Egroupware egw, String browser) throws Exception {
         EgroupwareELoginBrowser.open(egw, null, "");
     }
 
+    /**
+     * open
+     * 
+     * @param egw
+     * @param menuaction
+     * @param browser
+     * @throws Exception 
+     */
     static public void open(Egroupware egw, String menuaction, String browser) throws Exception {
         try {
             if( egw.isLogin() ) {
