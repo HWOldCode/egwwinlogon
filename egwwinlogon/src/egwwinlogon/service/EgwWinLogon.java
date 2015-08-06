@@ -68,7 +68,7 @@ public class EgwWinLogon {
             try {
                 SimpleLayout layout = new SimpleLayout();
                 ZipFileAppender fileAppender = new ZipFileAppender(layout,
-                    EgroupwarePGina.getAppDir() + "/log/egwWinLogon.log", 
+                    EgroupwarePGina.getAppDir() + "log/egwWinLogon.log", 
                     EgwWinLogonUltis.getPHSF(this)
                     );
                 
@@ -86,7 +86,7 @@ public class EgwWinLogon {
         // ---------------------------------------------------------------------
 
         this._eLoginCache = EgroupwareELoginCache.loadByFile(
-            EgroupwarePGina.getAppDir() + "/elogin.cache");
+            EgroupwarePGina.getAppDir() + "elogin.cache");
 
         if( this._eLoginCache == null ) {
             this._eLoginCache = new EgroupwareELoginCache();
@@ -95,7 +95,7 @@ public class EgwWinLogon {
         // ---------------------------------------------------------------------
         
         EgroupwareCommand.instance = EgroupwareCommand.loadByFile(
-            EgroupwarePGina.getAppDir() + "/ecommands.cache");
+            EgroupwarePGina.getAppDir() + "ecommands.cache");
         
         if( EgroupwareCommand.instance == null ) {
             EgroupwareCommand.instance = new EgroupwareCommand();
@@ -244,15 +244,6 @@ public class EgwWinLogon {
 
                         logger.info("Login by user: " + username + "@" + domain);
                         // ---------------------------------------------------------
-
-                        // final init wlt
-                        EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(username);
-
-                        if( _wlt == null ) {
-                            _wlt = new EgwWinLogonThread(_egw);
-                        }
-
-                        // ---------------------------------------------------------
                     }
                     catch( Exception ec ) {
                         // nothing
@@ -270,7 +261,7 @@ public class EgwWinLogon {
                         
                         EgroupwareELoginCache.saveToFile(
                             this._eLoginCache, 
-                            EgroupwarePGina.getAppDir() + "/elogin.cache");
+                            EgroupwarePGina.getAppDir() + "elogin.cache");
                     }
 
                     // request command cache list
@@ -281,14 +272,34 @@ public class EgwWinLogon {
 
                         EgroupwareCommand.saveToFile(
                             EgroupwareCommand.instance, 
-                            EgroupwarePGina.getAppDir() + "/ecommands.cache");
+                            EgroupwarePGina.getAppDir() + "ecommands.cache");
                     }
 
-                    EgroupwareCommand.instance.execute(
-                        0, 
-                        EgroupwareCommand.TYPE_SERVICE, 
-                        EgroupwareCommand.EVENT_LOGIN_PRE
-                        );
+                    try {
+                        // final init wlt
+                        EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(username);
+
+                        if( _wlt == null ) {
+                            
+                            // no instance found, first login
+                            // execute event login pre
+                            EgroupwareCommand.instance.execute(
+                                0, 
+                                EgroupwareCommand.TYPE_SERVICE, 
+                                EgroupwareCommand.EVENT_LOGIN_PRE
+                                );
+                            
+                            // create thread
+                            _wlt = new EgwWinLogonThread(_egw);
+                        }
+
+                        // ---------------------------------------------------------
+                    }
+                    catch( Exception ec ) {
+                        // nothing
+                        logger.error("EgroupwareMachineInfo Create Thread: " + ec.getMessage() + 
+                            " <> " + ec.getLocalizedMessage());
+                    }
 
                     logger.info("egwAuthenticateUser return true by user: " + username);
                     return 1;
@@ -506,7 +517,7 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetVersion() {
-		return "14.2.9";
+		return "14.3.0";
 	}
 
     /**
