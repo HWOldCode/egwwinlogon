@@ -59,6 +59,8 @@ public class EgroupwareCommand extends EgroupwareJson {
     public static final String EVENT_LOGIN_PRE      = "login_pre";
     public static final String EVENT_LOGIN          = "login";
     public static final String EVENT_LOGIN_AFTER    = "login_after";
+    public static final String EVENT_LOCK           = "lock";
+    public static final String EVENT_UNLOCK         = "unlock";
     
     /**
      * cmds
@@ -156,6 +158,7 @@ public class EgroupwareCommand extends EgroupwareJson {
     
     /**
      * execute
+     * 
      * @param sessionId 
      * @param type
      * @param event
