@@ -88,11 +88,28 @@ var_dump('Providerlist: ' . count($tprovider) );
                     echo "Eingelogt: " . $provider->getProviderName() . "<br><br>";
                 }
 
+                $circle_count = 1;
+
                 foreach( $egw_accounts as $egw_account ) {
-        echo "<hr>";
                     if( in_array($egw_account['account_lid'], $ignoruser) ) {
                         continue;
                     }
+
+                    if( $circle_count%6 ) {
+                        $provider->logout();
+                        $provider->login();
+
+                        if( !$provider->isLogin() ) {
+                            var_dump("Fehler beim relogin!");
+                            break;
+                        }
+                        else {
+                            var_dump("relogin!");
+                        }
+                    }
+
+                    $circle_count++;
+        echo "<hr>";
 
                     $provider_id    = $provider->getId();
                     $accid          = $egw_account['account_id'];
@@ -157,6 +174,10 @@ var_dump('Providerlist: ' . count($tprovider) );
                             // update account, new password?
                             if( $usershares->getProvider()->updatePassword($usershares) ) {
                                 // success
+                                var_dump("Password erfolgreich geupdatet.");
+                            }
+                            else {
+                                var_dump("Password nicht geupdatet. (Fehler)");
                             }
 
                             // shares setting
@@ -181,6 +202,7 @@ var_dump('Providerlist: ' . count($tprovider) );
                                 $kdshares[$tshare['name']] = $tshare;
                             }
 
+                            var_dump($kshares);
                             // -----
 
                             foreach( $kdshares as $tname => $tdshare ) {

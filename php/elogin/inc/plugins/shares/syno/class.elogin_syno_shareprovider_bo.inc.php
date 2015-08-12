@@ -66,6 +66,27 @@
         }
 
         /**
+         * login
+         *
+         * @return boolean
+         */
+        public function login() {
+            if( !$this->_syno->isLogin() ) {
+                //echo "nicht eingelogt client<br>";
+                if( $this->_syno->login($this->_account_user, $this->_account_password) ) {
+                    // TODO
+                    //echo "eingelogt client<br>";
+                    return true;
+                }
+                else {
+                   //echo "fehler login client<br>";
+                }
+            }
+
+            return false;
+        }
+
+        /**
          * _construct2
          */
         protected function _construct2() {
@@ -87,17 +108,8 @@
                     elogin_syno_shareprovider_bo::$_synoInstances[$this->_id] = $this->_syno;
                 }
 
-                if( !$this->_syno->isLogin() ) {
-                    //echo "nicht eingelogt client<br>";
-                    if( $this->_syno->login($this->_account_user, $this->_account_password) ) {
-                        // TODO
-                        //echo "eingelogt client<br>";
-                    }
-                    else {
-                       //echo "fehler login client<br>";
-                    }
-                }
 
+                $this->login();
                 //exit;
             }
         }
@@ -161,7 +173,7 @@
 
             if( $this->_syno ) {
                 $user = $this->_syno->getUser($username);
-                
+
                 if( $user ) {
                     return true;
                 }
