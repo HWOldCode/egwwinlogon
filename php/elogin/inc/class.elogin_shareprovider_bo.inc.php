@@ -381,8 +381,17 @@
         }
 
         /**
-         * logout
+         * login
          * 
+         * @return boolean
+         */
+        public function login() {
+            return false;
+        }
+
+        /**
+         * logout
+         *
          * @return boolean
          */
         public function logout() {
