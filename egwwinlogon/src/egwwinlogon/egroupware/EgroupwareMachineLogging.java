@@ -9,9 +9,14 @@ import com.jegroupware.egroupware.Egroupware;
 import com.jegroupware.egroupware.EgroupwareConfig;
 import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
+import egwwinlogon.service.EgroupwarePGina;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Appender;
 import org.apache.log4j.Layout;
@@ -27,7 +32,7 @@ import org.apache.log4j.spi.LoggingEvent;
  * EgroupwareMachineLogging
  * @author Stefan Werfling
  */
-public class EgroupwareMachineLogging extends EgroupwareJson implements Appender {
+public class EgroupwareMachineLogging extends EgroupwareJson implements Appender, Runnable {
    
     /**
      * menuaction
@@ -72,7 +77,17 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
     /**
      * Appender EventsList
      */
-    protected ArrayList<LoggingEvent> _appender_eventsList = new ArrayList();
+    protected Map<String, EgroupwareMachineLoggingEvent> _appender_eventsList = new HashMap<String, EgroupwareMachineLoggingEvent>();
+    
+    /**
+     * Appender EventsList uid index 
+     */
+    protected List<String> _appender_eventsList_uidindex = new ArrayList<String>();
+    
+    /**
+     * timer for reqest
+     */
+    protected Timer _requestTimer = null;
     
     /**
      * Egroupwar Config by User (for sending report)
@@ -85,17 +100,46 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
     protected String _uid = "";
     
     /**
+     * is send errror
+     */
+    protected Boolean _isSendError = false;
+    
+    /**
+     * index
+     */
+    protected long _index = 0;
+    
+    /**
      * constructor
+     * 
      * @param uid
+     * @param egwconfig 
      */
     public EgroupwareMachineLogging(String uid, EgroupwareConfig egwconfig) {
         super();
-
-        this._uid = uid;
+        
+        this._uid       = uid;
         this._egwconfig = egwconfig;
         
         this._request_url = this._createJsonMenuaction(
             EgroupwareMachineLogging.EGW_HTTP_GET_ML_ACTION);
+        
+        // init timer
+        
+        this._requestTimer = new Timer();
+        
+        MyTimer myTimer = new MyTimer();
+        myTimer.setRunnable(this);
+        
+        this._requestTimer.schedule(myTimer, 1000, 60000);  // in 10 sec
+    }
+    
+    /**
+     * constructor
+     * @param egwconfig
+     */
+    public EgroupwareMachineLogging(EgroupwareConfig egwconfig) {
+        this(EgroupwarePGina.getSysFingerprint(), egwconfig);
     }
     
     /**
@@ -125,7 +169,16 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
 
         String tlogs = "";
         
-        for( LoggingEvent le: this._appender_eventsList ) {
+        for( Map.Entry<String, EgroupwareMachineLoggingEvent> entry : this._appender_eventsList.entrySet() ) {
+            EgroupwareMachineLoggingEvent ele = entry.getValue();
+            
+            // exist in index list
+            if( this._appender_eventsList_uidindex.contains(ele.getUnid()) ) {
+                continue;
+            }
+            
+            LoggingEvent le = ele.getEvent();
+            
             if( tlogs.length() > 0 ) {
                 tlogs = tlogs + ",";
             }
@@ -133,11 +186,15 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
             String tmsg = (String) le.getMessage();
             
             tlogs = tlogs + "{" + 
+                "\"unid\": \"" + ele.getUnid() + "\", " +
+                "\"index\": \"" + Long.toString(ele.getIndex()) + "\", " +
                 "\"event\": \"" + le.getLoggerName() + "\", " +
                 "\"level\": \"" + le.getLevel().toString() + "\", " +
                 "\"message\": \"" + new String(Base64.encodeBase64(tmsg.getBytes())) + "\", " +
                 "\"logdate\": \"" + Long.toString(le.getTimeStamp()/1000) + "\" " +
                 "}";
+            
+            this._appender_eventsList_uidindex.add(ele.getUnid());
         }
         
         this._appender_eventsList.clear();
@@ -163,6 +220,11 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
         }
     }
 
+    /**
+     * addFilter
+     * 
+     * @param filter 
+     */
     @Override
     public void addFilter(Filter filter) {
         if( this._appender_headFilter == null) {
@@ -175,66 +237,62 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
         }
     }
 
+    /**
+     * getFilter
+     * 
+     * @return 
+     */
     @Override
     public Filter getFilter() {
         return this._appender_headFilter;
     }
 
+    /**
+     * clearFilters
+     */
     @Override
     public void clearFilters() {
         this._appender_headFilter = null;
         this._appender_tailFilter = null;
     }
 
+    /**
+     * close
+     */
     @Override
     public void close() {
     }
 
+    /**
+     * doAppend
+     * 
+     * @param le 
+     */
     @Override
     public void doAppend(LoggingEvent le) {
-        this._appender_eventsList.add(le);
-       
-        ArrayList<LoggingEvent> tlist = 
-            (ArrayList<LoggingEvent>) this._appender_eventsList.clone();
+        this._index++;
         
-        try {
-            // check can sending
-            if( this._egwconfig != null ) {
-                Egroupware _egw = Egroupware.getInstance(this._egwconfig);
-
-                if( _egw != null ) {
-                    if( _egw.isLogin() ) {
-                        _egw.request(this);
-                        
-                        tlist.clear();
-                        tlist = null;
-                    }
-                }
-            }
-        }
-        catch( Exception ec ) {
-            for( LoggingEvent tle: this._appender_eventsList ) {
-                tlist.add(tle);
-            }
-            
-            tlist.add(new LoggingEvent(
-                ec.getClass().getName(), 
-                logger.getParent(), 
-                Level.ERROR, 
-                "EgroupwareMachineLogging: can`t send logging list: " + 
-                    ec.getMessage(), 
-                null
-                ));
-            
-            this._appender_eventsList = tlist;
-        }
+        EgroupwareMachineLoggingEvent elv = new EgroupwareMachineLoggingEvent(
+            le, this._index);
+        
+        this._appender_eventsList.put(elv.getUnid(), elv);
     }
 
+    /**
+     * getName
+     * 
+     * @return 
+     */
     @Override
     public String getName() {
         return this._appender_name;
     }
 
+    /**
+     * setErrorHandler
+     * 
+     * @param eh 
+     */
     @Override
     public void setErrorHandler(ErrorHandler eh) {
         if( eh == null ) {
@@ -245,28 +303,137 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
         }
     }
 
+    /**
+     * getErrorHandler
+     * 
+     * @return 
+     */
     @Override
     public ErrorHandler getErrorHandler() {
         return this._appender_errorHandler;
     }
 
+    /**
+     * setLayout
+     * 
+     * @param layout 
+     */
     @Override
     public void setLayout(Layout layout) {
         this._appender_layout = layout;
     }
 
+    /**
+     * getLayout
+     * 
+     * @return 
+     */
     @Override
     public Layout getLayout() {
         return this._appender_layout;
     }
 
+    /**
+     * setName
+     * 
+     * @param name 
+     */
     @Override
     public void setName(String name) {
         this._appender_name = name;
     }
 
+    /**
+     * requiresLayout
+     * 
+     * @return 
+     */
     @Override
     public boolean requiresLayout() {
         return (this._appender_layout != null ? true : false);
     }
+
+    /**
+     * run
+     */
+    @Override
+    public void run() {
+        this._sendLogging();
+    }
+    
+    /**
+     * sendLogging
+     * @return 
+     */
+    protected Boolean _sendLogging() {
+        try {
+            // check can sending
+            if( this._egwconfig != null ) {
+                Egroupware _egw = Egroupware.getInstance(this._egwconfig);
+
+                if( _egw != null ) {
+                    if( _egw.isLogin() ) {
+                        _egw.request(this);
+                        
+                        // clear list
+                        Iterator<String> iterator = this._appender_eventsList_uidindex.iterator();
+                        
+                        while( iterator.hasNext() ) {
+                            String tuid = iterator.next();
+                            
+                            this._appender_eventsList.remove(tuid);
+                            this._appender_eventsList_uidindex.remove(tuid);
+                        }
+             
+                        this._isSendError = false;
+                        
+                        return true;
+                    }
+                }
+            }
+        }
+        catch( Exception ec ) {
+            if( !this._isSendError ) {
+                this._index++;
+                
+                EgroupwareMachineLoggingEvent tmp = 
+                    new EgroupwareMachineLoggingEvent(new LoggingEvent(
+                        ec.getClass().getName(), 
+                        logger.getParent(), 
+                        Level.ERROR, 
+                        "EgroupwareMachineLogging: can`t send logging list: " + 
+                            ec.getMessage(), 
+                        null
+                        ), this._index);
+                
+                this._appender_eventsList.put(tmp.getUnid(), tmp);
+                this._isSendError = true;
+            }
+        }
+        
+        this._appender_eventsList_uidindex.clear();
+        
+        return false;
+    }
+    
+    /**
+     * MyTimer
+     */
+    public static class MyTimer extends TimerTask {
+            
+            protected Runnable _runnable = null;
+            
+            public MyTimer() {
+                super();
+            }
+            
+            public void setRunnable(Runnable run) {
+                this._runnable = run;
+            }
+            
+            @Override
+            public void run() {
+                this._runnable.run();
+            }
+        };
 }

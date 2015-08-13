@@ -164,7 +164,7 @@ public class EgwWinLogon {
      */
 	public int egwAuthenticateUser(String username, String password, 
         String domain, int sessionid, EgroupwareEventListener egwListener) 
-    {
+    {   
         logger.info("egwAuthenticateUser, username: " + 
             username + " Domain: " + domain + 
             " Windows-SessionID: " + String.valueOf(sessionid));
@@ -184,7 +184,8 @@ public class EgwWinLogon {
         config.setDomain((String) EgwWinLogon._settings.get("domain"));
         config.setUser(username);
         config.setPassword(password);
-
+        config.setSocketTimeout(3000);
+        
         this._egwConfigs.put(username, config);
 
         // ---------------------------------------------------------------------
@@ -220,10 +221,7 @@ public class EgwWinLogon {
 
                         logger.info("Set Machine Logging ...");
 
-                        EgroupwareMachineLogging egwlog = new EgroupwareMachineLogging(
-                            (String) EgwWinLogon._settings.get("sysfingerprint"),
-                            config
-                            );
+                        EgroupwareMachineLogging egwlog = new EgroupwareMachineLogging(config);
 
                         // set logger
                         Logger tlogger = Logger.getRootLogger();
@@ -429,7 +427,7 @@ public class EgwWinLogon {
             }
         }
         
-        try {            
+        try {
             // set session status
             if( _wlt != null ) {
                 _wlt.setSessionStatus(sessionChangeReason);
@@ -517,7 +515,7 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetVersion() {
-		return "14.3.0";
+		return "14.3.1";
 	}
 
     /**
