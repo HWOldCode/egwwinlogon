@@ -123,3 +123,13 @@ function elogin_upgrade1_9_073()
 	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.074';
 }
 
+
+function elogin_upgrade1_9_074()
+{
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_cmd','el_condition',array(
+		'type' => 'text'
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.075';
+}
+

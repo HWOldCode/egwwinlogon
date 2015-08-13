@@ -72,6 +72,12 @@
         protected $_logdate = null;
 
         /**
+         * index
+         * @var string
+         */
+        protected $_index = '';
+
+        /**
          * Init our static properties
          */
         static public function init_static() {
@@ -93,6 +99,7 @@
                     $this->_event       = $data['el_event'];
                     $this->_logdate     = strtotime($data['el_logdate']);
                     $this->_message     = $data['el_message'];
+                    $this->_index       = $data['el_index'];
                 }
 
                 $this->_id = $id;
@@ -201,6 +208,23 @@
             return $this->_logdate;
         }
 
+        /**
+         * getIndex
+         *
+         * @return string
+         */
+        public function getIndex() {
+            return $this->_index;
+        }
+
+        /**
+         * setIndex
+         *
+         * @param string $index
+         */
+        public function setIndex($index) {
+            $this->_index = $index;
+        }
 
         /**
          * save
@@ -212,7 +236,8 @@
                     'el_account_id' => $this->_account_id,
                     'el_event'      => $this->_event,
                     'el_logdate'    => date("Y-m-d H:i:s", $this->_logdate),
-                    'el_message'    => $this->_message
+                    'el_message'    => $this->_message,
+                    'el_index'      => $this->_index
                     );
 
                 $return = self::_write($data);

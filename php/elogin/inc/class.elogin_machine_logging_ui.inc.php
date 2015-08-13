@@ -110,6 +110,7 @@
                             $event      = '';
                             $msg        = '';
                             $logdate    = 0;
+                            $index      = '';
 
                             if( isset($tlog['event']) ) {
                                 $event = $tlog['event'];
@@ -124,10 +125,15 @@
                                 //error_log(__METHOD__.__LINE__.':'.  var_export($logdate, true));
                             }
 
+                            if( isset($tlog['index']) ) {
+                                $index = $tlog['index'];
+                            }
+
                             $log->setEvent($event);
                             $log->setMessage($msg);
                             $log->setLogDate($logdate);
-
+                            $log->setIndex($index);
+                            
                             $log->save();
                         }
 

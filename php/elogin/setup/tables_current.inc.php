@@ -58,11 +58,12 @@ $phpgw_baseline = array(
 			'el_event' => array('type' => 'varchar','precision' => '128'),
 			'el_level' => array('type' => 'int','precision' => '4'),
 			'el_logdate' => array('type' => 'timestamp'),
-			'el_message' => array('type' => 'text')
+			'el_message' => array('type' => 'text'),
+			'el_index' => array('type' => 'varchar','precision' => '256')
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),
-		'ix' => array('el_unid','el_machine_id','el_account_id','el_event','el_level'),
+		'ix' => array('el_unid','el_machine_id','el_account_id','el_event','el_level','el_index'),
 		'uc' => array()
 	),
 	'egw_elogin_usershares_mount' => array(
