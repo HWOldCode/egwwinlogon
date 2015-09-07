@@ -49,16 +49,16 @@ public class EgwWinLogonUltis {
             String javaEnv = "SOFTWARE\\JavaSoft\\Java Runtime Environment";
 
             String currentVersion = Advapi32Util.registryGetStringValue(
-                    WinReg.HKEY_LOCAL_MACHINE, 
-                    javaEnv,
-                    "CurrentVersion");
+                WinReg.HKEY_LOCAL_MACHINE, 
+                javaEnv,
+                "CurrentVersion");
 
             String javaCV = javaEnv + "\\" + currentVersion;
 
             javaHome = Advapi32Util.registryGetStringValue(
-                    WinReg.HKEY_LOCAL_MACHINE, 
-                    javaCV,
-                    "JavaHome");
+                WinReg.HKEY_LOCAL_MACHINE, 
+                javaCV,
+                "JavaHome");
 
             logger.info("JavaHome: " + javaHome);
         }
@@ -86,8 +86,8 @@ public class EgwWinLogonUltis {
         }
         
         String appCmd = "\"" + EgwWinLogonUltis.getJavaInstallationPath() + 
-            "\\bin\\javaw.exe\" -jar \"" + appDir + 
-            "egwwinlogon.jar\" " + params;
+            "\\bin\\javaw.exe\" -cp \"" + appDir + 
+            "egwwinlogon.jar\" egwwinlogon.user.EgwWinTrayer " + params;
         
         return appCmd;
     }
@@ -103,7 +103,7 @@ public class EgwWinLogonUltis {
             appDir = EgroupwarePGina.getAppDir();
         }
         catch( Exception ex ) {
-            logger.error("Error getUserAppCmd: " + ex.getMessage());
+            logger.error("Error getUpdaterAppCmd: " + ex.getMessage());
         }
         
         String appCmd = "\"" + EgwWinLogonUltis.getJavaInstallationPath() + 
@@ -124,7 +124,7 @@ public class EgwWinLogonUltis {
             appDir = EgroupwarePGina.getAppDir();
         }
         catch( Exception ex ) {
-            logger.error("Error getUserAppCmd: " + ex.getMessage());
+            logger.error("Error getProtocolAppCmd: " + ex.getMessage());
         }
         
         String appCmd = "\"" + EgwWinLogonUltis.getJavaInstallationPath() + 
