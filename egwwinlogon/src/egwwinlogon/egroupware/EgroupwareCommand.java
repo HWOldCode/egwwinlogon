@@ -13,6 +13,7 @@ import egwwinlogon.winapi.ProcessList;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -194,7 +195,7 @@ public class EgroupwareCommand extends EgroupwareJson {
                         }
                     }
                     
-                    logger.info("EgroupwareCommand fount-Cmd: " + 
+                    logger.info("EgroupwareCommand found-Cmd: " + 
                         "ID: '" + cmdid + "' " + 
                         "MachineId: '" + machineid + "' " + 
                         "AccountId: '" + accountid + "' " + 
@@ -402,7 +403,7 @@ public class EgroupwareCommand extends EgroupwareJson {
      * @param file
      * @return
      */
-    static public EgroupwareCommand loadByFile(String file) {
+    static public EgroupwareCommand loadByFile(String file) throws Exception {
         try {
             String content = new String(Files.readAllBytes(Paths.get(file)));
             
@@ -414,6 +415,10 @@ public class EgroupwareCommand extends EgroupwareJson {
             //EgroupwarePGina.logInfo("loadByFile Cache: " + content);
             
             return EgroupwareCommand.fromSerializableString(content);
+        }
+        catch( InvalidKeyException exik ) {
+            throw new Exception(
+                "Wrong configuration, used base JavaCE, please contact your Administrator!");
         }
         catch( Exception ex ) {
             EgroupwarePGina.logError(
@@ -434,7 +439,7 @@ public class EgroupwareCommand extends EgroupwareJson {
      * @param file
      * @return
      */
-    static public Boolean saveToFile(EgroupwareCommand commands, String file) {
+    static public Boolean saveToFile(EgroupwareCommand commands, String file) throws Exception {
         try {
             String content = EgroupwareCommand.toSerializableString(commands);
             
@@ -444,6 +449,10 @@ public class EgroupwareCommand extends EgroupwareJson {
                 );
             
             Files.write(Paths.get(file), content.getBytes());
+        }
+        catch( InvalidKeyException exik ) {
+            throw new Exception(
+                "Wrong configuration, used base JavaCE, please contact your Administrator!");
         }
         catch( Exception ex ) {
             EgroupwarePGina.logError(

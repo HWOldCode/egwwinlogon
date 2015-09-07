@@ -58,10 +58,12 @@ public class EgroupwarePGina {
      */
     static public String getAppDir() {
         if( EgroupwarePGina._useEmulator ) {
-            return EgroupwareDLLEmulator.getAppDir();
+            return EgwWinLogonUltis.pathUriValid(
+                EgroupwareDLLEmulator.getAppDir());
         }
         
-        return EgroupwareDLL.getAppDir();
+        return EgwWinLogonUltis.pathUriValid(
+            EgroupwareDLL.getAppDir());
     }
     
     /**

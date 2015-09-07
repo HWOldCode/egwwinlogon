@@ -5,6 +5,7 @@
  */
 package egwwinlogon.service.crypt;
 
+import java.lang.reflect.Field;
 import java.security.Security;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -16,6 +17,30 @@ import org.bouncycastle.util.encoders.Base64;
  */
 public class EgwWinLogonCryptAes {
     
+    /**
+     * initJCE
+     */
+    static public void initJCE() {
+        try { 
+            Field field = Class.forName(
+                "javax.crypto.JceSecurity").getDeclaredField("isRestricted");
+            
+            field.setAccessible(true);
+            field.set(null, java.lang.Boolean.FALSE); 
+        }
+        catch( Exception ex ) {
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * encode
+     * 
+     * @param content
+     * @param k
+     * @return
+     * @throws Exception 
+     */
     static public String encode(String content, String k) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
@@ -39,6 +64,14 @@ public class EgwWinLogonCryptAes {
         return new String(Base64.encode(cipherText));
     }
     
+    /**
+     * decode
+     * 
+     * @param content
+     * @param k
+     * @return
+     * @throws Exception 
+     */
     static public String decode(String content, String k) throws Exception {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
         

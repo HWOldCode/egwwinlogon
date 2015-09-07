@@ -14,6 +14,7 @@ import egwwinlogon.service.EgwWinLogonUltis;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.InvalidKeyException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -391,7 +392,7 @@ public class EgroupwareELoginCache extends EgroupwareJson {
      * @param file
      * @return
      */
-    static public EgroupwareELoginCache loadByFile(String file) {
+    static public EgroupwareELoginCache loadByFile(String file) throws Exception {
         try {
             String content = new String(Files.readAllBytes(Paths.get(file)));
             
@@ -403,6 +404,10 @@ public class EgroupwareELoginCache extends EgroupwareJson {
             //EgroupwarePGina.logInfo("loadByFile Cache: " + content);
             
             return EgroupwareELoginCache.fromSerializableString(content);
+        }
+        catch( InvalidKeyException exik ) {
+            throw new Exception(
+                "Wrong configuration, used base JavaCE, please contact your Administrator!");
         }
         catch( Exception ex ) {
             EgroupwarePGina.logError(
@@ -423,7 +428,7 @@ public class EgroupwareELoginCache extends EgroupwareJson {
      * @param file
      * @return
      */
-    static public Boolean saveToFile(EgroupwareELoginCache cache, String file) {
+    static public Boolean saveToFile(EgroupwareELoginCache cache, String file) throws Exception {
         try {
             String content = EgroupwareELoginCache.toSerializableString(cache);
             
@@ -433,6 +438,10 @@ public class EgroupwareELoginCache extends EgroupwareJson {
                 );
             
             Files.write(Paths.get(file), content.getBytes());
+        }
+        catch( InvalidKeyException exik ) {
+            throw new Exception(
+                "Wrong configuration, used base JavaCE, please contact your Administrator!");
         }
         catch( Exception ex ) {
             EgroupwarePGina.logError(

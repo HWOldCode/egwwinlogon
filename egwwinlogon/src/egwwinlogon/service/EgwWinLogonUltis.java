@@ -21,17 +21,11 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.Arrays;
 import java.util.List;
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
+import java.util.Properties;
 import org.apache.log4j.Logger;
+import javax.mail.*;
+import javax.mail.internet.*;
 
 /**
  * EgwWinLogonUltis
@@ -270,5 +264,72 @@ public class EgwWinLogonUltis {
         tis.close();
         
         return tret;
+    }
+    
+    /**
+     * pathUriValid
+     * 
+     * @param path
+     * @return 
+     */
+    static public String pathUriValid(String path) {
+        path = path.replace("\\", "/");
+        String lastchar = path.substring(path.length() - 1);
+        
+        if( lastchar != "/" ) {
+            path += "/";
+        }
+        
+        return path;
+    }
+    
+    /**
+     * sendEmail
+     * 
+     * @param host
+     * @param user
+     * @param password
+     * @param to
+     * @param subject
+     * @param message
+     * @return 
+     */
+    static public Boolean sendEmail(String host, String user, String password, String to, String subject, String message) {
+        final Properties props = new Properties();
+        
+        props.setProperty( "mail.smtp.host", "smtp.gmail.com");
+        props.setProperty( "mail.smtp.auth", "true");
+        props.setProperty( "mail.smtp.port", "465");
+        props.setProperty( "mail.smtp.user", user);
+        props.setProperty( "mail.smtp.password", password);
+        props.setProperty( "mail.smtp.socketFactory.port", "465" );
+        props.setProperty( "mail.smtp.socketFactory.class",
+                           "javax.net.ssl.SSLSocketFactory" );
+        props.setProperty( "mail.smtp.socketFactory.fallback", "false" );
+        
+        Session tsession = Session.getInstance( props, new javax.mail.Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication( 
+                    props.getProperty( "mail.smtp.user" ),
+                    props.getProperty( "mail.smtp.password" ));
+            }
+          });
+        
+        Message msg = new MimeMessage(tsession);
+
+        try {
+            InternetAddress addressTo = new InternetAddress( to );
+            msg.setRecipient(Message.RecipientType.TO, addressTo);
+
+            msg.setSubject( subject );
+            msg.setContent( message, "text/plain" );
+            Transport.send( msg );
+        }
+        catch( Exception ex ) {
+            return false;
+        }
+        
+        return true;
     }
 }
