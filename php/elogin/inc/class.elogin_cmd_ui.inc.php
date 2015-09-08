@@ -39,12 +39,12 @@
 
                     foreach( $usersahres as $usersahre ) {
                         $tcmds = $usersahre->getCmds();
-
+						
                         foreach( $tcmds as $tcmd ) {
                             $cmds[] = $tcmd;
                         }
                     }
-
+					
                     $list = array();
 
                     foreach( $cmds as $tcmd ) {
@@ -58,7 +58,7 @@
                         'cmds' => $list));
                 }
             }
-
+			
             return egw_json_response::get()->data(array('status' => 'error'));
         }
 

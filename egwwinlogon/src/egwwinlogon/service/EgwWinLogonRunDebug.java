@@ -21,22 +21,23 @@ import egwwinlogon.user.EgwWinTrayer;
 public class EgwWinLogonRunDebug implements EgroupwareEventListener {
     
     /**
-	 * main
-	 * @param args String[]
-	 */
-	public static void main(String[] args) {
+     * main
+     * @param args String[]
+     */
+    public static void main(String[] args) {
         
         // emulator
         EgroupwarePGina.setUseEmulator(true);
         
         // default vars
-        String url          = "http://192.168.11.89/egw14/";
+        /*String url          = "http://192.168.11.89/egw14/";*/
+        String url          = "https://www.a3ds.de/egroupware/";
         String domain       = "default";
         String fingerprint  = "DEBUG-V3";
         String machinename  = "Debug-PC-HW";
         
         String username     = "stefan.werfling";
-        String password     = "test";
+        String password     = "";
         
         for( String s: args ) {
             System.out.println("Argument: " + s);

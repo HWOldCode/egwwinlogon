@@ -35,10 +35,10 @@ public class EgwWinLogon {
      */
     static protected LinkedHashMap _settings = new LinkedHashMap();
     
-	/**
-	 * Global Error
-	 */
-	static protected  String _error = "";
+    /**
+     * Global Error
+     */
+    static protected  String _error = "";
 
     /**
      * LogonHttpServer
@@ -180,7 +180,7 @@ public class EgwWinLogon {
      * @param egwListener
      * @return
      */
-	public int egwAuthenticateUser(String username, String password, 
+    public int egwAuthenticateUser(String username, String password, 
         String domain, int sessionid, EgroupwareEventListener egwListener) 
     {   
         logger.info("egwAuthenticateUser, username: " + 
@@ -536,7 +536,7 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetVersion() {
-		return "14.3.3";
+		return "14.3.4";
 	}
 
     /**

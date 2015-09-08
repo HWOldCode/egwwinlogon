@@ -223,7 +223,7 @@
                 if( $this->getMountname() != '' ) {
                     $cmd = $replace_str;
                     $cmd = str_replace('<drivename>', $this->getMountname(), $cmd);
-                    $cmd = str_replace('<server>', $us->getProvider()->getMountAddress(), $cmd);
+                    $cmd = str_replace('<server>', $us->getProvider(true)->getMountAddress(), $cmd);
                     $cmd = str_replace('<share>', $this->getShareSource(), $cmd);
                     $cmd = str_replace('<username>', $username, $cmd);
                     $cmd = str_replace('<password>', $sharepassword, $cmd);
