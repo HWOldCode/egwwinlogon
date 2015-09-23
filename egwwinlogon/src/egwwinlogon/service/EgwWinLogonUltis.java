@@ -146,7 +146,8 @@ public class EgwWinLogonUltis {
             connection.setRequestMethod("HEAD");
             int responseCode = connection.getResponseCode();
 
-            if( responseCode != 200 ) {
+            // OK or FOUND
+            if( (responseCode != 200) && (responseCode != 302) ) {
                 return false;
             }
 

@@ -109,34 +109,8 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
         this._egw           = this._client.getEgroupwareInstance(username, url);
         this._machine_id    = this._client.getMachineId(url);
         
-        // Thread check is egroupware offline to online
-        if( (this._egw == null) || ((this._egw != null) && !this._egw.isLogin()) ) {
-            Thread thread = new Thread(){
-                public void run(){
-                    while( true ) {
-                        _egw = _client.getEgroupwareInstance(_username, _url);
-                        
-                        if( (_egw != null) && (_egw.isLogin()) ) {
-                            if( _trayer != null ) {
-                                _trayer.displayMsgInfo(
-                                    "Egroupware", 
-                                    "Benutzer ist eingeloggt.");
-                            }
-                            
-                            break;
-                        }
-                        
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ex) {
-                            java.util.logging.Logger.getLogger(EgwWinTrayer.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                }
-            };
-            
-            thread.start();
-        }
+        // egroupware instance
+        this.reloadEgroupwareInstance();
         
 
         // ---------------------------------------------------------------------
@@ -204,27 +178,90 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
             this._trayer.displayMsgInfo("Egroupware", "Offline modus, kein Internet?");
         }
     }
+    
+    /**
+     * reloadEgroupwareInstance
+     * Thread check is egroupware offline to online
+     */
+    public void reloadEgroupwareInstance() {
+        if( (this._egw == null) || ((this._egw != null) && !this._egw.isLogin()) ) {
+            Thread thread = new Thread(){
+                
+                @Override
+                public void run(){
+                    while( true ) {
+                        _egw = _client.getEgroupwareInstance(_username, _url);
+                        
+                        if( (_egw != null) && (_egw.isLogin()) ) {
+                            if( _trayer != null ) {
+                                _trayer.displayMsgInfo(
+                                    "Egroupware", 
+                                    "Benutzer ist eingeloggt.");
+                            }
+                            
+                            break;
+                        }
+                        
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                            java.util.logging.Logger.getLogger(
+                                EgwWinTrayer.class.getName()).log(
+                                    Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            };
+            
+            thread.start();
+        }
+    }
 
+    /**
+     * authentificationSucceeded
+     * 
+     * @param e 
+     */
     @Override
     public void authentificationSucceeded(EgroupwareAuthentifiactionEvent e) {
         
     }
 
+    /**
+     * authentificationFailed
+     * 
+     * @param e 
+     */
     @Override
     public void authentificationFailed(EgroupwareAuthentifiactionEvent e) {
         
     }
 
+    /**
+     * logoutSucceeded
+     * 
+     * @param e 
+     */
     @Override
     public void logoutSucceeded(EgroupwareLogoutEvent e) {
         
     }
 
+    /**
+     * logoutFailed
+     * 
+     * @param e 
+     */
     @Override
     public void logoutFailed(EgroupwareLogoutEvent e) {
         
     }
 
+    /**
+     * requestSucceeded
+     * 
+     * @param e 
+     */
     @Override
     public void requestSucceeded(EgroupwareEventRequest e) {
         if( e.getRequest() instanceof EgroupwareJson ) {
@@ -238,11 +275,21 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
         }
     }
 
+    /**
+     * requestFailed
+     * 
+     * @param e 
+     */
     @Override
     public void requestFailed(EgroupwareEventRequest e) {
         
     }
 
+    /**
+     * actionPerformed
+     * 
+     * @param e 
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if( e.getSource() instanceof PopupMenu ) {
@@ -287,6 +334,11 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
         }
     }
 
+    /**
+     * threadAction
+     * 
+     * @param e 
+     */
     @Override
     public void threadAction(EgroupwareEvent e) {
         
@@ -303,10 +355,18 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
         {
             try {
                 if( this._egw.isLogin() ) {
+                    this._trayer.displayMsgInfo(
+                        this._trayerTitle, 
+                        "Start Browser, please wait..."
+                        );
+                    
                     EgroupwareELoginBrowser.open(this._egw);
                 }
                 else {
-                    this._trayer.displayMsgError("Error", "Egroupware is offline!");
+                    this.reloadEgroupwareInstance();
+                    
+                    this._trayer.displayMsgError("Error", 
+                        "Egroupware is offline, please wait for reaload egroupware instance!");
                 }
             }
             catch( Exception ex ) {
@@ -315,21 +375,41 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
         }
     }
 
+    /**
+     * mousePressed
+     * 
+     * @param e 
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         
     }
 
+    /**
+     * mouseReleased
+     * 
+     * @param e 
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
         
     }
 
+    /**
+     * mouseEntered
+     * 
+     * @param e 
+     */
     @Override
     public void mouseEntered(MouseEvent e) {
         
     }
 
+    /**
+     * mouseExited
+     * 
+     * @param e 
+     */
     @Override
     public void mouseExited(MouseEvent e) {
         

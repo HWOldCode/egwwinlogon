@@ -218,16 +218,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
         // ---------------------------------------------------------------------
         // offline, check have connection
         
-        if( !this._egw.isLogin() ) {
-            if( EgwWinLogonUltis.pingUrl(this._egw.getConfig().getUrl()) ) {
-                try {
-                    this._egw.login();
-                }
-                catch( Exception e ) {
-                    //
-                }
-            }
-        }
+       // none
         
         // ---------------------------------------------------------------------
         // userapp
@@ -288,6 +279,8 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      */
     protected void _runSessionLogon() {
         
+        this._reInitEgroupware();
+        
         // ---------------------------------------------------------------------
         // is egroupware logout
         if( !this._egw.isLogin() ) {
@@ -317,9 +310,25 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      * _runSessionUnlock
      */
     protected void _runSessionUnlock() {
-        
+        this._reInitEgroupware();
     }
 
+    /**
+     * _reInitEgroupware
+     */
+    protected void _reInitEgroupware() {
+        if( !this._egw.isLogin() ) {
+            if( EgwWinLogonUltis.pingUrl(this._egw.getConfig().getUrl()) ) {
+                try {
+                    this._egw.login();
+                }
+                catch( Exception e ) {
+                    //
+                }
+            }
+        }
+    }
+    
     /**
      * _changeSessionLogon
      */
