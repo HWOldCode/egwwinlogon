@@ -3,7 +3,10 @@ package egwwinlogon.service;
 import egwwinlogon.service.db.EgwWinLogonDb;
 import com.jegroupware.egroupware.Egroupware;
 import com.jegroupware.egroupware.EgroupwareConfig;
+import com.jegroupware.egroupware.EgroupwareHttp;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
+import com.jegroupware.egroupware.exceptions.EGroupwareExceptionLoginStatus;
+import com.jegroupware.egroupware.exceptions.EGroupwareExceptionUserConfig;
 import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.egroupware.EgroupwareMachineInfo;
@@ -25,6 +28,17 @@ import org.apache.log4j.*;
  */
 public class EgwWinLogon {
 
+	/**
+	 * Static
+	 */
+	static {
+		EgroupwareHttp.addUserAgent(
+			EgwWinLogonConst.EGW_WIN_LOGON_TITLE + ";" + 
+			EgwWinLogonConst.EGW_WIN_LOGON_DESCRIPTION + ";" + 
+			EgwWinLogonConst.EGW_WIN_LOGON_VERSION
+			);
+	}
+	
     /**
      * logger
      */
@@ -154,7 +168,7 @@ public class EgwWinLogon {
             
             try {
                 this._server.start();
-            } catch (IOException ex) {
+            } catch( IOException ex ) {
                 java.util.logging.Logger.getLogger(
                     EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -219,6 +233,17 @@ public class EgwWinLogon {
                 try {
                     _egw.login();
                 }
+				catch( EGroupwareExceptionUserConfig e ) {
+					EgwWinLogon._error = "Please check your username or password!";
+					
+					return 0;
+				}
+				catch( EGroupwareExceptionLoginStatus e ) {
+					EgwWinLogon._error = "EGroupware response status: " + 
+						EGroupwareExceptionLoginStatus.getStatusMessage(e.getStatus());
+					
+					return 0;
+				}
                 catch( Exception te ) {
                     throw new EgwWinLogonException(
                         EgwWinLogonException.EC_SERVER_CONNECTION);
@@ -520,7 +545,7 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetDescription() {
-		return "Egroupware CP Connector";
+		return EgwWinLogonConst.EGW_WIN_LOGON_DESCRIPTION;
 	}
 
 	/**
@@ -528,7 +553,7 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetName() {
-		return "Egroupware";
+		return EgwWinLogonConst.EGW_WIN_LOGON_TITLE;
 	}
 
 	/**
@@ -536,7 +561,7 @@ public class EgwWinLogon {
 	 * @return String
 	 */
 	public String egwGetVersion() {
-		return "14.3.6";
+		return EgwWinLogonConst.EGW_WIN_LOGON_VERSION;
 	}
 
     /**
