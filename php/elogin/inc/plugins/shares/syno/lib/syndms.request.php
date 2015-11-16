@@ -20,8 +20,8 @@
             $headers = (is_null($custom_headers)) ? array() : $custom_headers;
             $curl = curl_init();
 
-            curl_setopt($curl, CURLOPT_CONNECTTIMEOUT ,0);
-            curl_setopt($curl, CURLOPT_TIMEOUT, 100);
+            //curl_setopt($curl, CURLOPT_CONNECTTIMEOUT ,0);
+            //curl_setopt($curl, CURLOPT_TIMEOUT, 100);
 
 			curl_setopt($curl, CURLOPT_URL, $query_string);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -65,6 +65,13 @@
             }
 
             $response = curl_exec($curl);
+			
+			// -----------------------------------------------------------------
+			//$info = curl_getinfo($curl);
+			//error_log(__METHOD__ . ' ('.__LINE__.') CURL-INFO' . var_export($info, true));
+			//error_log(__METHOD__ . ' ('.__LINE__.') CURL-RESPONSE' . var_export($response, true));
+			// -----------------------------------------------------------------
+			
             $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
 
             curl_close($curl);

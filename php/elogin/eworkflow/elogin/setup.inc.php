@@ -8,7 +8,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     $setup_info = array();

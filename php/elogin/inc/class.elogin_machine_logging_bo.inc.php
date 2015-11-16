@@ -8,7 +8,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     /**
@@ -319,9 +319,26 @@
             $where = array();
             $cols = array(self::TABLE . '.*');
             $join = '';
+			
+			if( !isset($query['start']) ) {
+				$query['start'] = 0;
+			}
+			
+			$start = ($query['num_rows'] ? 
+				array((int)$query['start'], $query['num_rows']) : 
+				(int)$query['start']);
+			
+			list($start, $num_rows) = $start;
+			
+			if( ($num_rows == null) || ($num_rows == false) ) {
+				$num_rows = -1;
+			}
 
-            if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                false, ' ORDER BY ' . self::TABLE . '.el_logdate ', false, 20, $join)))
+			$total = self::$_db->select(self::TABLE, 'COUNT(*)', 
+				$where, __LINE__, __FILE__, false, '', false, 0, $join)->fetchColumn();
+			
+            if( !($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+                $start, ' ORDER BY ' . self::TABLE . '.el_logdate ', false, $num_rows, $join)) )
             {
                 return array();
             }
@@ -333,8 +350,36 @@
                 $rows[] = $row;
             }
 
-            return count($rows);
+            return $total;
         }
+		
+		/**
+		 * getLastLogByMachineId
+		 * 
+		 * @param string $id
+		 * @return elogin_machine_logging_bo
+		 */
+		static public function getLastLogByMachineId($id) {
+			$where = array(
+				'el_machine_id' => $id
+				);
+			
+            $cols = array(self::TABLE . '.el_unid');
+			
+			if( !($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+                0, ' ORDER BY ' . self::TABLE . '.el_logdate DESC', false, 1, '')) )
+            {
+                return null;
+            }
+			
+			foreach( $rs as $row ) {
+				$row = (array) $row;
+				
+				return new elogin_machine_logging_bo($row['el_unid']);
+			}
+			
+			return null;
+		}
     }
 
     /**

@@ -8,7 +8,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     /**
@@ -113,14 +113,19 @@
          * @return string
          */
         public function getProviderAccountId() {
-            $pa = $this->_params->getParam(static::PARAM_SHAREPROVIDER_ACCOUNT);
-
-            if( $pa ) {
-                $this->_provider_account = $pa->getValue();
-            }
-
-            return $this->_provider_account;
+			return $this->_params->getVariableByParam(
+				$this->_provider_account, static::PARAM_SHAREPROVIDER_ACCOUNT);
         }
+		
+		/**
+		 * setProviderAccountId
+		 * 
+		 * @param string $id
+		 */
+		public function setProviderAccountId($id) {
+			$this->_provider_account = $this->_params->saveVariableToParam(
+				$id, static::PARAM_SHAREPROVIDER_ACCOUNT);
+		}
 
         /**
          * getProvider
@@ -148,8 +153,7 @@
 		 */
 		public function uiEdit(&$content, &$option_sel, &$readonlys) {
             if( isset($content['button']) && isset($content['button']['save']) ) {
-                $this->_provider_account = $content['providers'];
-                $this->save();
+                $this->setProviderAccountId($content['providers']);
             }
 
             $content['providers'] = $this->getProviderAccountId();
@@ -164,21 +168,6 @@
             }
 
             parent::uiEdit($content, $option_sel, $readonlys);
-        }
-
-        /**
-		 * save
-		 *
-		 */
-		public function save() {
-            if( $this instanceof elogin_action_share_provider_account ) {
-                $this->_saveVariableToParam(
-                    $this->_provider_account,
-                    static::PARAM_SHAREPROVIDER_ACCOUNT
-                    );
-            }
-
-            parent::save();
         }
 
         /**

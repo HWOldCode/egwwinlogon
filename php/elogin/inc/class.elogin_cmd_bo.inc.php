@@ -8,7 +8,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     /**
@@ -24,10 +24,16 @@
         // types
         const TYPE_USER         = 'user';
         const TYPE_SERVICE      = 'service';
+		const TYPE_WIN_STA0		= 'winsta0';
 
+		// events
+		const EVENT_NONE		= 'none';
         const EVENT_LOGIN_PRE   = 'login_pre';
         const EVENT_LOGIN       = 'login';
         const EVENT_LOGIN_AFTER = 'login_after';
+		const EVENT_LOCKT		= 'lockt';
+		const EVENT_UNLOCKT		= 'unlockt';
+		const EVENT_LOGOFF		= 'logoff';
 
         // seperator
         const SEP_CONDITION = ',';
@@ -37,6 +43,10 @@
         const CONDITION_WAIT            = 'wait';
         const CONDITION_LOGGING         = 'logging';
 
+		// scripts
+		const SCRIPT_BATCHFILE	= 'batchfile';
+		const SCRIPT_VBS			= 'vbs';
+		
         /**
          * Reference to global db object
          *
@@ -62,6 +72,18 @@
          */
         protected $_account_id = null;
 
+		/**
+		 * name
+		 * @var string
+		 */
+		protected $_name	= '';
+		
+		/**
+		 * catid
+		 * @var int
+		 */
+		protected $_catid	= 0;
+		
         /**
          * command
          * @var string
@@ -97,7 +119,33 @@
          * @var array
          */
         protected $_condition = array();
+		
+		/**
+		 * with options
+		 * 
+		 * @var array
+		 */
+		protected $_options = array();
 
+		/**
+		 * script type
+		 * @var string 
+		 */
+		protected $_script_type = '';
+		
+		/**
+		 * script
+		 * 
+		 * @var string
+		 */
+		protected $_script = '';
+		
+		/**
+		 * scheduler time
+		 * @var int
+		 */
+		protected $_scheduler_time = 0;
+		
         /**
          * Init our static properties
          */
@@ -122,8 +170,18 @@
                     $this->_order       = $data['el_order'];
                     $this->_type        = $data['el_type'];
                     $this->_event       = $data['el_event'];
-
-                    $this->_condition   = explode(self::SEP_CONDITION, $data['el_condition']);
+					$this->_name		= $data['el_name'];
+					$this->_catid		= intval($data['el_catid']);
+					$this->_options		= json_decode($data['el_options'], true);
+					
+					if( !is_array($this->_options) ) {
+						$this->_options = array();
+					}
+					
+					$this->_script_type		= $data['el_script_type'];
+					$this->_script			= $data['el_script'];
+                    $this->_condition		= explode(self::SEP_CONDITION, $data['el_condition']);
+					$this->_scheduler_time	= $data['el_scheduler_time'];
                 }
             }
 
@@ -173,6 +231,42 @@
             return $this->_account_id;
         }
 
+		/**
+		 * getName
+		 * 
+		 * @return string
+		 */
+		public function getName() {
+			return $this->_name;
+		}
+		
+		/**
+		 * setName
+		 * 
+		 * @param string $name
+		 */
+		public function setName($name) {
+			$this->_name = $name;
+		}
+		
+		/**
+		 * getCatId
+		 * 
+		 * @return int
+		 */
+		public function getCatId() {
+			return $this->_catid;
+		}
+		
+		/**
+		 * setCatId
+		 * 
+		 * @param int $id
+		 */
+		public function setCatId($id) {
+			$this->_catid = intval($id);
+		}
+		
         /**
          * setCommand
          *
@@ -208,6 +302,24 @@
         public function getSystem() {
             return $this->_system;
         }
+		
+		/**
+		 * setSchedulerTime
+		 * 
+		 * @param int $sec
+		 */
+		public function setSchedulerTime($sec=0) {
+			$this->_scheduler_time = intval($sec);
+		}
+		
+		/**
+		 * getSchedulerTime
+		 * 
+		 * @return int
+		 */
+		public function getSchedulerTime() {
+			return $this->_scheduler_time;
+		}
 
         /**
          * setOrder
@@ -280,8 +392,77 @@
         public function getCondition() {
             return $this->_condition;
         }
+		
+		/**
+		 * setOption
+		 * 
+		 * @param string $name
+		 * @param string $key
+		 */
+		public function setOption($name, $key) {
+			$this->_options[$name] = $key;
+		}
+		
+		/**
+		 * getOption
+		 * 
+		 * @param string $name
+		 * @return string|null
+		 */
+		public function getOption($name) {
+			if( isset($this->_options[$name]) ) {
+				return $this->_options[$name];
+			}
+			
+			return null;
+		}
+		
+		/**
+		 * getOptions
+		 * 
+		 * @return array
+		 */
+		public function getOptions() {
+			return $this->_options;
+		}
 
-        /**
+		/**
+		 * getScriptType
+		 * 
+		 * @return string
+		 */
+		public function getScriptType() {
+			return $this->_script_type;
+		}
+		
+		/**
+		 * setScriptType
+		 * 
+		 * @param string $type
+		 */
+		public function setScriptType($type) {
+			$this->_script_type = $type;
+		}
+		
+		/**
+		 * setScript
+		 * 
+		 * @param string $script
+		 */
+		public function setScript($script) {
+			$this->_script = $script;
+		}
+
+		/**
+		 * getScript
+		 * 
+		 * @return string
+		 */
+		public function getScript() {
+			return $this->_script;
+		}
+		
+		/**
          * save
          */
         public function save() {
@@ -291,16 +472,27 @@
                 $data['el_unid'] = $this->_id;
             }
 
-            $data['el_machine_id']  = $this->_machine_id;
-            $data['el_account_id']  = $this->_account_id;
-            $data['el_command']     = $this->_command;
-            $data['el_system']      = $this->_system;
-            $data['el_order']       = $this->_order;
-            $data['el_type']        = $this->_type;
-            $data['el_event']       = $this->_event;
-            $data['el_condition']   = implode(
+			if( $this->_account_id == null ) {
+				$this->_account_id = '';
+			}
+			
+            $data['el_machine_id']			= $this->_machine_id;
+            $data['el_account_id']			= $this->_account_id;
+            $data['el_command']				= $this->_command;
+            $data['el_system']				= $this->_system;
+            $data['el_order']				= $this->_order;
+            $data['el_type']				= $this->_type;
+            $data['el_event']				= $this->_event;
+            $data['el_condition']			= implode(
                 self::SEP_CONDITION, $this->_condition);
 
+			$data['el_name']				= $this->_name;
+			$data['el_catid']				= $this->_catid;
+			$data['el_options']				= json_encode($this->_options);
+			$data['el_script_type']			= $this->_script_type;
+			$data['el_script']				= $this->_script;
+			$data['el_scheduler_time']		= $this->_scheduler_time;
+			
             $return = self::_write($data);
 
             if( $return ) {
@@ -309,6 +501,15 @@
                 }
             }
         }
+		
+		/**
+		 * delete
+		 */
+		public function delete() {
+			if( $this->_id != null ) {
+				self::_delete($this->_id);
+			}
+		}
 
         /**
          * read
@@ -367,7 +568,23 @@
             return $data['el_unid'];
         }
 
-        /**
+		/**
+		 * _delete
+		 * @param string $id
+		 */
+		static protected function _delete($id) {
+			self::$_db->delete(
+				self::TABLE,
+				array(
+					'el_unid' => $id,
+					),
+				__LINE__,
+				__FILE__,
+				'elogin'
+				);
+		}
+
+		/**
          * get_rows
          *
          * @param type $query
@@ -385,9 +602,26 @@
                     $where['el_machine_id'] = $query['col_filter']['machine_id'];
                 }
             }
-
+			
+			if( !isset($query['start']) ) {
+				$query['start'] = 0;
+			}
+			
+			$start = ($query['num_rows'] ? 
+				array((int)$query['start'], $query['num_rows']) : 
+				(int)$query['start']);
+			
+			list($start, $num_rows) = $start;
+			
+			if( ($num_rows == null) || ($num_rows == false) ) {
+				$num_rows = -1;
+			}
+			
+			$total = self::$_db->select(self::TABLE, 'COUNT(*)', 
+				$where, __LINE__, __FILE__, false, '', false, 0, $join)->fetchColumn();
+			
             if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                false, '', false, -1, $join)))
+                $start, '', false, $num_rows, $join)))
             {
                 return array();
             }
@@ -399,7 +633,7 @@
                 $rows[] = $row;
             }
 
-            return count($rows);
+            return $total;
         }
 
         /**
@@ -435,15 +669,22 @@
          */
         public function toArray() {
             return array(
-                'id'            => $this->_id,
-                'machine_id'    => $this->_machine_id,
-                'account_id'    => strval($this->_account_id),
-                'command'       => $this->_command,
-                'system'        => $this->_system,
-                'order'         => strval($this->_order),
-                'type'          => $this->_type,
-                'event'         => $this->_event,
-                'condition'     => $this->_condition
+                'id'				=> $this->_id,
+                'machine_id'		=> $this->_machine_id,
+                'account_id'		=> strval($this->_account_id),
+                'command'			=> $this->_command,
+                'system'			=> $this->_system,
+                'order'				=> strval($this->_order),
+                'type'				=> $this->_type,
+                'event'				=> $this->_event,
+                'condition'			=> $this->_condition,
+				'name'				=> $this->_name,
+				'options'			=> $this->_options,
+				'script_type'		=> $this->_script_type,
+				'script'			=> $this->_script,
+				'catid'				=> $this->_catid,
+				'catname'			=> categories::id2name($this->_catid),
+				'scheduler_time'	=> $this->_scheduler_time,
                 );
         }
 
@@ -455,6 +696,61 @@
         public function toJson() {
             return json_encode($this->toArray());
         }
+		
+		/**
+		 * link_title
+		 *
+		 * @param type $info
+		 * @return string
+		 */
+		static public function link_title($info) {
+			$cmd = new elogin_cmd_bo($info);
+			
+			if( $cmd->getMachineId() != null ) {
+				return $cmd->getName();
+			}
+			
+			return lang('not found');
+		}
+		
+		/**
+		 * link_titles
+		 *
+		 * @param array $ids
+		 */
+		static public function link_titles(array $ids) {
+            $titles = array();
+
+            foreach( $ids as $id ) {
+                $titles[$id] = self::link_title($id);
+            }
+
+            return $titles;
+		}
+		
+		/**
+         * link_query
+         *
+         * @param type $pattern
+         * @param array $options
+         */
+        static public function link_query($pattern, Array &$options = array()) {
+			$rows		= array();
+			$readonlys	= array();
+			$result = array();
+			
+			if( self::get_rows($options, $rows, $readonlys) > 0 ) {
+				foreach( $rows as &$row ) {
+					$result[$row['el_unid']] = array(
+							'label' => $row['el_name'],
+							);
+				}
+				
+				return $result;
+			}
+			
+			return array();
+		}
     }
 
     /**

@@ -8,7 +8,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     /**
@@ -76,6 +76,14 @@
             return array();
         }
 
+		/**
+		 * get_rows_logging
+		 * 
+		 * @param type $query
+		 * @param type $rows
+		 * @param type $readonlys
+		 * @return type
+		 */
         public function get_rows_logging(&$query, &$rows, &$readonlys) {
             egw_session::appsession('elogin_machine_logging_list', 'elogin', $query);
 

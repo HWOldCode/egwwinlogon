@@ -8,7 +8,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     require_once('lib/syndms.client.php');
@@ -365,10 +365,38 @@
          *
          * @param string $usersharename
          * @param string $dir
+		 * @param int $limit
          * @return array
          */
-        public function getShareDirList($usersharename, $dir="") {
+        public function getShareDirList($usersharename, $dir="", $limit=1000) {
             if( $this->_syno ) {
+				$dir = trim($dir);
+
+				if( $dir != '' ) {
+					$tdir = str_replace("\\", "/", $dir);
+
+					if( $tdir[0] == "/" ) {
+						$tdir = substr($tdir, 1);
+					}
+
+					$tdirs = explode("/", $tdir);
+
+					$dirname = $tdirs[count($tdirs)-1];
+
+					if( trim($dirname) == '' ) {
+						$dirname = $tdirs[count($tdirs)-2];
+						unset($tdirs[count($tdirs)-2]);
+					}
+
+					unset($tdirs[count($tdirs)-1]);
+
+					$dirpath = implode($tdirs, "/");
+
+					$usersharename = $usersharename . "/" . $dirpath . "/" . $dirname;
+					$usersharename = str_replace("//", "/", $usersharename);
+				}
+
+
                 $list = $this->_syno->getFileSharesList(
                     $usersharename,
                     1000,
@@ -392,9 +420,9 @@
          */
         public function existShareDir($usersharename, $dir) {
             if( $this->_syno ) {
-                $list = $this->getShareDirList($usersharename);
+                $list = $this->getShareDirList($usersharename, $dir, 1);
 
-                if( isset($list[$usersharename . '/' . $dir]) ) {
+                if( is_array($list) ) {
                     return true;
                 }
             }
@@ -411,7 +439,38 @@
          */
         public function createShareDir($usersharename, $dir) {
             if( $this->_syno ) {
-                if( $this->_syno->createDirShare($usersharename, $dir) ) {
+				$dir = trim($dir);
+
+				if( $dir != '' ) {
+					$tdir = str_replace("\\", "/", $dir);
+
+					if( $tdir[0] == "/" ) {
+						$tdir = substr($tdir, 1);
+					}
+
+					$tdirs = explode("/", $tdir);
+
+					$dirname = $tdirs[count($tdirs)-1];
+
+					if( trim($dirname) == '' ) {
+						$dirname = $tdirs[count($tdirs)-2];
+
+						unset($tdirs[count($tdirs)-2]);
+					}
+
+					unset($tdirs[count($tdirs)-1]);
+
+					$dirpath = implode($tdirs, "/");
+
+					$usersharename = $usersharename . "/" . $dirpath;
+					$usersharename = str_replace("//", "/", $usersharename);
+
+					if( $usersharename[strlen($usersharename)-1] == '/' ) {
+						$usersharename = substr($usersharename, 0, strlen($usersharename)-1);
+					}
+				}
+
+                if( $this->_syno->createDirShare($usersharename, $dirname) ) {
                     return true;
                 }
             }

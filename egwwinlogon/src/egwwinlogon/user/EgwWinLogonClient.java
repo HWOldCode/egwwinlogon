@@ -11,7 +11,15 @@ import com.jegroupware.egroupware.EgroupwareSession;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
 import egwwinlogon.http.LogonHttpClient;
+import egwwinlogon.service.EgwWinLogonUltis;
+import java.net.URLEncoder;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.codec.binary.Base64;
+import org.json.simple.parser.ContainerFactory;
+import org.json.simple.parser.JSONParser;
 
 /**
  * EgwWinLogonClient
@@ -25,6 +33,7 @@ public class EgwWinLogonClient  {
 
     public static final String REQUEST_SESSION  = "session";
     public static final String REQUEST_CONFIG   = "config";
+	public static final String REQUEST_COMMAND	= "command";
 
     /**
      * LogonHttpClient
@@ -129,4 +138,79 @@ public class EgwWinLogonClient  {
 
         return null;
     }
+	
+	/**
+	 * getCommands
+	 * 
+	 * @param user
+	 * @param url
+	 * @return 
+	 */
+	public LinkedList getCommands(String user, String url) {
+		LinkedList list = new LinkedList();
+		
+		try {
+            if( url == null ) {
+                url = EgwWinLogonClient.URL;
+            }
+        
+            String request = url + EgwWinLogonClient.REQUEST_COMMAND + 
+				"/?contextmenu=1&username=" + EgwWinLogonUltis.encodeURIComponent(user);
+			
+            String buffer = this._client.sendGET(request);
+			
+			
+			JSONParser parser = new JSONParser();
+			ContainerFactory containerFactory = new ContainerFactory(){
+					public List creatArrayContainer() {
+						return new LinkedList();
+					}
+
+					public Map createObjectContainer() {
+						return new LinkedHashMap();
+					}
+				};
+			
+			LinkedList response = (LinkedList)parser.parse(buffer.trim(), containerFactory);
+			
+			if( response != null ) {
+				for( int i=0; i<response.size(); i++ ) {
+					LinkedHashMap tmp = (LinkedHashMap) response.get(i);
+					
+					list.add(tmp);
+				}
+			}
+		}
+        catch( Exception e ) {
+        } 
+		
+		return list;
+	}
+	
+	/**
+	 * 
+	 * @param user
+	 * @param cmdname
+	 * @param url
+	 * @return 
+	 */
+	public String execCommand(String user, String cmdname, String url) {
+		try {
+            if( url == null ) {
+                url = EgwWinLogonClient.URL;
+            }
+        
+            String request = url + EgwWinLogonClient.REQUEST_COMMAND + 
+				"/?exec=" + EgwWinLogonUltis.encodeURIComponent(cmdname) + 
+				"&username=" + EgwWinLogonUltis.encodeURIComponent(user);
+			
+            String buffer = this._client.sendGET(request);
+			
+			return buffer;
+		}
+        catch( Exception e ) {
+        }
+		
+		return "";
+	}
 }

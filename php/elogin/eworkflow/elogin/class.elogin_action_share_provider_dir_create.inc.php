@@ -9,7 +9,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     /**
@@ -108,14 +108,19 @@
          * @return string
          */
         public function getUserShareEntryid() {
-            $ue = $this->_params->getParam(static::PARAM_DC_USERSHARE_ENTRY);
-
-            if( $ue ) {
-                $this->_usershare_entryid = $ue->getValue();
-            }
-
-            return $this->_usershare_entryid;
+			return $this->_params->getVariableByParam(
+				$this->_usershare_entryid, static::PARAM_DC_USERSHARE_ENTRY);
         }
+
+		/**
+		 * setUserShareEntryid
+		 *
+		 * @param string $id
+		 */
+		public function setUserShareEntryid($id) {
+			$this->_usershare_entryid = $this->_params->saveVariableToParam(
+				$id, static::PARAM_DC_USERSHARE_ENTRY);
+		}
 
         /**
          * getDirname
@@ -123,14 +128,19 @@
          * @return string
          */
         public function getDirname() {
-            $dn = $this->_params->getParam(static::PARAM_DC_DIRNAME);
-
-            if( $dn ) {
-                $this->_dirname = $dn->getValue();
-            }
-
-            return $this->_dirname;
+			return $this->_params->getVariableByParam(
+				$this->_dirname, static::PARAM_DC_DIRNAME);
         }
+
+		/**
+		 * setDirname
+		 *
+		 * @param string $dir
+		 */
+		public function setDirname($dir) {
+			$this->_dirname = $this->_params->saveVariableToParam(
+				$dir, static::PARAM_DC_DIRNAME);
+		}
 
         /**
 		 * uiEdit
@@ -139,9 +149,8 @@
 		 */
 		public function uiEdit(&$content, &$option_sel, &$readonlys) {
             if( isset($content['button']) && isset($content['button']['save']) ) {
-                $this->_usershare_entryid = $content['usershare_entry'];
-                $this->_dirname = $content['dirname'];
-                $this->save();
+                $this->setUserShareEntryid($content['usershare_entry']);
+                $this->setDirname($content['dirname']);
             }
 
             $content['usershare_entry'] = $this->getUserShareEntryid();
@@ -187,26 +196,6 @@
         }
 
         /**
-		 * save
-		 *
-		 */
-		public function save() {
-            if( $this instanceof elogin_action_share_provider_dir_create ) {
-                $this->_saveVariableToParam(
-                    $this->_usershare_entryid,
-                    static::PARAM_DC_USERSHARE_ENTRY
-                    );
-
-                $this->_saveVariableToParam(
-                    $this->_dirname,
-                    static::PARAM_DC_DIRNAME
-                    );
-            }
-
-            parent::save();
-        }
-
-        /**
          * execute
          *
          * @param type $params
@@ -230,27 +219,39 @@
             // -----------------------------------------------------------------
 
             $linkname = self::LINK_ERROR;
-            $dirname = eworkflow_vfs_bo::cleanUtf8PathName(
-                $pro->getParamValue(static::PARAM_DC_DIRNAME));
+            $dirname = $pro->getParamValue(static::PARAM_DC_DIRNAME);
 
-            $entryid = $this->getUserShareEntryid();
-            $entry = eworkflow_entrys_bo::loadEntry($entryid);
+			$this::$_logger->info('ParameterValue: ' . $dirname);
+
+            $dirname = eworkflow_vfs_bo::cleanUtf8PathName($dirname);
+
+			$this::$_logger->info('ParameterValue clear: ' . $dirname);
+
+            $entryid	= $this->getUserShareEntryid();
+            $entry		= eworkflow_entrys_bo::loadEntry($entryid);
 
             if( $entry instanceof elogin_action_share_provider_shares ) {
-                $provider = $entry->getProvider();
-                $sharename = $entry->getShareName();
+                $provider	= $entry->getProvider();
+                $sharename	= $entry->getShareName();
 
                 $this::$_logger->info('UserShare: ' . $sharename);
 
-                if( $provider->createShareDir("/" . $sharename, $dirname) ) {
-                    $linkname = self::LINK_ACTION;
-                    $this::$_logger->info('Dir create in UserShare: ' . $dirname);
-                }
-                else {
-                    $linkname = self::LINK_ACTION;
-                    $this::$_logger->info('Dir already exist in UserShare: ' . $dirname);
-                }
+				try {
+					if( $provider->createShareDir("/" . $sharename, $dirname) ) {
+						$linkname = self::LINK_ACTION;
+						$this::$_logger->info('Dir create in UserShare: /' . $sharename . "/" . $dirname);
+					}
+					else {
+						$linkname = self::LINK_ACTION;
+						$this::$_logger->info('Dir already exist in UserShare: /' . $sharename . "/" . $dirname);
+					}
+				}
+				catch( Exception $ex ) {
+					$this::$_logger->severe('Error: ' . $ex->getMessage());
+				}
             }
+
+			//------------------------------------------------------------------
 
             // get link for next action
             $this->_execNextEntryByLinkName($linkname, $params);

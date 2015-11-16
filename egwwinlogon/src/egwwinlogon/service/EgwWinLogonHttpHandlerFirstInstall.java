@@ -74,7 +74,7 @@ public class EgwWinLogonHttpHandlerFirstInstall extends LogonHttpServerHandler {
             
             if( "/firstinstall/".equals(path) ) {
                 _eLoginCache = EgroupwareELoginCache.loadByFile(
-                    EgroupwarePGina.getAppDir() + "/elogin.cache");
+                    EgroupwarePGina.getAppDirCache() + "/elogin.cache");
 
                 if( _eLoginCache == null ) {
                     // Egroupware Config
@@ -108,7 +108,7 @@ public class EgwWinLogonHttpHandlerFirstInstall extends LogonHttpServerHandler {
                             if( _eLoginCache.countAccounts() > 0 ) {
                                 EgroupwareELoginCache.saveToFile(
                                     _eLoginCache, 
-                                    EgroupwarePGina.getAppDir() + "/elogin.cache"
+                                    EgroupwarePGina.getAppDirCache() + "/elogin.cache"
                                     );
                                 
                                 response += "\r\nUser-Cache-List: create and save.";
@@ -124,7 +124,7 @@ public class EgwWinLogonHttpHandlerFirstInstall extends LogonHttpServerHandler {
                             if( EgroupwareCommand.instance.getCmdCount() > 0 ) {
                                 EgroupwareCommand.saveToFile(
                                     EgroupwareCommand.instance, 
-                                    EgroupwarePGina.getAppDir() + "/ecommands.cache"
+                                    EgroupwarePGina.getAppDirCache() + "/ecommands.cache"
                                     );
                                 
                                 response += "\r\nCommand-Cache-List: create and save.";

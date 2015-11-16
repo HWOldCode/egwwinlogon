@@ -218,7 +218,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
         // ---------------------------------------------------------------------
         // offline, check have connection
         
-       // none
+		// none
         
         // ---------------------------------------------------------------------
         // userapp
@@ -228,11 +228,11 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
                 
                 String cmdUApp = EgwWinLogonUltis.getUpdaterAppCmd();
                 
-                EgroupwareDLL.startProcessInSession(this._sessionId, cmdUApp);
+                EgroupwarePGina.startProcessInSession(this._sessionId, cmdUApp);
                 
                 // -------------------------------------------------------------
                 
-                logger.info("Start Userapp...");
+                logger.info("Firststart Userapp...");
                 
                 String username = EgroupwarePGina.getUsername(this._sessionId);
                 logger.info("Userapp for username: " + username);
@@ -241,10 +241,16 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
                 
                 logger.info("Userapp cmd: " + cmdApp);
                 
+				try{
+					Thread.sleep(10000);
+				}
+				catch( Exception ex ) {
+				}
+				
                 this._userappProcessId = EgroupwarePGina.startUserProcessInSession(
                     this._sessionId, cmdApp);
                 
-                logger.info("Userapp processid: " + 
+                logger.info("userapp processid: " + 
                     String.valueOf(this._userappProcessId));
             }
             else {
@@ -323,7 +329,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
                     this._egw.login();
                 }
                 catch( Exception e ) {
-                    //
+                    logger.error(e.getMessage());
                 }
             }
         }
@@ -334,10 +340,10 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      */
     private void _changeSessionLogon() {
         if( this._sessionId != -1 ) {
-            EgroupwareCommand.instance.execute(
+            EgroupwareCommand.instance.executeEvent(
                 this._sessionId, 
-                EgroupwareCommand.TYPE_USER, 
-                EgroupwareCommand.EVENT_LOGIN
+                EgroupwareCommand.TYPE_BYCMD, 
+                EgroupwareCommand.EVENT_LOGIN_AFTER
                 );
         }
         
@@ -362,21 +368,37 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      * _changeSessionLogoff
      */
     private void _changeSessionLogoff() {
-        
+		EgroupwareCommand.instance.executeEvent(
+			this._sessionId, 
+			EgroupwareCommand.TYPE_SERVICE, 
+			EgroupwareCommand.EVENT_LOGOFF
+			);
     }
 
     /**
      * _changeSessionLock
      */
     private void _changeSessionLock() {
-        
+        if( this._sessionId != -1 ) {
+            EgroupwareCommand.instance.executeEvent(
+                this._sessionId, 
+                EgroupwareCommand.TYPE_BYCMD, 
+                EgroupwareCommand.EVENT_LOCK
+                );
+        }
     }
 
     /**
      * _changeSessionUnlock
      */
     private void _changeSessionUnlock() {
-        
+        if( this._sessionId != -1 ) {
+            EgroupwareCommand.instance.executeEvent(
+                this._sessionId, 
+                EgroupwareCommand.TYPE_BYCMD, 
+                EgroupwareCommand.EVENT_UNLOCK
+                );
+        }
     }
 
     /**

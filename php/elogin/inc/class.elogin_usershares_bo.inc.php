@@ -8,7 +8,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     /**
@@ -306,7 +306,9 @@
 
             foreach( $shares as $tshare ) {
                 $mounts = elogin_usershares_mount_bo::getUserShareMountsBy(
-                    $tshare['name'], $this->_id);
+                    $tshare['name'], 
+					$this->_id
+					);
 
                 if( count($mounts) == 0 ) {
                     $mountname = '';
@@ -533,6 +535,7 @@
                     'account_id' => $accountid
                     )
                 );
+			
             $rows = array();
             $readonlys = array();
 

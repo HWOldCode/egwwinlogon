@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
@@ -61,6 +63,11 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
      */
     protected Trayer _trayer = null;
     
+	/**
+	 * PopupMenu for trayer
+	 */
+	protected PopupMenu _pmenu = null;
+	
     /**
      * Machine id
      */
@@ -111,7 +118,6 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
         
         // egroupware instance
         this.reloadEgroupwareInstance();
-        
 
         // ---------------------------------------------------------------------
         
@@ -124,15 +130,33 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
         this._trayer.setIconTooltip(this._trayerTitle + ": " + username);
         
         // set popup
-        PopupMenu popup = new PopupMenu();
-        popup.add(new MenuItem("About"));
-        popup.addSeparator();
-        popup.add(new MenuItem("Logout"));
-        popup.addSeparator();
-        popup.add(new MenuItem("Close"));
-        popup.addActionListener(this);
+        this._pmenu = new PopupMenu();
+		
+		MenuItem egwstart = new MenuItem("Start EGroupware");
+		
+		egwstart.setActionCommand("intern:egw");
+		
+        this._pmenu.add(egwstart);
+        this._pmenu.addSeparator();
         
-        this._trayer.setPopupMenu(popup);
+		LinkedList commandList = this._client.getCommands(username, url);
+		
+		for( int d=0; d<commandList.size(); d++ ) {
+			LinkedHashMap ccmd = (LinkedHashMap) commandList.get(d);
+			
+			if( ccmd.containsKey("name") ) {
+				String cmdname = (String) ccmd.get("name");
+				MenuItem pmenucmd = new MenuItem(cmdname);
+				
+				pmenucmd.setActionCommand("cmd:" + cmdname);
+				
+				this._pmenu.add(pmenucmd);
+			}
+		}
+		
+        this._pmenu.addActionListener(this);
+        
+        this._trayer.setPopupMenu(this._pmenu);
         
         if( (this._egw != null) && this._egw.isLogin() ) {
             this._trayer.displayMsgInfo("Egroupware", "Benutzer ist eingeloggt.");
@@ -152,30 +176,13 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
                 // -------------------------------------------------------------
                 
                 logger.info("Start EgwWinLogin Trayer ...");
-                
-                // -------------------------------------------------------------
-                /*EgroupwareCommand cmds = new EgroupwareCommand(
-                    this._machine_id, 
-                    EgroupwareCommand.EGW_CMD_TYPE_USER);
-
-                try {
-                    this._egw.request(cmds);
-                    cmds.execute();
-                }
-                catch( Exception e ) {
-                    this._trayer.displayMsgError("Egroupware", e.getMessage());
-                }*/
-                
-                //int r = MprHelper.mountW("\\\\192.168.0.252\\video", "I:", "megasave", "1234");
-                //int r=0;
-                //logger.info("Mount-Return: " + Integer.toString(r));
             }
             else {
-                this._trayer.displayMsgError("Egroupware", "System ist unbekannt!");
+                this._trayer.displayMsgError("EGroupware", "System ist unbekannt!");
             }
         }
         else {
-            this._trayer.displayMsgInfo("Egroupware", "Offline modus, kein Internet?");
+            this._trayer.displayMsgInfo("EGroupware", "Offline modus, kein Internet?");
         }
     }
     
@@ -201,6 +208,11 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
                             
                             break;
                         }
+						/*else {
+							if( _trayer != null ) {
+								_trayer.displayMsgInfo("EGroupware", "Offline modus, kein Internet?");
+							}
+						}*/
                         
                         try {
                             Thread.sleep(1000);
@@ -293,10 +305,31 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
     @Override
     public void actionPerformed(ActionEvent e) {
         if( e.getSource() instanceof PopupMenu ) {
-            String egwurl = null;
-            
-            if( e.getActionCommand() == "About" ) {
-                
+			String[] acmd = e.getActionCommand().split(":");
+			String egwurl = null;
+			
+			if( acmd.length == 2 ) {
+				if( "intern".equals(acmd[0]) ) {
+					
+					if( "egw".equals(acmd[1]) ) {
+						egwurl = "menuaction=infolog.infolog_ui.index";
+					}
+					else {
+						return;
+					}
+					// TODO
+				}
+				else if( "cmd".equals(acmd[0]) ) {
+					this._client.execCommand(this._username, acmd[1], this._url);
+					return;
+				}
+			}
+			else {
+				return;
+			}
+			
+            /*if( e.getActionCommand() == "Start EGroupware" ) {
+                egwurl = "menuaction=infolog.infolog_ui.index";
             }
             else if( e.getActionCommand() == "Addressbook" ) {
                 egwurl = "menuaction=addressbook.addressbook_ui.index";
@@ -309,11 +342,11 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
             }
             else if( e.getActionCommand() == "Close" ) {
                 System.exit(1);
-            }
+            }*/
             
             // egw browser start
             if( egwurl != null ) {
-                if( this._egw != null ) {
+                if( (this._egw != null) && (this._egw.isLogin()) ) {
                     try {
                         EgroupwareELoginBrowser.open(
                             this._egw, 
@@ -323,13 +356,17 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
                         
                         this._trayer.displayMsgInfo(
                             this._trayerTitle, 
-                            "Start Browser to Egroupware-App " + e.getActionCommand()
+                            "Start EGroupware " + e.getActionCommand()
                             );
                     }
                     catch( Exception ex ) {
                         System.out.println(ex.getMessage());
                     }
                 }
+				else {
+					this._trayer.displayMsgInfo("EGroupware", 
+						"Offline modus, kein Internet?");
+				}
             }
         }
     }
@@ -351,7 +388,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
     @Override
     public void mouseClicked(MouseEvent e) {
         if( (e.getButton() == MouseEvent.BUTTON1) && 
-            (e.getClickCount() == 2) ) 
+            (e.getClickCount() >= 2) ) 
         {
             try {
                 if( this._egw.isLogin() ) {
@@ -373,6 +410,9 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
                 logger.error("mouseClicked: " + ex.getMessage());
             }
         }
+		else if( e.getButton() == MouseEvent.BUTTON1 ) {
+			this._pmenu.show(e.getComponent(), e.getXOnScreen(), e.getYOnScreen());
+		}
     }
 
     /**

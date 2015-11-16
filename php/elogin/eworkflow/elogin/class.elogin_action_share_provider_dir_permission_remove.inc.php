@@ -9,7 +9,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     /**
@@ -108,14 +108,19 @@
          * @return string
          */
         public function getUserShareEntryid() {
-            $ue = $this->_params->getParam(static::PARAM_DPR_USERSHARE_ENTRY);
-
-            if( $ue ) {
-                $this->_usershare_entryid = $ue->getValue();
-            }
-
-            return $this->_usershare_entryid;
+			return $this->_params->getVariableByParam(
+				$this->_usershare_entryid, static::PARAM_DPR_USERSHARE_ENTRY);
         }
+		
+		/**
+		 * setUserShareEntryid
+		 * 
+		 * @param string $id
+		 */
+		public function setUserShareEntryid($id) {
+			$this->_usershare_entryid = $this->_params->saveVariableToParam(
+				$id, static::PARAM_DPR_USERSHARE_ENTRY);
+		}
 
         /**
          * getDirname
@@ -123,14 +128,19 @@
          * @return string
          */
         public function getDirname() {
-            $dn = $this->_params->getParam(static::PARAM_DPR_DIRNAME);
-
-            if( $dn ) {
-                $this->_dirname = $dn->getValue();
-            }
-
-            return $this->_dirname;
+			return $this->_params->getVariableByParam(
+				$this->_dirname, static::PARAM_DPR_DIRNAME);
         }
+		
+		/**
+		 * setDirname
+		 * 
+		 * @param string $dirname
+		 */
+		public function setDirname($dirname) {
+			$this->_dirname = $this->_params->saveVariableToParam(
+				$dirname, static::PARAM_DPR_DIRNAME);
+		}
 
         /**
 		 * uiEdit
@@ -139,9 +149,8 @@
 		 */
 		public function uiEdit(&$content, &$option_sel, &$readonlys) {
             if( isset($content['button']) && isset($content['button']['save']) ) {
-                $this->_usershare_entryid = $content['usershare_entry'];
-                $this->_dirname = $content['dirname'];
-                $this->save();
+                $this->setUserShareEntryid($content['usershare_entry']);
+                $this->setDirname($content['dirname']);
             }
 
             $content['usershare_entry'] = $this->getUserShareEntryid();
@@ -187,26 +196,6 @@
         }
 
         /**
-		 * save
-		 *
-		 */
-		public function save() {
-            if( $this instanceof elogin_action_share_provider_dir_permission_remove ) {
-                $this->_saveVariableToParam(
-                    $this->_usershare_entryid,
-                    static::PARAM_DPR_USERSHARE_ENTRY
-                    );
-
-                $this->_saveVariableToParam(
-                    $this->_dirname,
-                    static::PARAM_DPR_DIRNAME
-                    );
-            }
-
-            parent::save();
-        }
-
-        /**
          * execute
          *
          * @param type $params
@@ -244,11 +233,11 @@
 
                 if( $provider->removeAllPermissionDir("/" . $sharename . '/', $dirname) ) {
                     $linkname = self::LINK_ACTION;
-                    $this::$_logger->info('Dir remove permission in UserShare: ' . $dirname);
+                    $this::$_logger->info('Dir remove permission in UserShare: ' . "/" . $sharename . '/' . $dirname);
                 }
                 else {
                     $linkname = self::LINK_ERROR;
-                    $this::$_logger->info('Dir can`t remove permission in UserShare: ' . $dirname);
+                    $this::$_logger->severe('Dir can`t remove permission in UserShare: ' . "/" . $sharename . '/' . $dirname);
                 }
             }
 

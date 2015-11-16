@@ -6,10 +6,12 @@
 package egwwinlogon.winapi;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Tlhelp32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.win32.W32APIOptions;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,40 @@ import java.util.List;
  */
 public class ProcessList {
     
+	/**
+	 * windowsProcessId
+	 * @source https://github.com/flapdoodle-oss/de.flapdoodle.embed.process/blob/master/src/main/java/de/flapdoodle/embed/process/runtime/Processes.java
+	 * @param process
+	 * @return 
+	 */
+	public static Long windowsProcessId(Process process) {
+		if( process.getClass().getName().equals("java.lang.Win32Process") || 
+			process.getClass().getName().equals("java.lang.ProcessImpl") ) 
+		{
+			/* determine the pid on windows plattforms */
+			try {
+				
+				Field f = process.getClass().getDeclaredField("handle");
+				f.setAccessible(true);
+				
+				long handl = f.getLong(process);
+
+				Kernel32 kernel = Kernel32.INSTANCE;
+				WinNT.HANDLE handle = new WinNT.HANDLE();
+				handle.setPointer(Pointer.createConstant(handl));
+				
+				int ret = kernel.GetProcessId(handle);
+				
+				return Long.valueOf(ret);
+			} 
+			catch( Throwable e ) {
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
+	
     /**
      * getProcessList
      * @return 

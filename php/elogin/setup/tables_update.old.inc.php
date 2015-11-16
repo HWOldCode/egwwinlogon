@@ -133,3 +133,83 @@ function elogin_upgrade1_9_074()
 	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.075';
 }
 
+
+function elogin_upgrade1_9_075()
+{
+	/* done by RefreshTable() anyway
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_machine_logging','el_index',array(
+		'type' => 'varchar',
+		'precision' => '256'
+	));*/
+	$GLOBALS['egw_setup']->oProc->RefreshTable('egw_elogin_machine_logging',array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_machine_id' => array('type' => 'varchar','precision' => '64'),
+			'el_account_id' => array('type' => 'int','precision' => '4'),
+			'el_event' => array('type' => 'varchar','precision' => '128'),
+			'el_level' => array('type' => 'int','precision' => '4'),
+			'el_logdate' => array('type' => 'timestamp'),
+			'el_message' => array('type' => 'text'),
+			'el_index' => array('type' => 'varchar','precision' => '256')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_machine_id','el_account_id','el_event','el_level','el_index'),
+		'uc' => array()
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.076';
+}
+
+
+function elogin_upgrade1_9_076()
+{
+	/* done by RefreshTable() anyway
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_cmd','el_catid',array(
+		'type' => 'int',
+		'precision' => '4'
+	));*/
+	/* done by RefreshTable() anyway
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_cmd','el_script_type',array(
+		'type' => 'varchar',
+		'precision' => '128'
+	));*/
+	/* done by RefreshTable() anyway
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_cmd','el_script',array(
+		'type' => 'text'
+	));*/
+	/* done by RefreshTable() anyway
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_cmd','el_options',array(
+		'type' => 'text'
+	));*/
+	/* done by RefreshTable() anyway
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_cmd','el_name',array(
+		'type' => 'varchar',
+		'precision' => '255'
+	));*/
+	$GLOBALS['egw_setup']->oProc->RefreshTable('egw_elogin_cmd',array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_machine_id' => array('type' => 'varchar','precision' => '64'),
+			'el_account_id' => array('type' => 'int','precision' => '4'),
+			'el_command' => array('type' => 'varchar','precision' => '255'),
+			'el_system' => array('type' => 'varchar','precision' => '128'),
+			'el_order' => array('type' => 'int','precision' => '4'),
+			'el_type' => array('type' => 'varchar','precision' => '128'),
+			'el_event' => array('type' => 'varchar','precision' => '128'),
+			'el_condition' => array('type' => 'text'),
+			'el_catid' => array('type' => 'int','precision' => '4'),
+			'el_script_type' => array('type' => 'varchar','precision' => '128'),
+			'el_script' => array('type' => 'text'),
+			'el_options' => array('type' => 'text'),
+			'el_name' => array('type' => 'varchar','precision' => '255')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_machine_id','el_account_id','el_system','el_order','el_type','el_event','el_catid','el_script_type','el_name'),
+		'uc' => array()
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.077';
+}
+

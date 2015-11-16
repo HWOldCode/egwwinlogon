@@ -30,14 +30,14 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
         EgroupwarePGina.setUseEmulator(true);
         
         // default vars
-        String url          = "http://192.168.0.37/egroupware/";
+        String url          = "http://192.168.11.51/egroupware/";
         //String url          = "https://www.hw-softwareentwicklung.de/egroupware/";
         String domain       = "default";
         String fingerprint  = "DEBUG-V3";
         String machinename  = "Debug-PC-HW";
         
         String username     = "sysop";
-        String password     = "";
+        String password     = "hwcp12mskl";
         
         for( String s: args ) {
             System.out.println("Argument: " + s);
@@ -79,6 +79,9 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
         if( egw.egwAuthenticateUser(username, password, domain, 
             0, new EgwWinLogonRunDebug()) == 1 ) 
         {
+			// simulate logon
+			egw.egwSessionChange("5", username, 1);
+			
             System.out.println("User login: " + username);
             
             // open user part

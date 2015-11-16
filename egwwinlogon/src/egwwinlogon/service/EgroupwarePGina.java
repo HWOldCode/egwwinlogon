@@ -5,6 +5,12 @@
  */
 package egwwinlogon.service;
 
+import egwwinlogon.winapi.ProcessList;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * EgroupwarePGina
  * @author Stefan Werfling
@@ -66,6 +72,27 @@ public class EgroupwarePGina {
             EgroupwareDLL.getAppDir());
     }
     
+	/**
+	 * getAppDirCache
+	 * 
+	 * @return 
+	 */
+	static public String getAppDirCache() {
+		String strcadir = EgroupwarePGina.getAppDir() + "cache/";
+		File cachedir = new File(strcadir);
+		
+		if( !(cachedir.exists() && cachedir.isDirectory()) ) {
+			if( cachedir.mkdir() ) {
+				// log
+			}
+			else {
+				// log
+			}
+		}
+		
+		return strcadir;
+	}
+	
     /**
      * startProcessInSession
      * start a process in a session
@@ -76,7 +103,18 @@ public class EgroupwarePGina {
      */
     static public int startProcessInSession(int sessionId, String cmdLine) {
         if( EgroupwarePGina._useEmulator ) {
-            // TODO
+            Process t;
+			
+			try {
+				t = Runtime.getRuntime().exec(cmdLine);
+				
+				if( t != null ) {
+					return ProcessList.windowsProcessId(t).intValue();
+				}
+			} catch (IOException ex) {
+				Logger.getLogger(EgroupwarePGina.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			
             return -1;
         }
         
@@ -93,7 +131,18 @@ public class EgroupwarePGina {
      */
     static public int startUserProcessInSession(int sessionId, String cmdLine) {
         if( EgroupwarePGina._useEmulator ) {
-            // TODO
+            Process t;
+			
+			try {
+				t = Runtime.getRuntime().exec(cmdLine);
+				
+				if( t != null ) {
+					return ProcessList.windowsProcessId(t).intValue();
+				}
+			} catch (IOException ex) {
+				Logger.getLogger(EgroupwarePGina.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			
             return -1;
         }
         
@@ -107,7 +156,18 @@ public class EgroupwarePGina {
      */
     static public int startProcessInWinsta0Default(String cmdLine) {
         if( EgroupwarePGina._useEmulator ) {
-            // TODO
+            Process t;
+			
+			try {
+				t = Runtime.getRuntime().exec(cmdLine);
+				
+				if( t != null ) {
+					return ProcessList.windowsProcessId(t).intValue();
+				}
+			} catch (IOException ex) {
+				Logger.getLogger(EgroupwarePGina.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			
             return -1;
         }
         
@@ -121,7 +181,18 @@ public class EgroupwarePGina {
      */
     static public int startProcessInWinsta0Winlogon(String cmdLine) {
         if( EgroupwarePGina._useEmulator ) {
-            // TODO
+            Process t;
+			
+			try {
+				t = Runtime.getRuntime().exec(cmdLine);
+				
+				if( t != null ) {
+					return ProcessList.windowsProcessId(t).intValue();
+				}
+			} catch (IOException ex) {
+				Logger.getLogger(EgroupwarePGina.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			
             return -1;
         }
         

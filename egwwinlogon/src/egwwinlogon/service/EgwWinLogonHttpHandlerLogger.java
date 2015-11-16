@@ -39,6 +39,12 @@ public class EgwWinLogonHttpHandlerLogger extends LogonHttpServerHandler {
         return "/logger";
     }
 
+	/**
+	 * handle
+	 * 
+	 * @param t
+	 * @throws IOException 
+	 */
     @Override
     public void handle(HttpExchange t) throws IOException {
         try {

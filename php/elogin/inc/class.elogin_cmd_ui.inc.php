@@ -8,7 +8,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     /**
@@ -23,6 +23,7 @@
         public $public_functions = array(
             'ajax_cmd_list'     => true,
             'cmd_edit'          => true,
+			'cmd_delete'		=> true,
             );
 
         /**
@@ -96,7 +97,8 @@
                 if( $cmd == null ) {
                     $cmd = new elogin_cmd_bo();
                 }
-
+				
+				$cmd->setName($content['commandname']);
                 $cmd->setCommand($content['command']);
                 $cmd->setAccountId($content['account']);
                 $cmd->setMachineId($content['machine']);
@@ -105,19 +107,45 @@
                 $cmd->setType($content['type']);
                 $cmd->setEvent($content['event']);
                 $cmd->setCondition($content['condition']);
+				$cmd->setScript($content['scriptcontent']);
+				$cmd->setScriptType($content['script_type']);
+				$cmd->setCatId($content['cat']);
+				$cmd->setSchedulerTime($content['schedulertime']);
+				
+				if( $content['options_trayer_show_contextmenu'] == '1' ) {
+					$cmd->setOption('trayer_show_contextmenu', '1');
+				}
+				else {
+					$cmd->setOption('trayer_show_contextmenu', '0');
+				}
+				
                 $cmd->save();
             }
 
             if( $cmd != null ) {
-                $content['command']     = $cmd->getCommand();
-                $content['machine']     = $cmd->getMachineId();
-                $content['account']     = $cmd->getAccountId();
-                $content['system']      = $cmd->getSystem();
-                $content['order']       = $cmd->getOrder();
-                $content['type']        = $cmd->getType();
-                $content['event']       = $cmd->getEvent();
-                $content['condition']   = $cmd->getCondition();
-                $preserv['uid']         = $cmd->getId();
+				$content['commandname']		= $cmd->getName();
+				$content['cat']				= $cmd->getCatId();
+                $content['command']			= $cmd->getCommand();
+                $content['machine']			= $cmd->getMachineId();
+                $content['account']			= $cmd->getAccountId();
+                $content['system']			= $cmd->getSystem();
+                $content['order']			= $cmd->getOrder();
+                $content['type']			= $cmd->getType();
+                $content['event']			= $cmd->getEvent();
+                $content['condition']		= $cmd->getCondition();
+                $preserv['uid']				= $cmd->getId();
+				$content['scriptcontent']	= $cmd->getScript();
+				$content['script_type']		= $cmd->getScriptType();
+				$content['schedulertime']	= $cmd->getSchedulerTime();
+				
+				if( $cmd->getOption('trayer_show_contextmenu') == '1' ) {
+					$content['options_trayer_show_contextmenu'] = true;
+				}
+				
+				$content['link_to'] = array(
+					'to_id'		=> $cmd->getId(),
+					'to_app'	=> 'elogin-cmd',
+					);
             }
 
             // machine ---------------------------------------------------------
@@ -144,20 +172,28 @@
             $option_sel['order'] = array(
                 '0' => '0',
                 '1' => '1',
-                '2' => '2'
+                '2' => '2',
+				'3' => '3',
+				'4' => '4',
+				'5' => '5'
                 );
 
             // type ------------------------------------------------------------
             $option_sel['type'] = array(
-                elogin_cmd_bo::TYPE_USER    => lang('As User'),
-                elogin_cmd_bo::TYPE_SERVICE => lang('As System'),
+                elogin_cmd_bo::TYPE_USER		=> lang('As User'),
+                elogin_cmd_bo::TYPE_SERVICE		=> lang('As System'),
+				elogin_cmd_bo::TYPE_WIN_STA0	=> lang('As WinSTA0'),
                 );
 
             // event -----------------------------------------------------------
             $option_sel['event'] = array(
+				elogin_cmd_bo::EVENT_NONE			=> lang('None'),
                 elogin_cmd_bo::EVENT_LOGIN_PRE      => lang('Login Pre (password accept)'),
-                elogin_cmd_bo::EVENT_LOGIN          => lang('Login (System session create)'),
+                //elogin_cmd_bo::EVENT_LOGIN          => lang('Login (System session create)'),
                 elogin_cmd_bo::EVENT_LOGIN_AFTER    => lang('Login After (Destop is show)'),
+                elogin_cmd_bo::EVENT_LOCKT			=> lang('Lockt'),
+                elogin_cmd_bo::EVENT_UNLOCKT		=> lang('Unlockt'),
+				elogin_cmd_bo::EVENT_LOGOFF			=> lang('Logoff'),
                 );
 
             // condition -------------------------------------------------------
@@ -167,6 +203,13 @@
                 elogin_cmd_bo::CONDITION_LOGGING        => 'Logging',
                 );
 
+			// script ----------------------------------------------------------
+			$option_sel['script_type'] = array(
+				'none'								=> lang('None'),
+				elogin_cmd_bo::SCRIPT_BATCHFILE		=> lang('Batchfile'),
+				elogin_cmd_bo::SCRIPT_VBS			=> lang('VBS'),
+				);
+			
             $tpl = new etemplate_new('elogin.cmd.dialog');
 			$tpl->exec(
                 'elogin.elogin_cmd_ui.cmd_edit',
@@ -194,14 +237,18 @@
                 );
 
             $label_type = array(
-                elogin_cmd_bo::TYPE_USER    => lang('As User'),
-                elogin_cmd_bo::TYPE_SERVICE => lang('As System'),
+                elogin_cmd_bo::TYPE_USER		=> lang('As User'),
+                elogin_cmd_bo::TYPE_SERVICE		=> lang('As System'),
+				elogin_cmd_bo::TYPE_WIN_STA0	=> lang('As WinSTA0'),
                 );
 
             $label_event = array(
+                elogin_cmd_bo::EVENT_NONE			=> lang('None'),
                 elogin_cmd_bo::EVENT_LOGIN_PRE      => lang('Login Pre (password accept)'),
-                elogin_cmd_bo::EVENT_LOGIN          => lang('Login (System session create)'),
+                //elogin_cmd_bo::EVENT_LOGIN          => lang('Login (System session create)'),
                 elogin_cmd_bo::EVENT_LOGIN_AFTER    => lang('Login After (Destop is show)'),
+                elogin_cmd_bo::EVENT_LOCKT			=> lang('Lockt'),
+                elogin_cmd_bo::EVENT_UNLOCKT		=> lang('Unlockt'),
                 );
 
             $machine = new elogin_machine_bo($query['unid']);
@@ -227,7 +274,7 @@
                             'el_unid'   => $tcmd->getId(),
                             'machine'   => $machinename,
                             'account'   => $accountname,
-                            'command'   => $tcmd->getCommand(),
+                            'name'		=> $tcmd->getName(),
                             'system'    => $label_system[$tcmd->getSystem()],
                             'order'     => $tcmd->getOrder(),
                             'type'      => $label_type[$tcmd->getType()],
@@ -239,4 +286,23 @@
 
             return count($rows);
         }
+		
+		/**
+		 * cmd_delete
+		 * 
+		 * @param array $content
+		 */
+		public function cmd_delete($content=null) {
+			$uid = ( isset($content['uid']) ? $content['uid'] : null);
+			$uid = ( $uid == null ? (isset($_GET['uid']) ? $_GET['uid'] : null) : $uid);
+			
+			if( $uid != null ) {
+                $cmd = new elogin_cmd_bo($uid);
+				$cmd->delete();
+            }
+			
+			//egw_framework::refresh_opener('', 'elogin', $uid, 'delete');
+			egw_framework::window_close();
+			exit;
+		}
     }

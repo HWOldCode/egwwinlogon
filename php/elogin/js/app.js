@@ -18,6 +18,7 @@
     jquery.jquery-ui;
     /elogin/js/et2_widget_elogin_mountlist.js;
     /elogin/js/et2_widget_elogin_commands.js;
+    /elogin/js/et2_widget_elogin_code_editor.js;
 */
 
 /**
@@ -129,33 +130,6 @@ if( typeof app != 'undefined' ) {
 
             return dialog;
         },
-
-        /**
-         * elogin_machine_list_actions
-         */
-        elogin_machine_list_actions: function(_action, _senders) {
-            var self = this;
-
-			switch( _action.id ) {
-                case 'settinglist':
-                    for( var i=0; i<_senders.length; i++) {
-                        var id = _senders[i].id;
-                        var idparts = id.split('::');
-
-                        var url = window.egw_webserverUrl +
-                            '/index.php?menuaction=' +
-                            'elogin.elogin_machine_ui.settings&machineid=' +
-                            idparts[1];
-
-						this._openEgwWindow(url, function(){
-                            var nm = self.et2_obj.getWidgetById('nm');
-                            nm.dataview.updateColumns();
-                        }, 'elogin_setting');
-                    }
-
-                    break;
-            }
-        }
     });
 }
 

@@ -79,6 +79,10 @@ public class EgwWinLogon {
      *
      */
     public void initEgroupware() {
+		// add machinename to user agent
+		EgroupwareHttp.addUserAgent(
+			"MN:" + EgroupwarePGina.getMachineName());
+		
         // init JCE
         EgwWinLogonCryptAes.initJCE();
         
@@ -107,7 +111,7 @@ public class EgwWinLogon {
 
         try {
             this._eLoginCache = EgroupwareELoginCache.loadByFile(
-                EgroupwarePGina.getAppDir() + "elogin.cache");
+                EgroupwarePGina.getAppDirCache() + "elogin.cache");
         }
         catch( Exception ex ) {
             EgroupwarePGina.logError(
@@ -122,7 +126,7 @@ public class EgwWinLogon {
         
         try {
             EgroupwareCommand.instance = EgroupwareCommand.loadByFile(
-                EgroupwarePGina.getAppDir() + "ecommands.cache");
+                EgroupwarePGina.getAppDirCache() + "ecommands.cache");
         }
         catch( Exception ex ) {
             EgroupwarePGina.logError(
@@ -166,6 +170,9 @@ public class EgwWinLogon {
             EgwWinLogonHttpHandlerFirstInstall finstall = new EgwWinLogonHttpHandlerFirstInstall();
             finstall.register(this._server);
             
+			EgwWinLogonHttpHandlerCommand httpcmd = new EgwWinLogonHttpHandlerCommand();
+			httpcmd.register(this._server);
+			
             try {
                 this._server.start();
             } catch( IOException ex ) {
@@ -307,7 +314,7 @@ public class EgwWinLogon {
 
                             EgroupwareELoginCache.saveToFile(
                                 this._eLoginCache, 
-                                EgroupwarePGina.getAppDir() + "elogin.cache");
+                                EgroupwarePGina.getAppDirCache() + "elogin.cache");
                         }
 
                         // request command cache list
@@ -318,7 +325,7 @@ public class EgwWinLogon {
 
                             EgroupwareCommand.saveToFile(
                                 EgroupwareCommand.instance, 
-                                EgroupwarePGina.getAppDir() + "ecommands.cache");
+                                EgroupwarePGina.getAppDirCache() + "ecommands.cache");
                         }
                     }
 
@@ -327,7 +334,7 @@ public class EgwWinLogon {
                             
                             // no instance found, first login
                             // execute event login pre
-                            EgroupwareCommand.instance.execute(
+                            EgroupwareCommand.instance.executeEvent(
                                 0, 
                                 EgroupwareCommand.TYPE_SERVICE, 
                                 EgroupwareCommand.EVENT_LOGIN_PRE
@@ -381,7 +388,7 @@ public class EgwWinLogon {
                                 _wlt = new EgwWinLogonThread(_egw);
                             }
 
-                            EgroupwareCommand.instance.execute(
+                            EgroupwareCommand.instance.executeEvent(
                                 0, 
                                 EgroupwareCommand.TYPE_SERVICE, 
                                 EgroupwareCommand.EVENT_LOGIN_PRE

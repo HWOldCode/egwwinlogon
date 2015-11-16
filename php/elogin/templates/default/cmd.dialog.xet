@@ -1,6 +1,129 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
 <overlay>
+	<template id="elogin.cmd.dialog.common" template="" lang="" group="0" version="1.9.001">
+		<grid width="100%">
+			<columns>
+				<column/>
+				<column/>
+			</columns>
+			<rows>
+				<row>
+					<description value="Command"/>
+					<textbox id="command" />
+				</row>
+				<row>
+					<description value="Scripttype"/>
+					<menulist>
+						<menupopup id="script_type"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Category"/>
+					<menulist>
+						<menupopup type="select-cat" statustext="select a category for this entry" id="cat" options="None"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Machine"/>
+					<menulist>
+						<menupopup id="machine"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Account"/>
+					<menulist>
+						<menupopup type="select-account" id="account" multiple="true" no_lang="1" tags="true" account_type="both" empty_label="User or group"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Schedulertime (Sec)"/>
+					<textbox id="schedulertime" />
+				</row>
+				<row>
+					<description value="System"/>
+					<menulist>
+						<menupopup id="system"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Order"/>
+					<menulist>
+						<menupopup id="order"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Execute Type"/>
+					<menulist>
+						<menupopup id="type"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Event" no_lang="1"/>
+					<menulist>
+						<menupopup id="event"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Condition"/>
+					<listbox id="condition" rows="6" />
+				</row>
+			</rows>
+		</grid>
+	</template>
+	<template id="elogin.cmd.dialog.options" template="" lang="" group="0" version="1.9.001">
+		<grid width="100%">
+			<columns>
+				<column/>
+				<column/>
+			</columns>
+			<rows>
+				<row class="th">
+					<description span="2" value="Trayer"/>
+				</row>
+				<row>
+					<description value="Show in Contextmenu" />
+					<checkbox id="options_trayer_show_contextmenu" />
+				</row>
+			</rows>
+		</grid>
+	</template>
+	<template id="elogin.cmd.dialog.script" template="" lang="" group="0" version="1.9.001">
+		<grid width="100%">
+			<columns>
+				<column width="30px"/>
+				<column/>
+			</columns>
+			<rows>
+				<row>
+					<description value="Script-Content"/>
+					<elogin-code-editor id="scriptcontent" />
+				</row>
+			</rows>
+		</grid>
+	</template>
+	<template id="elogin.cmd.dialog.file" template="" lang="" group="0" version="1.9.001">
+		<grid width="100%" overflow="auto">
+			<columns>
+				<column width="99%"/>
+				<column/>
+			</columns>
+			<rows>
+				<row class="th" disabled="@status_only">
+					<description value="Create new links" span="all"/>
+				</row>
+				<row class="row" disabled="@status_only">
+					<link-to id="link_to" span="all" only_app="filemanager"/>
+				</row>
+				<row class="th">
+					<description value="Existing links" span="all"/>
+				</row>
+				<row class="row_off" valign="top">
+					<link-list id="link_to" only_app="filemanager" span="all"/>
+				</row>
+			</rows>
+		</grid>
+	</template>
 	<template id="elogin.cmd.dialog" template="" lang="" group="0" version="">
         <grid width="100%">
 			<columns>
@@ -20,62 +143,28 @@
                         <rows>
                             <row class="dialogHeader">
                                 <appicon src="elogin"/>
-                                <description value="Command"/>
-                                <textbox id="command" span="4" class="et2_fullWidth et2_required"/>
+                                <description value="Name"/>
+                                <textbox id="commandname" span="4" class="et2_fullWidth et2_required"/>
                             </row>
                         </rows>
 					</grid>
                 </row>
-				<row>
-                    <grid width="100%">
-                        <columns>
-                            <column/>
-                            <column/>
-                        </columns>
-                        <rows>
-                            <row>
-                                <description value="Machine"/>
-                                <menulist>
-                                    <menupopup id="machine"/>
-                                </menulist>
-                            </row>
-                            <row>
-                                <description value="Account"/>
-                                <menulist>
-                                    <menupopup type="select-account" id="account" multiple="true" no_lang="1" tags="true" account_type="both" empty_label="User or group"/>
-                                </menulist>
-                            </row>
-                            <row>
-                                <description value="System"/>
-                                <menulist>
-                                    <menupopup id="system"/>
-                                </menulist>
-                            </row>
-                            <row>
-                                <description value="Order"/>
-                                <menulist>
-                                    <menupopup id="order"/>
-                                </menulist>
-                            </row>
-                            <row>
-                                <description value="Execute Type"/>
-                                <menulist>
-                                    <menupopup id="type"/>
-                                </menulist>
-                            </row>
-                            <row>
-                                <description value="Event"/>
-                                <menulist>
-                                    <menupopup id="event"/>
-                                </menulist>
-                            </row>
-                            <row>
-                                <description value="Condition"/>
-                                <listbox id="condition" rows="9" />
-                            </row>
-                        </rows>
-                    </grid>
-                </row>
+				<row width="100%">
+                    <tabbox id="tabs">
+                        <tabs>
+							<tab id="com" label="Common"/>
+							<tab id="opt" label="Options"/>
+							<tab id="scr" label="Script"/>
+							<tab id="file" label="Files"/>
+						</tabs>
+						<tabpanels>
+							<template id="elogin.cmd.dialog.common" height="100%"/>
+							<template id="elogin.cmd.dialog.options" height="100%"/>
+							<template id="elogin.cmd.dialog.script" height="100%"/>
+							<template id="elogin.cmd.dialog.file" height="100%"/>
+						</tabpanels>
+					</tabbox>
+				</row>
                 <row class="dialogFooterToolbar">
                     <hbox span="all">
 						<button statustext="Saves the changes made" label="Save" id="button[save]" image="save" background_image="1"/>

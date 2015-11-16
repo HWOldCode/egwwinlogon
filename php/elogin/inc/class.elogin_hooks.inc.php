@@ -8,7 +8,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     class elogin_hooks {
@@ -69,6 +69,25 @@
         public static function admin($data) {
 
         }
+		
+		static public function search_link($location) {
+			$appname = self::APP;
+			
+			return array(
+				'query'					=> $appname . '.elogin_machine_bo.link_query',
+				'title'					=> $appname . '.elogin_machine_bo.link_title',
+				'titles'				=> $appname . '.elogin_machine_bo.link_titles',
+				'entry'					=> 'ELogin-Machine',
+				'additional'			=> array(
+					'elogin-cmd'		=> array(
+                            'query'		=> $appname . '.elogin_cmd_bo.link_query',
+                            'title'		=> $appname . '.elogin_cmd_bo.link_title',
+                            'titles'	=> $appname . '.elogin_cmd_bo.link_titles',
+							'entry'		=> 'ELogin-Cmd',
+						)
+					)
+				);
+		}
 
         /**
 		 * settings

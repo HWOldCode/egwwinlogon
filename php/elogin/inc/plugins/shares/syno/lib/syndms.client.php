@@ -201,12 +201,27 @@
                             if( isset($data['error']) ) {
                                 $error = (array) $data['error'];
 
-                                throw new Exception(
-                                        "servicename: " . $serviceName .
-                                        " method: " . $query['method'] .
-                                        " code: " . $error['code'] .
-                                        ' var_export: ' . var_export($query, true),
-                                    $error['code']);
+								if( isset($error['errors']) ) {
+									$errors = (array) $error['errors'];
+
+									foreach( $errors as $error ) {
+										$error = (array) $error;
+										throw new Exception(
+											"See Errorcode:" . $error['code'],
+											$error['code']
+											);
+									}
+								}
+								else {
+									throw new Exception(
+											"servicename: " . $serviceName .
+											" method: " . $query['method'] .
+											" code: " . $error['code'] .
+											' var_export_query: ' . var_export($query, true) .
+											' var_export_error: ' . var_export($error, true)
+											,
+										$error['code']);
+								}
                             }
                         }
                     }
@@ -634,7 +649,7 @@
                         'name'              => $username,
                         'additional'        => '["description","email","expired","cannot_chg_passwd"]'
                         ));
-                    
+
                     if( $data ) {
                         if( isset($data['users']) ) {
                             $users = array();
@@ -935,7 +950,7 @@
                     'version'           => '1',
                     'folder_path'       => $sharename,
                     'name'              => $dir,
-                    'force_parent'      => false,
+                    'force_parent'      => true,
                     ), true);
 
                 if( $data && is_array($data) && isset($data['folders']) ) {

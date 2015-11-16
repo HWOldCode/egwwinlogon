@@ -8,7 +8,7 @@
 	 * @package elogin
 	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
-	 * @version $Id:$
+	 * @version $Id$
 	 */
 
     /**
@@ -120,14 +120,19 @@
          * @return string
          */
         public function getShareProviderEntryId() {
-            $pe = $this->_params->getParam(static::PARAM_SHARES_PROVIDER_ENTRY);
-
-            if( $pe ) {
-                $this->_shareprovider_entryid = $pe->getValue();
-            }
-
-            return $this->_shareprovider_entryid;
+			return $this->_params->getVariableByParam(
+				$this->_shareprovider_entryid, static::PARAM_SHARES_PROVIDER_ENTRY);
         }
+		
+		/**
+		 * setShareProviderEntryId
+		 * 
+		 * @param string $id
+		 */
+		public function setShareProviderEntryId($id) {
+			$this->_shareprovider_entryid = $this->_params->saveVariableToParam(
+				$id, static::PARAM_SHARES_PROVIDER_ENTRY);
+		}
 
         /**
          * getShareName
@@ -135,14 +140,19 @@
          * @return string
          */
         public function getShareName() {
-            $sn = $this->_params->getParam(static::PARAM_SHARES_SHARENAME);
-
-            if( $sn ) {
-                $this->_sharename = $sn->getValue();
-            }
-
-            return $this->_sharename;
+			return $this->_params->getVariableByParam(
+				$this->_sharename, static::PARAM_SHARES_SHARENAME);
         }
+		
+		/**
+		 * setShareName
+		 * 
+		 * @param string $name
+		 */
+		public function setShareName($name) {
+			$this->_sharename = $this->_params->saveVariableToParam(
+				$name, static::PARAM_SHARES_SHARENAME);
+		}
 
         /**
          * getProvider
@@ -170,9 +180,8 @@
 		 */
 		public function uiEdit(&$content, &$option_sel, &$readonlys) {
             if( isset($content['button']) && isset($content['button']['save']) ) {
-                $this->_shareprovider_entryid = $content['provider_entrys'];
-                $this->_sharename = $content['provider_shares'];
-                $this->save();
+                $this->setShareProviderEntryId($content['provider_entrys']);
+                $this->setShareName($content['provider_shares']);
             }
 
             $content['provider_entrys'] = $this->getShareProviderEntryId();
@@ -225,26 +234,6 @@
             }
 
             parent::uiEdit($content, $option_sel, $readonlys);
-        }
-
-        /**
-		 * save
-		 *
-		 */
-		public function save() {
-            if( $this instanceof elogin_action_share_provider_shares ) {
-                $this->_saveVariableToParam(
-                    $this->_shareprovider_entryid,
-                    static::PARAM_SHARES_PROVIDER_ENTRY
-                    );
-
-                $this->_saveVariableToParam(
-                    $this->_sharename,
-                    static::PARAM_SHARES_SHARENAME
-                    );
-            }
-
-            parent::save();
         }
 
         /**

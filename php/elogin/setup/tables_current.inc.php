@@ -90,11 +90,17 @@ $phpgw_baseline = array(
 			'el_order' => array('type' => 'int','precision' => '4'),
 			'el_type' => array('type' => 'varchar','precision' => '128'),
 			'el_event' => array('type' => 'varchar','precision' => '128'),
-			'el_condition' => array('type' => 'text')
+			'el_condition' => array('type' => 'text'),
+			'el_catid' => array('type' => 'int','precision' => '4'),
+			'el_script_type' => array('type' => 'varchar','precision' => '128'),
+			'el_script' => array('type' => 'text'),
+			'el_options' => array('type' => 'text'),
+			'el_name' => array('type' => 'varchar','precision' => '255'),
+			'el_scheduler_time' => array('type' => 'int','precision' => '4')
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),
-		'ix' => array('el_unid','el_machine_id','el_account_id','el_system','el_order','el_type','el_event'),
+		'ix' => array('el_unid','el_machine_id','el_account_id','el_system','el_order','el_type','el_event','el_catid','el_script_type','el_name'),
 		'uc' => array()
 	)
 );

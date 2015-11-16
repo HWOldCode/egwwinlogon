@@ -42,7 +42,7 @@ var elogin_commands = et2_valueWidget.extend([et2_IDataProvider], {
     columns: [
       {'id': 'machine', caption: 'Machine', 'width': '100px'},
       {'id': 'account', caption: 'Account', 'width': '100px'},
-      {'id': 'command', caption: 'Command', 'width': '100px'},
+      {'id': 'name', caption: 'Name', 'width': '100px'},
       {'id': 'system', caption: 'System', 'width': '100px'},
       {'id': 'order', caption: 'Order', 'width': '100px'},
       {'id': 'type', caption: 'Type', 'width': '100px'},
@@ -68,86 +68,50 @@ var elogin_commands = et2_valueWidget.extend([et2_IDataProvider], {
         // Set up context menu
 		var self = this;
 
-
-        var menu_cmd_dialog = function(menu_item) {
-            app.elogin._openEgwWindow(
-                egw.link(
-                    '/index.php',
-                    'menuaction=elogin.elogin_cmd_ui.cmd_edit&muid=' +
-                        self.options.value.unid + "&uid=" +
-                        self.context.data.el_unid),
-                null,
-                '_blank'
-                );
-
-            /*var content = {
-                    machineid: self.options.value.unid,
-                    action: 'add'
-                    };
-
-            var title = self.egw().lang("Add Command");
-
-            if( menu_item.id === 'editcmd' ) {
-                if( typeof self.context.data !== 'undefined' ) {
-                    title = self.egw().lang("Edit Command");
-                    content = {
-                        cmdid: self.context.data.el_unid,
-                        machineid: self.options.value.unid,
-                        action: 'edit'
-                        };
-                }
-            }
-
-            self.show_prompt_cmd(
-				function(button, _value) {
-                    if(button != et2_dialog.OK_BUTTON) return;
-
-                    _value = $j.extend({}, content, _value);
-
-                    egw.jsonq("elogin.elogin_usershares_ui.ajax_usershare_mount",
-						[_value],
-						function() {
-                            self.controller.update();
-						},
-						this, true
-					);
-                },
-                title,
-                content
-                );*/
-        };
-
         this.context = new egwMenu();
         this.context.addItem(
             "editcmd",
             this.egw().lang("Edit Command"),
             this.egw().image("edit"),
-            menu_cmd_dialog
-            );
-
-        /*this.context.addItem(
-            "addcmd",
-            this.egw().lang("Add Command"),
-            this.egw().image("new"),
-            menu_cmd_dialog
-            );
-
-        // ---------------------------------------------------------------------
-        this.mcontext = new egwMenu();
-        this.mcontext.addItem(
-            "addcmd",
-            this.egw().lang("Add Command"),
-            this.egw().image("new"),
-            menu_cmd_dialog
-            );
-
-        $j(this.div).bind("contextmenu", function(e) {
-            if( self.context.instance === null ) {
-                self.mcontext.showAt(e.pageX, e.pageY, true);
-            }
-
-            e.preventDefault();
-		});*/
+            function(menu_item) {
+				app.elogin._openEgwWindow(
+					egw.link(
+						'/index.php',
+						'menuaction=elogin.elogin_cmd_ui.cmd_edit&muid=' +
+							self.options.value.unid + "&uid=" +
+							self.context.data.el_unid),
+					function(){
+						if( typeof self.controller !== 'undefined' ) {
+							self.controller.update();
+						}
+					},
+					'_blank'
+					);
+			
+				if( typeof self.controller !== 'undefined' ) {
+					this.controller.update();
+				}
+			});
+			
+		this.context.addItem(
+            "deletecmd",
+            this.egw().lang("Delete Command"),
+            this.egw().image("delete"),
+            function(menu_item) {
+				app.elogin._openEgwWindow(
+					egw.link(
+						'/index.php',
+						'menuaction=elogin.elogin_cmd_ui.cmd_delete&muid=' +
+							self.options.value.unid + "&uid=" +
+							self.context.data.el_unid),
+					function(){
+						if( typeof self.controller !== 'undefined' ) {
+							self.controller.update();
+						}
+					},
+					'_blank'
+					);
+			});
     },
 
     /**
