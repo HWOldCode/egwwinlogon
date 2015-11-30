@@ -155,3 +155,27 @@
     $setup_info_spdps['depends'] = array();
 
     $setup_info[] = $setup_info_spdps;
+
+    // ---- share provider dir permission setpm --------------------------------
+
+    $setup_info_spdpspm = array();
+	$setup_info_spdpspm['name']         = 'elogin';
+    $setup_info_spdpspm['app']          = 'elogin';
+    $setup_info_spdpspm['class']        = 'elogin_action_share_provider_dir_permission_setpm';
+    $setup_info_spdpspm['title']        = 'ELogin Share Provider dir permission set projectmanager';
+    $setup_info_spdpspm['version']      = '1.0';
+
+    $setup_info_spdpspm['author']       = 'Stefan Werfling';
+    $setup_info_spdpspm['license']      = 'HW license';
+    $setup_info_spdpspm['description']  = 'ELogin get Share Provider dir permission set projectmanager';
+
+    $setup_info_spdpspm['maintainer'] = array(
+		'name' 	=> 'HW-Softwareentwicklung GbR',
+		'email' => 'info@hw-softwareentwicklung.de'
+        );
+
+    $setup_info_spdpspm['settings'] = array();
+
+    $setup_info_spdpspm['depends'] = array();
+
+    $setup_info[] = $setup_info_spdpspm;

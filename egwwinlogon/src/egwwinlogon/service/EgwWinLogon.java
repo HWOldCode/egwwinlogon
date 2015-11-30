@@ -225,6 +225,9 @@ public class EgwWinLogon {
         config.setPassword(password);
         config.setSocketTimeout(3000);
         
+		// disable
+		config.setUseEgwThread(false);
+		
         this._egwConfigs.put(username, config);
 
         // ---------------------------------------------------------------------

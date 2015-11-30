@@ -71,6 +71,8 @@ exit;*/
         }
 
         public function cronjob_hand($content=array()) {
+			//$GLOBALS['egw']->session->commit_session();
+
             elogin_sharehandler_bo::handle();
 
             $tpl = new etemplate_new('elogin.index');

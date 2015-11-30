@@ -45,194 +45,260 @@
          * @param string $provider_id
          */
         static public function handle($provider_id=null) {
-            $provider_list = array();
+			$conjobfile = $GLOBALS['egw_info']['server']['temp_dir'] . '/elogin_sharehandler.tmp';
 
-            if( $provider_id == null ) {
-                $query = array();
-                $rows = array();
-                $readonlys = array();
+			self::cronjob_error_log($conjobfile, __LINE__);
 
-                elogin_shareprovider_bo::get_rows($query, $rows, $readonlys);
+			$cache_life = 60 * 60 * 6;
 
-                foreach( $rows as $trow ) {
-                    $tprovider = elogin_shareprovider_bo::i($trow['el_unid']);
+			$isExec = false;
 
-                    if( $tprovider instanceof elogin_shareprovider_bo ) {
-                        $provider_list[] = $tprovider;
-                    }
-                }
-            }
-            else {
-                $tprovider = elogin_shareprovider_bo::i($provider_id);
+			if( file_exists($conjobfile) ) {
+				$filemtime = @filemtime($conjobfile);
 
-                if( $tprovider instanceof elogin_shareprovider_bo ) {
-                    $provider_list[] = $tprovider;
-                }
-            }
-var_dump('Providerlist: ' . count($tprovider) );
-            // -----------------------------------------------------------------
+				if( (!$filemtime) || (time() - $filemtime >= $cache_life)) {
+					unlink($conjobfile);
+					$isExec = true;
+				}
+			}
+			else {
+				$isExec = true;
+			}
 
-            $egw_accounts = elogin_bo::getEgroupwareAccounts();
-            $ignoruser = array(
-                'admin',
-                'sysop',
-                'anonymous'
-                );
+			/*if( $isExec ) {
+				file_put_contents($conjobfile, '1');
+			}
+			else {
+				return;
+			}*/
 
-            foreach( $provider_list as $provider ) {
-                if( !$provider->isLogin() ) {
-                    echo $provider->getProviderName() . ": <b>nicht eingelogt!</b><br>";
-                    continue;
-                }
-                else {
-                    echo "Eingelogt: " . $provider->getProviderName() . "<br><br>";
-                }
+			// -----------------------------------------------------------------
 
-                $circle_count = 1;
+			try {
+				$provider_list = array();
 
-                foreach( $egw_accounts as $egw_account ) {
-                    if( in_array($egw_account['account_lid'], $ignoruser) ) {
-                        continue;
-                    }
+				if( $provider_id == null ) {
+					$query = array();
+					$rows = array();
+					$readonlys = array();
 
-                    if( $circle_count%6 ) {
-                        $provider->logout();
-                        $provider->login();
+					elogin_shareprovider_bo::get_rows($query, $rows, $readonlys);
 
-                        if( !$provider->isLogin() ) {
-                            var_dump("Fehler beim relogin!");
-                            break;
-                        }
-                        else {
-                            var_dump("relogin!");
-                        }
-                    }
+					foreach( $rows as $trow ) {
+						$tprovider = elogin_shareprovider_bo::i($trow['el_unid']);
 
-                    $circle_count++;
-        echo "<hr>";
+						if( $tprovider instanceof elogin_shareprovider_bo ) {
+							$provider_list[] = $tprovider;
+						}
+					}
+				}
+				else {
+					$tprovider = elogin_shareprovider_bo::i($provider_id);
 
-                    $provider_id    = $provider->getId();
-                    $accid          = $egw_account['account_id'];
-                    $username       = $egw_account['account_lid'];
-                    $isExist        = $provider->isUsernameExist($username);
+					if( $tprovider instanceof elogin_shareprovider_bo ) {
+						$provider_list[] = $tprovider;
+					}
+				}
 
-        var_dump("User Exist: " . $username . " Exist: " . ($isExist ? 'ja' : 'nein') . "<br>");
+				self::cronjob_error_log('Providerlist: ' . count($tprovider), __LINE__);
 
-                    $usershares     = null;
+				// -----------------------------------------------------------------
 
-                    $usuid          = elogin_usershares_bo::existByAccountAndProvider($accid, $provider_id);
+				$egw_accounts = elogin_bo::getEgroupwareAccounts();
+				$ignoruser = array(
+					'admin',
+					'sysop',
+					'anonymous'
+					);
 
-                    if( $egw_account['account_status'] == 'A' ) {
-                var_dump("Aktiv");
-                //var_dump($usuid);
-                        if( !$isExist ) {
-                            if( !($usuid) ) {
-                                $usershares = $provider->createUserShares($accid);
-                            }
-                            else {
-                                $usershares = $provider->createUserShares(new elogin_usershares_bo($usuid));
-                            }
+				foreach( $provider_list as $provider ) {
+					if( !$provider->isLogin() ) {
+						self::cronjob_error_log($provider->getProviderName() . ": <b>nicht eingelogt!</b><br>", __LINE__);
+						continue;
+					}
+					else {
+						self::cronjob_error_log("Eingelogt: " . $provider->getProviderName() . "<br><br>", __LINE__);
+					}
 
-                            $isExist = $provider->isUsernameExist($username);
+					$circle_count = 1;
 
-                            if( !$isExist ) {
-                                echo "<b>nicht angelegt: $username!</b>";
-                            }
-                //var_dump($isExist);
-                        }
-                    }
+					foreach( $egw_accounts as $egw_account ) {
+						if( in_array($egw_account['account_lid'], $ignoruser) ) {
+							continue;
+						}
 
-                    // read usershares
-                    if( ($usuid) && ($usershares == null)  ) {
-                        $usershares = new elogin_usershares_bo($usuid);
-                    }
+						if( $circle_count%6 ) {
+							$provider->logout();
+							$provider->login();
 
-                    // update account
-                    if( $usershares ) {
-            //var_dump($usershares->getUsername());
-                        // disable account
-                        if( ($egw_account['account_status'] <> 'A') && $isExist ) {
-                            if( $usershares->getProvider()->disableUserShares($usershares) ) {
-                                // success
-                                var_dump("Disable");
-                            }
+							if( !$provider->isLogin() ) {
+								var_dump("Fehler beim relogin!");
+								break;
+							}
+							else {
+								var_dump("relogin!");
+							}
+						}
 
-                            var_dump("Disable Ende");
-                        }
-                        elseif( $isExist ) {
-            var_dump("Account vorhanden");
-                            // enable account
-                            if( $usershares->getProvider()->isUserSharesDisabled($usershares) ) {
+						$circle_count++;
 
-                                if( $usershares->getProvider()->enableUserShares($usershares) ) {
-                                    var_dump("Enable");
-                                }
+						self::cronjob_error_log('-----------------------------------', __LINE__);
 
-                                var_dump("Enable Ende");
-                            }
+						$provider_id    = $provider->getId();
+						$accid          = $egw_account['account_id'];
+						$username       = $egw_account['account_lid'];
+						$isExist        = $provider->isUsernameExist($username);
 
-                            // update account, new password?
-                            if( $usershares->getProvider()->updatePassword($usershares) ) {
-                                // success
-                                var_dump("Password erfolgreich geupdatet.");
-                            }
-                            else {
-                                var_dump("Password nicht geupdatet. (Fehler)");
-                            }
+						self::cronjob_error_log("User Exist: " . $username .
+							" Exist: " . ($isExist ? 'ja' : 'nein') . "<br>", __LINE__);
 
-                            // shares setting
-                            $shares = $usershares->getProvider()->getShares($usershares);
-                            $ushares = $usershares->getShares();
-                            $dshares = $usershares->getDefaultShares();
+						$usershares     = null;
 
-                            // --- transform arrays
-                            $kshares = array();
-                            $kushares = array();
-                            $kdshares = array();
+						$usuid          = elogin_usershares_bo::existByAccountAndProvider($accid, $provider_id);
 
-                            foreach( $shares as $tshare ) {
-                                $kshares[$tshare['name']] = $tshare;
-                            }
+						if( $egw_account['account_status'] == 'A' ) {
+							self::cronjob_error_log("Aktiv", __LINE__);
 
-                            foreach( $ushares as $tshare ) {
-                                $kushares[$tshare['name']] = $tshare;
-                            }
+							if( !$isExist ) {
+								if( !($usuid) ) {
+									$usershares = $provider->createUserShares($accid);
+								}
+								else {
+									$usershares = $provider->createUserShares(new elogin_usershares_bo($usuid));
+								}
 
-                            foreach( $dshares as $tshare ) {
-                                $kdshares[$tshare['name']] = $tshare;
-                            }
+								$isExist = $provider->isUsernameExist($username);
 
-                            var_dump($kshares);
-                            // -----
+								if( !$isExist ) {
+									self::cronjob_error_log("<b>nicht angelegt: $username!</b>");
+								}
+							}
+						}
 
-                            foreach( $kdshares as $tname => $tdshare ) {
-                                if( isset($kushares[$tname]) ) {
-                                    continue;
-                                }
+						// read usershares
+						if( ($usuid) && ($usershares == null)  ) {
+							$usershares = new elogin_usershares_bo($usuid);
+						}
 
-                                // create share only when not exist
-                                if( !isset($kshares[$tname]) ) {
-                                    if( $usershares->getProvider()->createShare($usershares, $tname) ) {
-                                        // todo
-                                        var_dump("Share is set.");
-                                    }
-                                }
+						// update account
+						if( $usershares ) {
+							// disable account
+							if( ($egw_account['account_status'] <> 'A') && $isExist ) {
+								if( $usershares->getProvider()->disableUserShares($usershares) ) {
+									// success
+									self::cronjob_error_log("Disable", __LINE__);
+								}
 
-                                // add access to share
-                                if( $usershares->getProvider()->setSharePermission($usershares, $tname) ) {
-                                    var_dump("Share access is set.");
-                                }
-                            }
+								self::cronjob_error_log("Disable Ende", __LINE__);
+							}
+							elseif( $isExist ) {
+								self::cronjob_error_log("Account vorhanden", __LINE__);
 
-                            // -----
-                            // update mount list
-                        //var_dump("Update Mounts");
-                            $usershares->updateUserSharesMounts();
-                        }
-                    }
-                }
+								// enable account
+								if( $usershares->getProvider()->isUserSharesDisabled($usershares) ) {
 
-                $provider->logout();
-            }
+									if( $usershares->getProvider()->enableUserShares($usershares) ) {
+										var_dump("Enable");
+									}
+
+									self::cronjob_error_log("Enable Ende", __LINE__);
+								}
+
+								// update account, new password?
+								if( $usershares->getProvider()->updatePassword($usershares) ) {
+									// success
+									self::cronjob_error_log("Password erfolgreich geupdatet.", __LINE__);
+								}
+								else {
+									self::cronjob_error_log("Password nicht geupdatet. (Fehler)", __LINE__);
+								}
+
+								// shares setting
+								$shares = $usershares->getProvider()->getShares($usershares);
+								$ushares = $usershares->getShares();
+								$dshares = $usershares->getDefaultShares();
+
+								// --- transform arrays
+								$kshares = array();
+								$kushares = array();
+								$kdshares = array();
+
+								foreach( $shares as $tshare ) {
+									$kshares[$tshare['name']] = $tshare;
+								}
+
+								foreach( $ushares as $tshare ) {
+									$kushares[$tshare['name']] = $tshare;
+								}
+
+								foreach( $dshares as $tshare ) {
+									$kdshares[$tshare['name']] = $tshare;
+								}
+
+								var_dump($kshares);
+								// -----
+
+								foreach( $kdshares as $tname => $tdshare ) {
+									if( isset($kushares[$tname]) ) {
+										continue;
+									}
+
+									// create share only when not exist
+									if( !isset($kshares[$tname]) ) {
+										if( $usershares->getProvider()->createShare($usershares, $tname) ) {
+											// todo
+											self::cronjob_error_log("Share is set.", __LINE__);
+										}
+									}
+
+									// add access to share
+									if( $usershares->getProvider()->setSharePermission($usershares, $tname) ) {
+										self::cronjob_error_log("Share access is set.", __LINE__);
+									}
+								}
+
+								// -----
+								// update mount list
+							//var_dump("Update Mounts");
+								$usershares->updateUserSharesMounts();
+							}
+						}
+					}
+
+					$provider->logout();
+				}
+			}
+			catch( Exception $ex ) {
+				self::cronjob_error_log($ex, $ex->getLine());
+
+				try {
+					if( $provider !== null ) {
+						$provider->logout();
+					}
+				}
+				catch (Exception $ex2) {
+					self::cronjob_error_log($ex2, $ex2->getLine());
+				}
+			}
+
+			unlink($conjobfile);
         }
+
+		/**
+		 * cronjob_error_log
+		 *
+		 * @param type $message
+		 * @param type $line
+		 */
+		static public function cronjob_error_log($message, $line) {
+			if( is_array($message) ) {
+				$message = var_export($message, true);
+			}
+
+			$message = 'Line: ' . $line . ' Message: ' . $message . "\r\n";
+
+			$file = $GLOBALS['egw_info']['server']['temp_dir'] . '/elogin_sharehandler.log';
+
+			error_log($message, 3, $file);
+		}
     }

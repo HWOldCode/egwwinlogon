@@ -30,7 +30,7 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
         EgroupwarePGina.setUseEmulator(true);
         
         // default vars
-        String url          = "http://192.168.11.51/egroupware/";
+        String url          = "http://192.168.0.37/egroupware/";	// 192.168.11.51
         //String url          = "https://www.hw-softwareentwicklung.de/egroupware/";
         String domain       = "default";
         String fingerprint  = "DEBUG-V3";

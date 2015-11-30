@@ -508,8 +508,11 @@
         public function addPermissionDir($usersharename, $dir, $username, $read=false, $write=false) {
             if( $this->_syno ) {
                 if( !$this->isUsernameExist($username) ) {
+					error_log("addPermissionDir user not found: '" . $username . "'");
                     return false;
                 }
+
+				$dir = str_replace("//", "/", $dir);
 
                 /*$shares = $this->_syno->getUserShares($username);
                 $sharelist = array();
@@ -576,10 +579,116 @@
                         )
                     );
 
-                if( $this->_syno->setFileShareACLs('/volume1', $usersharename . $dir, $rules) ) {
-                    return true;
-                }
+
+				if( $this->_syno->setFileShareACLs('/volume1', $usersharename . $dir, $rules) ) {
+					return true;
+				}
+
+
+				error_log("setFileShareACLs not set: '" . $username . "'");
             }
+
+            return false;
+        }
+
+		/**
+         * addPermissionDir
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @param array $usernames
+         * @param boolean $read
+         * @param boolean $write
+		 * @param boolean $ignorUser
+         * @return boolean
+         */
+        public function addPermissionDirMulti($usersharename, $dir, $usernames, $read=false, $write=false, $ignorUser=true) {
+			if( $this->_syno ) {
+				if( !is_array($usernames) ) {
+					return false;
+				}
+
+				$userlist = array();
+
+				foreach( $usernames as $username ) {
+					if( !$this->isUsernameExist($username) ) {
+						if( $ignorUser ) {
+							continue;
+						}
+
+						error_log("addPermissionDir user not found: '" . $username . "'");
+						return false;
+					}
+					else {
+						$userlist[] = $username;
+					}
+				}
+
+				$dir = str_replace("//", "/", $dir);
+
+				// -------------------------------------------------------------
+
+				$list = $this->_syno->getFileShareACLs('/volume1' . $usersharename . $dir);
+
+                $rules = array();
+
+                foreach( $list as $tusername => $permission ) {
+                    if( in_array($tusername, $userlist)  ) {
+                        continue;
+                    }
+
+                    $rules[] = array(
+                        'owner_type'        => 'user',
+                        'owner_name'        => $tusername,
+                        'permission_type'   => 'allow',
+                        'permission'        => $permission,
+                        'inherit'           => array(
+                            'child_files'   => true,
+                            'child_folders' => true,
+                            'this_folder'   => true,
+                            'all_descendants' => true
+                        )
+                    );
+                }
+
+				$permission = array(
+                    'read_data' => ($read ? true : false),
+                    'write_data' => ($write ? true : false),
+                    'exe_file' => ($read ? true : false),
+                    'append_data' => ($write ? true : false),
+                    'delete' => ($write ? true : false),
+                    'delete_sub' => ($write ? true : false),
+                    'read_attr' => ($read ? true : false),
+                    'write_attr' => ($write ? true : false),
+                    'read_ext_attr' => ($read ? true : false),
+                    'write_ext_attr' => ($write ? true : false),
+                    'read_perm' => ($read ? true : false),
+                    'change_perm' => false,
+                    'take_ownership' => false
+                    );
+
+				foreach( $userlist as $username ) {
+					$rules[] = array(
+						'owner_type'        => 'user',
+						'owner_name'        => $username,
+						'permission_type'   => 'allow',
+						'permission'        => $permission,
+						'inherit'           => array(
+								'child_files'   => true,
+								'child_folders' => true,
+								'this_folder'   => true,
+								'all_descendants' => true
+							)
+						);
+				}
+
+				if( $this->_syno->setFileShareACLs('/volume1', $usersharename . $dir, $rules) ) {
+					return true;
+				}
+
+
+				error_log("setFileShareACLs not set: '" . var_export($userlist, true) . "'");
+			}
 
             return false;
         }

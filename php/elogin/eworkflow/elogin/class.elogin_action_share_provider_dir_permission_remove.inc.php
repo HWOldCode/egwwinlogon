@@ -111,10 +111,10 @@
 			return $this->_params->getVariableByParam(
 				$this->_usershare_entryid, static::PARAM_DPR_USERSHARE_ENTRY);
         }
-		
+
 		/**
 		 * setUserShareEntryid
-		 * 
+		 *
 		 * @param string $id
 		 */
 		public function setUserShareEntryid($id) {
@@ -131,10 +131,10 @@
 			return $this->_params->getVariableByParam(
 				$this->_dirname, static::PARAM_DPR_DIRNAME);
         }
-		
+
 		/**
 		 * setDirname
-		 * 
+		 *
 		 * @param string $dirname
 		 */
 		public function setDirname($dirname) {
@@ -231,14 +231,19 @@
 
                 $this::$_logger->info('UserShare: ' . $sharename);
 
-                if( $provider->removeAllPermissionDir("/" . $sharename . '/', $dirname) ) {
-                    $linkname = self::LINK_ACTION;
-                    $this::$_logger->info('Dir remove permission in UserShare: ' . "/" . $sharename . '/' . $dirname);
-                }
-                else {
-                    $linkname = self::LINK_ERROR;
-                    $this::$_logger->severe('Dir can`t remove permission in UserShare: ' . "/" . $sharename . '/' . $dirname);
-                }
+				try {
+					if( $provider->removeAllPermissionDir("/" . $sharename . '/', $dirname) ) {
+						$linkname = self::LINK_ACTION;
+						$this::$_logger->info('Dir remove permission in UserShare: ' . "/" . $sharename . '/' . $dirname);
+					}
+					else {
+						$linkname = self::LINK_ERROR;
+						$this::$_logger->severe('Dir can`t remove permission in UserShare: ' . "/" . $sharename . '/' . $dirname);
+					}
+				}
+				catch( Exception $ex ) {
+					$this::$_logger->severe('Error: ' . $ex->getMessage());
+				}
             }
 
             // get link for next action

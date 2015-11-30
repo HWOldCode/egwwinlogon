@@ -10,12 +10,16 @@
      */
     class SyndmsClient {
 
-        const URL_INDEX         = 'webman/index.cgi';
-        const URL_LOGOUT        = 'webman/logout.cgi';
-        const URL_QUERY         = 'webapi/query.cgi';
-        const URL_AUTH          = 'webapi/auth.cgi';
-        const URL_FILESHARE     = 'webapi/FileStation/file_share.cgi';
-        const URL_FILESHARE_CRT = 'webapi/FileStation/file_crtfdr.cgi';
+		const DEBUG				= true;
+
+        const URL_INDEX				= 'webman/index.cgi';
+        const URL_LOGOUT			= 'webman/logout.cgi';
+        const URL_QUERY				= 'webapi/query.cgi';
+        const URL_AUTH				= 'webapi/auth.cgi';
+        const URL_FILESHARE			= 'webapi/FileStation/file_share.cgi';
+        const URL_FILESHARE_CRT		= 'webapi/FileStation/file_crtfdr.cgi';
+		const URL_POLLING			= 'webman/modules/PollingTask/polling.cgi';
+		const URL_BACKGROUND_TASK	= 'webapi/FileStation/background_task.cgi';
 
         const SYNO_SDS_SESSISON = 'SYNO.SDS.Session';
 
@@ -138,6 +142,19 @@
             $response = SyndmsRequest::curlRequest($url, $data, null, $header);
 
             if( $response ) {
+
+				$httpstatus = array();
+
+				preg_match('#HTTP/1\.\d (?P<code>\d{3}) (?P<text>.*)#', $response['header'], $httpstatus);
+
+				if( is_array($httpstatus) && isset($httpstatus['code']) ) {
+					if( intval($httpstatus['code']) == 400 ) {
+						throw new Exception($httpstatus['text'], $httpstatus['code']);
+					}
+				}
+
+				// -------------------------------------------------------------
+
                 $cookies = array();
 
                 preg_match_all('/Set-Cookie:(?<cookie>\s{0,}.*)$/im', $response['header'], $cookies);
@@ -293,6 +310,19 @@
             if( $this->_sds_session ) {
                 $this->_services = array();
 
+				// read cache file
+				$servicesfile = null;
+
+				if( function_exists('sys_get_temp_dir') ) {
+					$servicesfile = sys_get_temp_dir() . '/' . __CLASS__ . '.json';
+
+					if( file_exists($servicesfile) ) {
+						$servicesfilecontent = file_get_contents($servicesfile);
+						$this->_services = json_decode($servicesfilecontent, true);
+						return;
+					}
+				}
+
                 $query = array(
                     'query'     => 'all',
                     'api'       => 'SYNO.API.Info',
@@ -311,6 +341,11 @@
                         foreach( $data as $servicename => $tservice ) {
                             $this->_services[$servicename] = (array) $tservice;
                         }
+
+						// create cache file
+						if( ($servicesfile !== null) &&  !file_exists($servicesfile) ) {
+							file_put_contents($servicesfile, json_encode($this->_services));
+						}
                     }
                 }
             }
@@ -329,12 +364,12 @@
 
                 $response = $this->_request(self::URL_AUTH, array(
                     'api' => 'SYNO.API.Auth',
-                    'version' => '3',
-                    'method' => 'login',
-                    'account' => $username,
-                    'passwd' => $password,
-                    'session' => 'FileStation',
-                    'format' => 'cookie'));
+                    'version'	=> '3',
+                    'method'	=> 'login',
+                    'account'	=> $username,
+                    'passwd'	=> $password,
+                    'session'	=> 'FileStation',
+                    'format'	=> 'cookie'));
             //var_dump($response);
                 if( $response ) {
                     $data = json_decode($response['body']);
@@ -383,13 +418,13 @@
         public function getUsers() {
             if( $this->_isLogin ) {
                 $data = $this->_queryByService('SYNO.Core.User', array(
-                        'action'    => 'list',
-                        'type'      => 'local',
-                        'offset'    => 0,
-                        'limit'     => 50,
-                        'additional' => '["email","description","expired"]',
-                        'method'    => 'list',
-                        'version'   => '1'
+                        'action'		=> 'list',
+                        'type'			=> 'local',
+                        'offset'		=> 0,
+                        'limit'			=> 50,
+                        'additional'	=> '["email","description","expired"]',
+                        'method'		=> 'list',
+                        'version'		=> '1'
                     ));
 
                 if( $data ) {
@@ -897,7 +932,7 @@
                 $data = $this->_queryByService('SYNO.FileStation.List', array(
                     'method'            => 'list',
                     'version'           => '1',
-                    'folder_path'       => $sharename,
+                    'folder_path'       => $this->_escapeFolderName($sharename),
                     'filetype'          => 'all',
                     'additional'        => 'real_path,size,owner,time,perm,type,mount_point_type',
                     'action'            => 'list',
@@ -948,8 +983,8 @@
                 $data = $this->_queryByService('SYNO.FileStation.CreateFolder', array(
                     'method'            => 'create',
                     'version'           => '1',
-                    'folder_path'       => $sharename,
-                    'name'              => $dir,
+                    'folder_path'       => $this->_escapeFolderName($sharename),
+                    'name'              => $this->_escapeFolderName($dir),
                     'force_parent'      => true,
                     ), true);
 
@@ -1002,7 +1037,7 @@
                 $data = $this->_queryByService('SYNO.Core.ACL', array(
                     'method'            => 'get',
                     'version'           => '1',
-                    'file_path'         => $realpath,
+                    'file_path'         => $this->_escapePath($realpath),
                     'type'              => 'all',
                     ), true);
 
@@ -1036,9 +1071,9 @@
                 $data = $this->_queryByService('SYNO.Core.ACL', array(
                     'method'            => 'set',
                     'version'           => '1',
-                    'file_path'         =>  $volume . $realpath,
-                    'files'             =>  $volume  . $realpath,
-                    'dirPaths'          =>  $realpath,
+                    'file_path'         =>  $this->_escapePath($volume . $realpath),
+                    'files'             =>  $this->_escapePath($volume  . $realpath),
+                    'dirPaths'          =>  $this->_escapePath($realpath),
                     'change_acl'        => 'true',
                     'rules'             => json_encode($rules),
                     'inherited'         => 'false',
@@ -1051,8 +1086,17 @@
                     if( $status ) {
                         return true;
                     }
+
+					error_log("setFileShareACLs realpath: '" .
+						$realpath . "' status: '" . var_export($status, true) . "'");
                 }
+
+				error_log("setFileShareACLs realpath: '" .
+						$realpath . "' returndata: '" . var_export($data, true) . "'");
              }
+
+			 error_log("setFileShareACLs realpath: '" .
+						$realpath . "' login: '" . var_export($this->_isLogin, true) . "'");
 
             return false;
         }
@@ -1078,4 +1122,107 @@
 
             return false;
         }
+
+		/**
+		 * polling
+		 *
+		 * @return
+		 */
+		public function polling() {
+			if( $this->_isLogin ) {
+				$response = $this->_request(self::URL_POLLING, array(
+					'action'				=> 'load',
+					'load_disabled_port'	=> 'true',
+					));
+
+				self::client_error_log(var_export($response, true), __LINE__);
+			}
+
+			return;
+		}
+
+		/**
+		 * getBackgroundTaskList
+		 *
+		 * @return
+		 */
+		public function getBackgroundTaskList() {
+			if( $this->_isLogin ) {
+				$response = $this->_request(self::URL_BACKGROUND_TASK, array(
+					'is_vfs'	=> 'true',
+					'bkg_info'	=> 'true',
+					'api'		=> 'SYNO.FileStation.BackgroundTask',
+					'method'	=> 'list',
+					'version'	=> '1'
+				));
+
+				self::client_error_log(var_export($response, true), __LINE__);
+			}
+
+			return;
+		}
+
+		/**
+		 * _escapeFolderName
+		 *
+		 * @param string $name
+		 * @return string
+		 */
+		protected function _escapeFolderName($name) {
+			$name = html_entity_decode($name);
+
+			$escapes = array(
+				',',
+				);
+
+			foreach( $escapes as $char ) {
+				$name = str_replace($char, "\\" . $char, $name);
+			}
+
+			return $name;
+		}
+
+		/**
+		 * _escapePath
+		 *
+		 * @param string $path
+		 * @return string
+		 */
+		protected function _escapePath($path) {
+			$path = html_entity_decode($path);
+
+			$escapes = array(
+				'"',
+				);
+
+			foreach( $escapes as $char ) {
+				$path = str_replace($char, "\\" . $char, $path);
+			}
+
+			return '"' . $path . '"';
+		}
+
+		/**
+		 * client_error_log
+		 *
+		 * @param type $message
+		 * @param type $line
+		 */
+		static public function client_error_log($message, $line) {
+			if( !self::DEBUG ) {
+				return;
+			}
+
+			if( is_array($message) ) {
+				$message = var_export($message, true);
+			}
+
+			$amessage = '';
+			$amessage .= '--------------------------------------------------\r\n';
+			$amessage .= 'Line: ' . $line . ' Message: ' . $message . "\r\n";
+
+			$file = sys_get_temp_dir() . '/elogin_syndms.client.log';
+
+			error_log($amessage, 3, $file);
+		}
     }

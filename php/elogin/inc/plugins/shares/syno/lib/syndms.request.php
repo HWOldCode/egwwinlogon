@@ -7,6 +7,8 @@
      */
     class SyndmsRequest {
 
+		const DEBUG = true;
+
         /**
          * curlRequest
          *
@@ -19,9 +21,6 @@
         public static function curlRequest($query_string, $postdata=null, $content_type=null, $custom_headers=null) {
             $headers = (is_null($custom_headers)) ? array() : $custom_headers;
             $curl = curl_init();
-
-            //curl_setopt($curl, CURLOPT_CONNECTTIMEOUT ,0);
-            //curl_setopt($curl, CURLOPT_TIMEOUT, 100);
 
 			curl_setopt($curl, CURLOPT_URL, $query_string);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -41,7 +40,12 @@
             }
 
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-            //curl_setopt($curl, CURLOPT_ENCODING, "UTF-8");
+            curl_setopt($curl, CURLOPT_ENCODING, "UTF-8");
+			curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
+			curl_setopt($curl, CURLOPT_CONNECTTIMEOUT_MS, 30000);
+			curl_setopt($curl, CURLOPT_TIMEOUT, 60*2);
+
+			// -----------------------------------------------------------------
 
             if( $postdata ) {
                 if( is_array($postdata) ) {
@@ -54,7 +58,7 @@
                             $strpost .= "&";
                         }
 
-                        $strpost .= $key . "=" . urlencode($value);
+                        $strpost .= $key . "=" . str_replace('+', "%20", urlencode($value));
                     }
 
                     $postdata = $strpost;
@@ -64,24 +68,66 @@
 
             }
 
+			// -----------------------------------------------------------------
+
             $response = curl_exec($curl);
-			
-			// -----------------------------------------------------------------
-			//$info = curl_getinfo($curl);
-			//error_log(__METHOD__ . ' ('.__LINE__.') CURL-INFO' . var_export($info, true));
-			//error_log(__METHOD__ . ' ('.__LINE__.') CURL-RESPONSE' . var_export($response, true));
-			// -----------------------------------------------------------------
-			
-            $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
 
-            curl_close($curl);
+			if( self::DEBUG ) {
+				$info = curl_getinfo($curl);
 
-            $header = substr($response, 0, $header_size);
-            $body = substr($response, $header_size);
+				self::request_error_log('CURL-SENDE' . var_export($postdata, true), __LINE__);
+				self::request_error_log('CURL-INFO' . var_export($info, true), __LINE__);
+				self::request_error_log('CURL-RESPONSE' . var_export($response, true), __LINE__);
+			}
 
-            return array(
-                'header' => $header,
-                'body' => $body
-                );
+			if( !curl_errno($curl) ) {
+				$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+
+				curl_close($curl);
+
+				$header = substr($response, 0, $header_size);
+				$body = substr($response, $header_size);
+
+				return array(
+					'header'	=> $header,
+					'body'		=> $body
+					);
+			}
+			else {
+				$ex = new Exception(
+					curl_error($curl),
+					curl_errno($curl)
+					);
+
+				curl_close($curl);
+
+				throw $ex;
+			}
+
+			return array();
         }
+
+		/**
+		 * request_error_log
+		 *
+		 * @param type $message
+		 * @param type $line
+		 */
+		static public function request_error_log($message, $line) {
+			if( !self::DEBUG ) {
+				return;
+			}
+
+			if( is_array($message) ) {
+				$message = var_export($message, true);
+			}
+
+			$amessage = '';
+			$amessage .= '--------------------------------------------------\r\n';
+			$amessage .= 'Line: ' . $line . ' Message: ' . $message . "\r\n";
+
+			$file = sys_get_temp_dir() . '/elogin_syndms.request.log';
+
+			error_log($amessage, 3, $file);
+		}
     }

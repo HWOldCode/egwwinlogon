@@ -382,7 +382,7 @@
 
         /**
          * login
-         * 
+         *
          * @return boolean
          */
         public function login() {
@@ -453,6 +453,21 @@
          * @return boolean
          */
         public function addPermissionDir($usersharename, $dir, $username, $read=false, $write=false) {
+            return false;
+        }
+
+        /**
+         * addPermissionDir
+         *
+         * @param string $usersharename
+         * @param string $dir
+         * @param array $usernames
+         * @param boolean $read
+         * @param boolean $write
+		 * @param boolean $ignorUser
+         * @return boolean
+         */
+        public function addPermissionDirMulti($usersharename, $dir, $usernames, $read=false, $write=false, $ignorUser=true) {
             return false;
         }
 

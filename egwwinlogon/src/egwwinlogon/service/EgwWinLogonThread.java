@@ -242,7 +242,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
                 logger.info("Userapp cmd: " + cmdApp);
                 
 				try{
-					Thread.sleep(10000);
+					Thread.sleep(20000);
 				}
 				catch( Exception ex ) {
 				}

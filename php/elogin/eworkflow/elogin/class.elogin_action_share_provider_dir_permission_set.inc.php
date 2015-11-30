@@ -1,13 +1,12 @@
 <?php
 
-
     /**
 	 * ELogin - Egroupware
 	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -132,10 +131,10 @@
 			return $this->_params->getVariableByParam(
 				$this->_usershare_entryid, static::PARAM_DPS_USERSHARE_ENTRY);
         }
-		
+
 		/**
 		 * setUserShareEntryid
-		 * 
+		 *
 		 * @param string $id
 		 */
 		public function setUserShareEntryid($id) {
@@ -152,10 +151,10 @@
 			return $this->_params->getVariableByParam(
 				$this->_dirname, static::PARAM_DPS_DIRNAME);
         }
-		
+
 		/**
 		 * setDirname
-		 * 
+		 *
 		 * @param string $dirname
 		 */
 		public function setDirname($dirname) {
@@ -172,10 +171,10 @@
 			return $this->_params->getVariableByParam(
 				$this->_username, static::PARAM_DPS_USERNAME);
         }
-		
+
 		/**
 		 * setUsername
-		 * 
+		 *
 		 * @param string $username
 		 */
 		public function setUsername($username) {
@@ -283,16 +282,22 @@
                 $provider = $entry->getProvider();
                 $sharename = $entry->getShareName();
 
-                $this::$_logger->info('UserShare: ' . $sharename);
+                $this::$_logger->info('UserShare: "' . $sharename . '"');
 
                 if( $provider->addPermissionDir("/" . $sharename . '/', $dirname, $username, true, true) ) {
                     $linkname = self::LINK_ACTION;
-                    $this::$_logger->info('Dir set permission in UserShare: ' . "/" . $sharename . '/' . $dirname .
+
+                    $this::$_logger->info(
+						'Dir set permission in UserShare: ' . "/" .
+						$sharename . '/' . $dirname .
 						' username: ' . $username);
                 }
                 else {
                     $linkname = self::LINK_ERROR;
-                    $this::$_logger->severe('Dir can`t set permission in UserShare: ' . "/" . $sharename . '/' . $dirname . 
+
+                    $this::$_logger->severe(
+						'Dir can`t set permission in UserShare: ' . "/" .
+						$sharename . '/' . $dirname .
 						' username: ' . $username);
                 }
             }
