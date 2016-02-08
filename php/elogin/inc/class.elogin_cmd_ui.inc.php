@@ -40,12 +40,12 @@
 
                     foreach( $usersahres as $usersahre ) {
                         $tcmds = $usersahre->getCmds();
-						
+
                         foreach( $tcmds as $tcmd ) {
                             $cmds[] = $tcmd;
                         }
                     }
-					
+
                     $list = array();
 
                     foreach( $cmds as $tcmd ) {
@@ -59,7 +59,7 @@
                         'cmds' => $list));
                 }
             }
-			
+
             return egw_json_response::get()->data(array('status' => 'error'));
         }
 
@@ -97,7 +97,7 @@
                 if( $cmd == null ) {
                     $cmd = new elogin_cmd_bo();
                 }
-				
+
 				$cmd->setName($content['commandname']);
                 $cmd->setCommand($content['command']);
                 $cmd->setAccountId($content['account']);
@@ -111,14 +111,15 @@
 				$cmd->setScriptType($content['script_type']);
 				$cmd->setCatId($content['cat']);
 				$cmd->setSchedulerTime($content['schedulertime']);
-				
+				$cmd->setMountPointCheck($content['mountpointcheck']);
+
 				if( $content['options_trayer_show_contextmenu'] == '1' ) {
 					$cmd->setOption('trayer_show_contextmenu', '1');
 				}
 				else {
 					$cmd->setOption('trayer_show_contextmenu', '0');
 				}
-				
+
                 $cmd->save();
             }
 
@@ -137,11 +138,12 @@
 				$content['scriptcontent']	= $cmd->getScript();
 				$content['script_type']		= $cmd->getScriptType();
 				$content['schedulertime']	= $cmd->getSchedulerTime();
+				$content['mountpointcheck']	= $cmd->getMountPointCheck();
 				
 				if( $cmd->getOption('trayer_show_contextmenu') == '1' ) {
 					$content['options_trayer_show_contextmenu'] = true;
 				}
-				
+
 				$content['link_to'] = array(
 					'to_id'		=> $cmd->getId(),
 					'to_app'	=> 'elogin-cmd',
@@ -209,7 +211,7 @@
 				elogin_cmd_bo::SCRIPT_BATCHFILE		=> lang('Batchfile'),
 				elogin_cmd_bo::SCRIPT_VBS			=> lang('VBS'),
 				);
-			
+
             $tpl = new etemplate_new('elogin.cmd.dialog');
 			$tpl->exec(
                 'elogin.elogin_cmd_ui.cmd_edit',
@@ -286,21 +288,21 @@
 
             return count($rows);
         }
-		
+
 		/**
 		 * cmd_delete
-		 * 
+		 *
 		 * @param array $content
 		 */
 		public function cmd_delete($content=null) {
 			$uid = ( isset($content['uid']) ? $content['uid'] : null);
 			$uid = ( $uid == null ? (isset($_GET['uid']) ? $_GET['uid'] : null) : $uid);
-			
+
 			if( $uid != null ) {
                 $cmd = new elogin_cmd_bo($uid);
 				$cmd->delete();
             }
-			
+
 			//egw_framework::refresh_opener('', 'elogin', $uid, 'delete');
 			egw_framework::window_close();
 			exit;

@@ -13,6 +13,10 @@
 					<textbox id="command" />
 				</row>
 				<row>
+					<description value="Mountpoint check"/>
+					<textbox id="mountpointcheck" />
+				</row>
+				<row>
 					<description value="Scripttype"/>
 					<menulist>
 						<menupopup id="script_type"/>

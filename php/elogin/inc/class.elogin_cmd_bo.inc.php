@@ -46,7 +46,7 @@
 		// scripts
 		const SCRIPT_BATCHFILE	= 'batchfile';
 		const SCRIPT_VBS			= 'vbs';
-		
+
         /**
          * Reference to global db object
          *
@@ -77,13 +77,13 @@
 		 * @var string
 		 */
 		protected $_name	= '';
-		
+
 		/**
 		 * catid
 		 * @var int
 		 */
 		protected $_catid	= 0;
-		
+
         /**
          * command
          * @var string
@@ -119,33 +119,39 @@
          * @var array
          */
         protected $_condition = array();
-		
+
 		/**
 		 * with options
-		 * 
+		 *
 		 * @var array
 		 */
 		protected $_options = array();
 
 		/**
 		 * script type
-		 * @var string 
+		 * @var string
 		 */
 		protected $_script_type = '';
-		
+
 		/**
 		 * script
-		 * 
+		 *
 		 * @var string
 		 */
 		protected $_script = '';
-		
+
 		/**
 		 * scheduler time
 		 * @var int
 		 */
 		protected $_scheduler_time = 0;
-		
+
+		/**
+		 * mount point check
+		 * @var string
+		 */
+		protected $_mount_point_check = '';
+
         /**
          * Init our static properties
          */
@@ -173,15 +179,16 @@
 					$this->_name		= $data['el_name'];
 					$this->_catid		= intval($data['el_catid']);
 					$this->_options		= json_decode($data['el_options'], true);
-					
+
 					if( !is_array($this->_options) ) {
 						$this->_options = array();
 					}
-					
-					$this->_script_type		= $data['el_script_type'];
-					$this->_script			= $data['el_script'];
-                    $this->_condition		= explode(self::SEP_CONDITION, $data['el_condition']);
-					$this->_scheduler_time	= $data['el_scheduler_time'];
+
+					$this->_script_type			= $data['el_script_type'];
+					$this->_script				= $data['el_script'];
+                    $this->_condition			= explode(self::SEP_CONDITION, $data['el_condition']);
+					$this->_scheduler_time		= $data['el_scheduler_time'];
+					$this->_mount_point_check	= $data['el_mountpoint_check'];
                 }
             }
 
@@ -233,40 +240,40 @@
 
 		/**
 		 * getName
-		 * 
+		 *
 		 * @return string
 		 */
 		public function getName() {
 			return $this->_name;
 		}
-		
+
 		/**
 		 * setName
-		 * 
+		 *
 		 * @param string $name
 		 */
 		public function setName($name) {
 			$this->_name = $name;
 		}
-		
+
 		/**
 		 * getCatId
-		 * 
+		 *
 		 * @return int
 		 */
 		public function getCatId() {
 			return $this->_catid;
 		}
-		
+
 		/**
 		 * setCatId
-		 * 
+		 *
 		 * @param int $id
 		 */
 		public function setCatId($id) {
 			$this->_catid = intval($id);
 		}
-		
+
         /**
          * setCommand
          *
@@ -302,19 +309,19 @@
         public function getSystem() {
             return $this->_system;
         }
-		
+
 		/**
 		 * setSchedulerTime
-		 * 
+		 *
 		 * @param int $sec
 		 */
 		public function setSchedulerTime($sec=0) {
 			$this->_scheduler_time = intval($sec);
 		}
-		
+
 		/**
 		 * getSchedulerTime
-		 * 
+		 *
 		 * @return int
 		 */
 		public function getSchedulerTime() {
@@ -392,20 +399,20 @@
         public function getCondition() {
             return $this->_condition;
         }
-		
+
 		/**
 		 * setOption
-		 * 
+		 *
 		 * @param string $name
 		 * @param string $key
 		 */
 		public function setOption($name, $key) {
 			$this->_options[$name] = $key;
 		}
-		
+
 		/**
 		 * getOption
-		 * 
+		 *
 		 * @param string $name
 		 * @return string|null
 		 */
@@ -413,13 +420,13 @@
 			if( isset($this->_options[$name]) ) {
 				return $this->_options[$name];
 			}
-			
+
 			return null;
 		}
-		
+
 		/**
 		 * getOptions
-		 * 
+		 *
 		 * @return array
 		 */
 		public function getOptions() {
@@ -428,25 +435,25 @@
 
 		/**
 		 * getScriptType
-		 * 
+		 *
 		 * @return string
 		 */
 		public function getScriptType() {
 			return $this->_script_type;
 		}
-		
+
 		/**
 		 * setScriptType
-		 * 
+		 *
 		 * @param string $type
 		 */
 		public function setScriptType($type) {
 			$this->_script_type = $type;
 		}
-		
+
 		/**
 		 * setScript
-		 * 
+		 *
 		 * @param string $script
 		 */
 		public function setScript($script) {
@@ -455,13 +462,29 @@
 
 		/**
 		 * getScript
-		 * 
+		 *
 		 * @return string
 		 */
 		public function getScript() {
 			return $this->_script;
 		}
-		
+
+		/**
+		 * getMountPointCheck
+		 * @return string
+		 */
+		public function getMountPointCheck() {
+			return $this->_mount_point_check;
+		}
+
+		/**
+		 * setMountPointCheck
+		 * @param string $mp
+		 */
+		public function setMountPointCheck($mp) {
+			$this->_mount_point_check = $mp;
+		}
+
 		/**
          * save
          */
@@ -475,7 +498,7 @@
 			if( $this->_account_id == null ) {
 				$this->_account_id = '';
 			}
-			
+
             $data['el_machine_id']			= $this->_machine_id;
             $data['el_account_id']			= $this->_account_id;
             $data['el_command']				= $this->_command;
@@ -492,7 +515,8 @@
 			$data['el_script_type']			= $this->_script_type;
 			$data['el_script']				= $this->_script;
 			$data['el_scheduler_time']		= $this->_scheduler_time;
-			
+			$data['el_mountpoint_check']	= $this->_mount_point_check;
+
             $return = self::_write($data);
 
             if( $return ) {
@@ -501,7 +525,7 @@
                 }
             }
         }
-		
+
 		/**
 		 * delete
 		 */
@@ -602,24 +626,24 @@
                     $where['el_machine_id'] = $query['col_filter']['machine_id'];
                 }
             }
-			
+
 			if( !isset($query['start']) ) {
 				$query['start'] = 0;
 			}
-			
-			$start = ($query['num_rows'] ? 
-				array((int)$query['start'], $query['num_rows']) : 
+
+			$start = ($query['num_rows'] ?
+				array((int)$query['start'], $query['num_rows']) :
 				(int)$query['start']);
-			
+
 			list($start, $num_rows) = $start;
-			
+
 			if( ($num_rows == null) || ($num_rows == false) ) {
 				$num_rows = -1;
 			}
-			
-			$total = self::$_db->select(self::TABLE, 'COUNT(*)', 
+
+			$total = self::$_db->select(self::TABLE, 'COUNT(*)',
 				$where, __LINE__, __FILE__, false, '', false, 0, $join)->fetchColumn();
-			
+
             if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
                 $start, '', false, $num_rows, $join)))
             {
@@ -685,6 +709,7 @@
 				'catid'				=> $this->_catid,
 				'catname'			=> categories::id2name($this->_catid),
 				'scheduler_time'	=> $this->_scheduler_time,
+				'mount_point_check'	=> $this->_mount_point_check,
                 );
         }
 
@@ -696,7 +721,7 @@
         public function toJson() {
             return json_encode($this->toArray());
         }
-		
+
 		/**
 		 * link_title
 		 *
@@ -705,14 +730,14 @@
 		 */
 		static public function link_title($info) {
 			$cmd = new elogin_cmd_bo($info);
-			
+
 			if( $cmd->getMachineId() != null ) {
 				return $cmd->getName();
 			}
-			
+
 			return lang('not found');
 		}
-		
+
 		/**
 		 * link_titles
 		 *
@@ -727,7 +752,7 @@
 
             return $titles;
 		}
-		
+
 		/**
          * link_query
          *
@@ -738,17 +763,17 @@
 			$rows		= array();
 			$readonlys	= array();
 			$result = array();
-			
+
 			if( self::get_rows($options, $rows, $readonlys) > 0 ) {
 				foreach( $rows as &$row ) {
 					$result[$row['el_unid']] = array(
 							'label' => $row['el_name'],
 							);
 				}
-				
+
 				return $result;
 			}
-			
+
 			return array();
 		}
     }

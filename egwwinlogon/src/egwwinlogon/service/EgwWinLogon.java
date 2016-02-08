@@ -238,7 +238,7 @@ public class EgwWinLogon {
             _egw.addListener(egwListener);
         }
         
-        try{
+        try {
             try {
                 try {
                     _egw.login();
@@ -348,11 +348,17 @@ public class EgwWinLogon {
                         }
 
                         // ---------------------------------------------------------
+						
+						if( EgwWinLogonUltis.checkWindowsProfile(username) ) {
+							logger.info("Profile is fixed.");
+						}
                     }
                     catch( Exception ec ) {
                         // nothing
                         logger.error("EgroupwareMachineInfo Create Thread: " + ec.getMessage() + 
                             " <> " + ec.getLocalizedMessage());
+						
+						throw ec;
                     }
 
                     logger.info("egwAuthenticateUser return true by user: " + username);

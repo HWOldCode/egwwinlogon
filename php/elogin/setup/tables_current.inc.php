@@ -96,7 +96,8 @@ $phpgw_baseline = array(
 			'el_script' => array('type' => 'text'),
 			'el_options' => array('type' => 'text'),
 			'el_name' => array('type' => 'varchar','precision' => '255'),
-			'el_scheduler_time' => array('type' => 'int','precision' => '4')
+			'el_scheduler_time' => array('type' => 'int','precision' => '4'),
+			'el_mountpoint_check' => array('type' => 'varchar','precision' => '25')
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),

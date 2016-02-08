@@ -182,13 +182,16 @@ public class EgroupwareCommand extends EgroupwareJson {
 	 * @param cmddata
 	 * @param sessionId 
 	 */
-	protected void _executeCommand(LinkedHashMap cmddata, int sessionId) {
-		try {
+	protected void _executeCommand(LinkedHashMap cmddata, int sessionId) throws Exception {
+		Boolean throwexec = false;
+		
+		try {			
 			String cmdid        = (String) cmddata.get("id");
 			String command      = (String) cmddata.get("command");
 			String type			= (String) cmddata.get("type");
 			String script_type	= (String) cmddata.get("script_type");
 			String script		= (String) cmddata.get("script");
+			String mountpoint	= (String) cmddata.get("mount_point_check");	// mount point
 			
 			File scriptFile		= null;
 			int wcount			= 0;
@@ -197,7 +200,8 @@ public class EgroupwareCommand extends EgroupwareJson {
 			// -----------------------------------------------------------------
 			String withConsole  = "0";  // false
 			String process_wait = "0";  // false
-
+			
+			
 			if( cmddata.containsKey("condition") ) {
 				LinkedList<String> conditions =  (LinkedList<String>) cmddata.get("condition");
 
@@ -295,6 +299,19 @@ public class EgroupwareCommand extends EgroupwareJson {
 				logger.info("_executeCommand process stop pid: " + String.valueOf(pid));
 			}
 			
+			// check mount point
+			// -----------------------------------------------------------------
+			if( (mountpoint != null) && (!"".equals(mountpoint)) ) {
+				File tmp_mp = new File(mountpoint + ":/");
+				
+				logger.info("Check mount point: " + mountpoint);
+				
+				if( !tmp_mp.exists() ) {
+					throwexec = true;
+					throw new Exception("Mount point '" + mountpoint + "' not ready!");
+				}
+			}
+			
 			// cleaning
 			// -----------------------------------------------------------------
 			if( scriptFile != null ) {
@@ -333,6 +350,10 @@ public class EgroupwareCommand extends EgroupwareJson {
 		}
 		catch( Exception e ) {
 			logger.error(e.getMessage());
+			
+			if( throwexec ) {
+				throw e;
+			}
 		}
 	}
 	
@@ -393,7 +414,7 @@ public class EgroupwareCommand extends EgroupwareJson {
      * @param type
      * @param event
      */
-    public void executeEvent(int sessionId, String type, String event) {
+    public void executeEvent(int sessionId, String type, String event) throws Exception {
 		logger.info(
 			"execute run by type: " + type + 
 			" event: " + event + 
@@ -474,6 +495,8 @@ public class EgroupwareCommand extends EgroupwareJson {
                 }
                 catch( Exception e ) {
                     logger.error(e.getMessage());
+					
+					throw e;
                 }
             }
         }
@@ -491,6 +514,7 @@ public class EgroupwareCommand extends EgroupwareJson {
 				}
 				catch( Exception g ) {
                     logger.error(g.getMessage());
+					throw g;
                 }
 			}
 		}

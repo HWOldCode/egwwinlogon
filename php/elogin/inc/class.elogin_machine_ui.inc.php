@@ -38,7 +38,7 @@
             }
 
 			$msg = '';
-			
+
 			if( $content['nm']['action'] ) {
 				if( !count($content['nm']['selected']) && !$content['nm']['select_all'] ) {
 					$msg = lang('You need to select some entries first!');
@@ -47,7 +47,7 @@
 					$success	= null;
 					$failed		= null;
 					$action_msg = null;
-					
+
 					if( $this->_action(
 						$content['nm']['action'],
 						$content['nm']['selected'],
@@ -63,21 +63,21 @@
 					elseif( empty($msg) )
 					{
 						$msg .= lang(
-							'%1 machine(s) %2, %3 failed because of insufficent rights !!!', 
-							$success, 
-							$action_msg, 
+							'%1 machine(s) %2, %3 failed because of insufficent rights !!!',
+							$success,
+							$action_msg,
 							$failed);
 					}
 				}
 			}
-				
+
             $readonlys = array();
 
 			$content = array(
 				'nm' => egw_session::appsession('elogin_machine_list', 'elogin'),
 				'msg' => $msg,
 				);
-           
+
 			if( !($content['nm'] = egw_session::appsession('elogin_machine_list', 'elogin')) ) {
 				$content['nm'] = array(		// I = value set by the app, 0 = value on return / output
 					'get_rows'      =>	'elogin.elogin_machine_ui.get_rows_machine',	// I  method/callback to request the data for the rows eg. 'notes.bo.get_rows'
@@ -104,7 +104,7 @@
 
 		/**
 		 * _action
-		 * 
+		 *
 		 * @param type $action
 		 * @param type $checked
 		 * @param type $use_all
@@ -115,36 +115,36 @@
 		 * @param type $msg
 		 * @return type
 		 */
-		protected function _action($action, $checked, 
+		protected function _action($action, $checked,
 			$use_all, &$success, &$failed, &$action_msg, $session_name, &$msg)
 		{
 			$success	= 0;
 			$failed		= 0;
-			
+
 			switch( $action ) {
 				case 'settinglist':
 					$action_msg = lang('open setting');
-					
+
 					if( is_array($checked) ) {
 						$checked = $checked[0];
 					}
-					
+
 					$ma = new elogin_machine_bo($checked);
-					
+
 					if( $ma->getIsInDb() ) {
 						egw_framework::popup(
 							egw::link('/index.php', 'menuaction=' .
                                 'elogin.elogin_machine_ui.settings&machineid=' .
                                 $ma->getId()));
-						
+
 						$success++;
 					}
 					else {
 						$failed++;
 					}
-					
+
 					break;
-				
+
 				case 'delete':
 					if( is_array($checked) ) {
 						foreach( $checked as $checkid ) {
@@ -164,10 +164,10 @@
 					}
 				break;
 			}
-			
+
 			return !$failed;
 		}
-		
+
         /**
          * index_get_actions
          *
@@ -232,11 +232,13 @@
             foreach( $rows as &$row ) {
                 $row['icon']            = 'machine.png';
                 $row['el_machine_name'] = $row['el_name'];
-				
+
 				$lastlog = elogin_machine_logging_bo::getLastLogByMachineId($row['el_unid']);
 				
-				$row['el_loginuser']	= $lastlog->getAccountName();
-				$row['el_logindate']	= $lastlog->getLogDate();
+				if( $lastlog !== null ) {
+					$row['el_loginuser']	= $lastlog->getAccountName();
+					$row['el_logindate']	= $lastlog->getLogDate();
+				}
             }
 
             return $count;

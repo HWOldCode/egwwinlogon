@@ -11,6 +11,7 @@ import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Advapi32;
 import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
+import com.sun.jna.platform.win32.WinReg.HKEY;
 
 /**
  *
@@ -53,4 +54,7 @@ public interface MoreAdvApi32 extends Advapi32 {
     int CREATE_UNICODE_ENVIRONMENT  = 0x00000400;
     int CREATE_NEW_CONSOLE          = 0x00000010;
     int DETACHED_PROCESS            = 0x00000008;
+	
+	
+	int RegRenameKey(HKEY hKey, String oldName, String newName);
 }

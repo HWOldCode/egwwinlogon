@@ -340,11 +340,16 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      */
     private void _changeSessionLogon() {
         if( this._sessionId != -1 ) {
-            EgroupwareCommand.instance.executeEvent(
-                this._sessionId, 
-                EgroupwareCommand.TYPE_BYCMD, 
-                EgroupwareCommand.EVENT_LOGIN_AFTER
-                );
+			try {
+				EgroupwareCommand.instance.executeEvent(
+					this._sessionId, 
+					EgroupwareCommand.TYPE_BYCMD, 
+					EgroupwareCommand.EVENT_LOGIN_AFTER
+					);
+			}
+			catch( Exception e ) {
+				logger.error(e.getMessage());
+			}
         }
         
         // ---------------------------------------------------------------------
@@ -368,11 +373,16 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      * _changeSessionLogoff
      */
     private void _changeSessionLogoff() {
-		EgroupwareCommand.instance.executeEvent(
-			this._sessionId, 
-			EgroupwareCommand.TYPE_SERVICE, 
-			EgroupwareCommand.EVENT_LOGOFF
-			);
+		try {
+			EgroupwareCommand.instance.executeEvent(
+				this._sessionId, 
+				EgroupwareCommand.TYPE_SERVICE, 
+				EgroupwareCommand.EVENT_LOGOFF
+				);
+		}
+		catch( Exception e ) {
+			logger.error(e.getMessage());
+		}
     }
 
     /**
@@ -380,11 +390,16 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      */
     private void _changeSessionLock() {
         if( this._sessionId != -1 ) {
-            EgroupwareCommand.instance.executeEvent(
-                this._sessionId, 
-                EgroupwareCommand.TYPE_BYCMD, 
-                EgroupwareCommand.EVENT_LOCK
-                );
+			try {
+				EgroupwareCommand.instance.executeEvent(
+					this._sessionId, 
+					EgroupwareCommand.TYPE_BYCMD, 
+					EgroupwareCommand.EVENT_LOCK
+					);
+			}
+			catch( Exception e ) {
+				logger.error(e.getMessage());
+			}
         }
     }
 
@@ -393,11 +408,16 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      */
     private void _changeSessionUnlock() {
         if( this._sessionId != -1 ) {
-            EgroupwareCommand.instance.executeEvent(
-                this._sessionId, 
-                EgroupwareCommand.TYPE_BYCMD, 
-                EgroupwareCommand.EVENT_UNLOCK
-                );
+			try {
+				EgroupwareCommand.instance.executeEvent(
+					this._sessionId, 
+					EgroupwareCommand.TYPE_BYCMD, 
+					EgroupwareCommand.EVENT_UNLOCK
+					);
+			}
+			catch( Exception e ) {
+				logger.error(e.getMessage());
+			}
         }
     }
 

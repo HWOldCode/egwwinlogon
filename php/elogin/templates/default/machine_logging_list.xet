@@ -19,8 +19,8 @@
 				<row class="th">
 					<description label=""/>
                     <vbox>
-                        <nextmatch-sortheader label="Machine-Name" id="el_machine_name_sort"/>
-                        <nextmatch-sortheader label="Username" id="el_username_sort"/>
+                        <nextmatch-filterheader options="Machine-Name" id="el_machine_name_filter"/>
+                        <nextmatch-filterheader options="Username" id="el_username_filter"/>
                     </vbox>
 					<nextmatch-sortheader label="Date" id="el_date_sort"/>
 					<nextmatch-sortheader label="Event" id="el_event_sort" no_lang="1"/>

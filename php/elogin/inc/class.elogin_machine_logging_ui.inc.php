@@ -36,7 +36,33 @@
                 die("Only for Admins!");
             }
 
-            $readonlys = array();
+            $readonlys		= array();
+			$sel_options	= array();
+
+			if( !isset($sel_options['el_machine_name_filter']) ) {
+				$sel_options['el_machine_name_filter'] = array();
+
+				$m_query		= array();
+				$m_rows			= array();
+				$m_readonlys	= array();
+
+				$count = elogin_machine_bo::get_rows($m_query, $m_rows, $m_readonlys);
+
+				foreach( $m_rows as $m_row ) {
+					$sel_options['el_machine_name_filter'][$m_row['el_unid']] = $m_row['el_name'];
+				}
+			}
+
+			if( !isset($sel_options['el_username_filter']) ) {
+				$sel_options['el_username_filter'] = array();
+
+				$taccount = new accounts();
+				$accounts = $taccount->search(array('type' => 'accounts'));
+
+				foreach( $accounts as $account ) {
+					$sel_options['el_username_filter'][$account['account_id']] = $account['account_lid'];
+				}
+			}
 
             if( !is_array($content) ) {
                 if( !($content['nm'] = egw_session::appsession('elogin_machine_logging_list', 'elogin')) ) {
@@ -45,7 +71,7 @@
 						'no_filter'     => true,// I  disable the 1. filter
 						'no_filter2'    => true,// I  disable the 2. filter (params are the same as for filter)
 						'no_cat'        => false,// I  disable the cat-selectbox
-						//'never_hide'    => true,// I  never hide the nextmatch-line if less then maxmatch entrie
+						'never_hide'    => true,// I  never hide the nextmatch-line if less then maxmatch entrie
 						'row_id'        => 'el_unid',
 						'actions'       => self::index_get_actions(),
                         'header_row'    => 'elogin.machine_logging_list.header_right',
@@ -58,10 +84,8 @@
 			$tpl->exec(
                 'elogin.elogin_machine_logging_ui.logging_list',
                 $content,
-                array(),
-                $readonlys,
-                array(),
-                0);
+                $sel_options,
+                $readonlys);
         }
 
          /**
@@ -78,7 +102,7 @@
 
 		/**
 		 * get_rows_logging
-		 * 
+		 *
 		 * @param type $query
 		 * @param type $rows
 		 * @param type $readonlys
@@ -86,6 +110,44 @@
 		 */
         public function get_rows_logging(&$query, &$rows, &$readonlys) {
             egw_session::appsession('elogin_machine_logging_list', 'elogin', $query);
+
+			if( !isset($query['col_filter']) ) {
+				$query['colfilter'] = array();
+			}
+
+			$colfilter = array();
+			
+			if( isset($query['col_filter']['el_machine_name_filter']) ) {
+				if( $query['col_filter']['el_machine_name_filter'] != '' ) {
+					$colfilter[] = elogin_machine_logging_bo::expression(
+						elogin_machine_logging_bo::TABLE,
+						array(
+							'el_machine_id' => $query['col_filter']['el_machine_name_filter'],
+						));
+				}
+			}
+
+			if( isset($query['col_filter']['el_username_filter']) ) {
+				if( $query['col_filter']['el_username_filter'] != '' ) {
+					$colfilter[] = elogin_machine_logging_bo::expression(
+						elogin_machine_logging_bo::TABLE,
+						array(
+							'el_account_id' => $query['col_filter']['el_username_filter'],
+						));
+				}
+			}
+
+			$query['col_filter'] = $colfilter;
+
+			if( isset($query['order']) ) {
+				$order = 'el_logdate';
+
+				if( $query['order'] == 'el_date_sort') {
+					$order = 'el_logdate';
+				}
+
+				$query['order'] = $order;
+			}
 
             $count = elogin_machine_logging_bo::get_rows($query, $rows, $readonlys);
 
@@ -141,7 +203,7 @@
                             $log->setMessage($msg);
                             $log->setLogDate($logdate);
                             $log->setIndex($index);
-                            
+
                             $log->save();
                         }
 

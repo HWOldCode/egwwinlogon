@@ -5,10 +5,13 @@
  */
 package egwwinlogon.service;
 
+
 import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.WinReg;
 import egwwinlogon.service.crypt.EgwWinLogonCryptAes;
 import egwwinlogon.updater.WinLogonUpdater;
+import egwwinlogon.winapi.MoreAdvApi32;
 import egwwinlogon.winapi.ProcessList;
 import egwwinlogon.winapi.ProcessList.ProcessInfo;
 import java.io.ByteArrayInputStream;
@@ -22,6 +25,8 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import org.apache.log4j.Logger;
@@ -173,6 +178,51 @@ public class EgwWinLogonUltis {
         return decodedPath;
     }
     
+	/**
+	 * checkWindowsProfile
+	 * @param username
+	 * @return 
+	 */
+	static public Boolean checkWindowsProfile(String username) {
+		try {
+			Account taccount = Advapi32Util.getAccountByName(username);
+			String sid = taccount.sidString;
+			
+			String profileList = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\ProfileList";
+			
+			String[] keylist = Advapi32Util.registryGetKeys(
+				WinReg.HKEY_LOCAL_MACHINE,
+				profileList
+				);
+			
+			LinkedList<String> mkeylist = new LinkedList<String>(Arrays.asList(keylist));
+			
+			if( mkeylist.contains(sid) ) {
+				if( mkeylist.contains(sid + ".bak") ) {
+					Advapi32Util.registryDeleteKey(
+						WinReg.HKEY_LOCAL_MACHINE, 
+						profileList, 
+						sid);
+					
+					int treturn = MoreAdvApi32.INSTANCE.RegRenameKey(
+						WinReg.HKEY_LOCAL_MACHINE, 
+						profileList + "\\" + sid + ".bak",
+						profileList + "\\" + sid
+						);
+					
+					logger.info("Reg-Profile-Fix: " + sid);
+					
+					return true;
+				}
+			}
+		}
+		catch( Exception ex ) {
+			logger.error("Error checkWindowsProfile: " + ex.getMessage());
+		}
+		
+		return false;
+	}
+	
     /**
      * getStrEncode
      * 
