@@ -48,7 +48,6 @@ public class LogonHttpClient {
      * @throws Exception
      */
     protected void _initConnection(String url) throws Exception {
-
         HttpURLConnection.setFollowRedirects(false);
 
         URL jtUrl = new URL(url);

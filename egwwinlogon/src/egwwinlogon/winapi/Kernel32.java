@@ -19,6 +19,8 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Kernel32 extends StdCallLibrary, com.sun.jna.platform.win32.Kernel32 {
     
+	public static final int PROCESS_QUERY_INFORMATION = 0x0400;
+	
     /** Instance of KERNEL32.DLL for use in accessing native functions. */
     Kernel32 INSTANCE = (Kernel32) Native.loadLibrary(
             "kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);

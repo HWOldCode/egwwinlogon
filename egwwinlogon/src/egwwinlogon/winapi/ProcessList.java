@@ -7,9 +7,14 @@ package egwwinlogon.winapi;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Tlhelp32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import static com.sun.jna.platform.win32.WinNT.OWNER_SECURITY_INFORMATION;
+import com.sun.jna.platform.win32.WinNT.PSID;
+import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -107,6 +112,23 @@ public class ProcessList {
         
         return false;
     }
+	
+	/**
+	 * getProcessByPId
+	 * @param pid
+	 * @return 
+	 */
+	static public ProcessInfo getProcessByPId(int pid) {
+		List<ProcessInfo> processList = ProcessList.getProcessList();
+        
+        for( ProcessInfo process: processList ) {
+            if( process.getProcessId() == pid ) {
+				return process;
+			}
+		}
+		
+		return null;
+	} 
     
     /**
      * ProcessInfo
@@ -156,5 +178,47 @@ public class ProcessList {
         public String getProcessExeFile() {
             return _exefile;
         }
+		
+		/**
+		 * getHandle
+		 * @return 
+		 */
+		public HANDLE getHandle() {
+			Kernel32 kernel32 = (Kernel32) Native.loadLibrary(
+				Kernel32.class, 
+				W32APIOptions.UNICODE_OPTIONS
+				);
+			
+			return kernel32.OpenProcess(
+				Kernel32.PROCESS_QUERY_INFORMATION | Kernel32.GENERIC_READ, 
+				false, 
+				this._processid
+				);
+		}
+		
+		/**
+		 * getProcessOwner
+		 * @return 
+		 */
+		public String getProcessOwner() {
+			HANDLE hprocess = this.getHandle();
+			PointerByReference psid = new PointerByReference();
+			
+			if( hprocess != null ) {
+				if( MoreAdvApi32.INSTANCE.GetSecurityInfo(
+					hprocess, 
+					MoreAdvApi32.SE_KERNEL_OBJECT, 
+					OWNER_SECURITY_INFORMATION, 
+					psid, null, null, null, null) == 0 )
+				{
+					PSID tpid		= new PSID(psid.getValue());
+					String strsid	= Advapi32Util.convertSidToStringSid(tpid);
+					
+					return strsid;
+				}
+			}
+			
+			return null;
+		}
     }
 }

@@ -11,7 +11,10 @@ import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Advapi32;
 import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinReg.HKEY;
+import com.sun.jna.ptr.PointerByReference;
 
 /**
  *
@@ -19,6 +22,30 @@ import com.sun.jna.platform.win32.WinReg.HKEY;
  */
 public interface MoreAdvApi32 extends Advapi32 {
     
+	public static final int LOGON_WITH_PROFILE          = 0x00000001;
+    public static final int LOGON_NETCREDENTIALS_ONLY   = 0x00000002;
+
+
+    public static final int CREATE_NO_WINDOW            = 0x08000000;
+    public static final int CREATE_UNICODE_ENVIRONMENT  = 0x00000400;
+    public static final int CREATE_NEW_CONSOLE          = 0x00000010;
+    public static final int DETACHED_PROCESS            = 0x00000008;
+	
+	public static final int SE_UNKNOWN_OBJECT_TYPE		= 0x00000000;
+	public static final int SE_FILE_OBJECT				= 0x00000001;
+	public static final int SE_SERVICE					= 0x00000002;
+	public static final int SE_PRINTER					= 0x00000003;
+	public static final int SE_REGISTRY_KEY				= 0x00000004;
+	public static final int SE_LMSHARE					= 0x00000005;
+	public static final int SE_KERNEL_OBJECT			= 0x00000006;
+	public static final int SE_WINDOW_OBJECT			= 0x00000007;
+	public static final int SE_DS_OBJECT				= 0x00000008;
+	public static final int SE_DS_OBJECT_ALL			= 0x00000009;
+	public static final int SE_PROVIDER_DEFINED_OBJECT	= 0x00000010;
+	public static final int SE_WMIGUID_OBJECT			= 0x00000011;
+	public static final int SE_REGISTRY_WOW64_32KEY		= 0x00000012;
+	
+	
     MoreAdvApi32 INSTANCE =
         (MoreAdvApi32) Native.loadLibrary("AdvApi32", MoreAdvApi32.class);
     
@@ -45,16 +72,29 @@ public interface MoreAdvApi32 extends Advapi32 {
              WString lpCurrentDirectory,
              STARTUPINFO  lpStartupInfo,
              PROCESS_INFORMATION lpProcessInfo);
-            
-    public static final int LOGON_WITH_PROFILE          = 0x00000001;
-    public static final int LOGON_NETCREDENTIALS_ONLY   = 0x00000002;
-
-
-    int CREATE_NO_WINDOW            = 0x08000000;
-    int CREATE_UNICODE_ENVIRONMENT  = 0x00000400;
-    int CREATE_NEW_CONSOLE          = 0x00000010;
-    int DETACHED_PROCESS            = 0x00000008;
 	
 	
 	int RegRenameKey(HKEY hKey, String oldName, String newName);
+	
+	/**
+	 * GetSecurityInfo
+	 * @param handle
+	 * @param ObjectType
+	 * @param SecurityInfo
+	 * @param ppsidOwner
+	 * @param ppsidGroup
+	 * @param ppDacl
+	 * @param ppSacl
+	 * @param ppSecurityDescriptor
+	 * @return 
+	 */
+	int GetSecurityInfo(
+		HANDLE handle, 
+		int ObjectType, 
+		int SecurityInfo, 
+		PointerByReference ppsidOwner,
+		PointerByReference ppsidGroup,
+		PointerByReference ppDacl,
+		PointerByReference ppSacl,
+		PointerByReference ppSecurityDescriptor);
 }

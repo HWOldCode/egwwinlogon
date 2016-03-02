@@ -45,7 +45,7 @@ public class EgwWinLogonProtocol {
         }
         catch( Exception e ) {
             // none
-        }  
+        }
     }
     
     /**

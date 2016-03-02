@@ -7,7 +7,6 @@ package egwwinlogon.egroupware;
 
 import com.jegroupware.egroupware.Egroupware;
 import com.jegroupware.egroupware.EgroupwareBrowser;
-import edu.stanford.ejalbert.BrowserLauncher;
 import java.io.File;
 
 /**
@@ -57,17 +56,15 @@ public class EgroupwareELoginBrowser extends EgroupwareBrowser {
                     "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
                     };
                 
-                for( int i=0; i<_browsers.length; i++ ) {
-                    String browserApp = _browsers[i];
-                    
-                    File f = new File(browserApp);
-                    
-                    if( f.exists() ) {
-                        Process proc = Runtime.getRuntime().exec(
-                            "\"" + browserApp + "\" --app=" + url);
-                        return;
-                    }
-                }
+				for (String browserApp : _browsers) {
+					File f = new File(browserApp);
+					
+					if( f.exists() ) {
+						Process proc = Runtime.getRuntime().exec(
+								"\"" + browserApp + "\" --app=" + url);
+						return;
+					}
+				}
                 
                 EgroupwareBrowser.open(egw, menuaction, browser);
             }
