@@ -6,6 +6,7 @@
 package egwwinlogon.dokan.callback;
 
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.WinNT;
 import egwwinlogon.dokan.EgwWinFSVolume;
 import egwwinlogon.dokan.IEgwWinFSVolumeCallback;
 import egwwinlogon.dokan.lib.DokanFileInfo;
@@ -41,6 +42,10 @@ public class EgwWinFSUnlockFileCallback implements UnlockFileCallback, IEgwWinFS
 	 */
 	@Override
 	public int invoke(WString path, long byteOffset, long length, DokanFileInfo dokanFileInfo) {
-		return 0;
+		if( this._volume != null ) {
+			return this._volume.onUnlockFile(path, byteOffset, length, dokanFileInfo);
+		}
+		
+		return WinNT.ERROR_SUCCESS;
 	}
 }

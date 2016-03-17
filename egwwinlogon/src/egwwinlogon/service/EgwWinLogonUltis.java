@@ -11,7 +11,7 @@ import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.WinReg;
 import egwwinlogon.service.crypt.EgwWinLogonCryptAes;
 import egwwinlogon.updater.WinLogonUpdater;
-import egwwinlogon.winapi.MoreAdvApi32;
+import egwwinlogon.winapi.AdvApi32;
 import egwwinlogon.winapi.ProcessList;
 import egwwinlogon.winapi.ProcessList.ProcessInfo;
 import java.io.ByteArrayInputStream;
@@ -204,7 +204,7 @@ public class EgwWinLogonUltis {
 						profileList, 
 						sid);
 					
-					int treturn = MoreAdvApi32.INSTANCE.RegRenameKey(
+					int treturn = AdvApi32.INSTANCE.RegRenameKey(
 						WinReg.HKEY_LOCAL_MACHINE, 
 						profileList + "\\" + sid + ".bak",
 						profileList + "\\" + sid

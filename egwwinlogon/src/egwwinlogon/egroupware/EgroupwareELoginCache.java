@@ -34,7 +34,7 @@ import org.json.simple.parser.ParseException;
  * EgroupwareELogin
  * @author Stefan Werfling
  */
-public class EgroupwareELoginCache extends EgroupwareJson {
+public class EgroupwareELoginCache extends EgroupwareCacheList {
 
     /**
 	 * serialVersionUID
@@ -282,22 +282,20 @@ public class EgroupwareELoginCache extends EgroupwareJson {
     }
 
     /**
-	 * toSerializableString
-	 *
-	 * @param cache
+	 * _toSerializableString
 	 * @return
-	 * @throws IOException
 	 */
-	static public String toSerializableString(EgroupwareELoginCache cache) throws IOException {
+	@Override
+	protected String _toSerializableString() {
 		JSONObject serializable = new JSONObject();
         JSONArray jsonList = new JSONArray();
 
-        if( cache.countAccounts() == 0 ) {
+        if( this.countAccounts() == 0 ) {
             return null;
         }
 
-        for( int i=0; i<cache.countAccounts(); i++ ) {
-            LinkedHashMap account = cache.getAccount(i);
+        for( int i=0; i<this.countAccounts(); i++ ) {
+            LinkedHashMap account = this.getAccount(i);
             JSONArray jsonAccountDataList = new JSONArray();
 
             Set<String> keys = account.keySet();
@@ -312,53 +310,26 @@ public class EgroupwareELoginCache extends EgroupwareJson {
         }
 
         serializable.put("accounts", jsonList);
-        serializable.put("encryption_type", cache.getEncryptionType());
+        serializable.put("encryption_type", this.getEncryptionType());
 
         // save time for later (check max cache access)
         Timestamp stamp = new Timestamp(System.currentTimeMillis());
         serializable.put("save_time", stamp.getTime());
 
+		// todo to main class
+		serializable.put("classname", this.getClass().getName());
+		
         return serializable.toJSONString();
 	}
 
     /**
-	 * fromSerializableString
-	 *
-	 * @param serialize
-	 * @return
-	 * @throws IOException
-	 * @throws ClassNotFoundException
+	 * _fromSerializableMap
+	 * @param data
+	 * @return 
 	 */
-	static public EgroupwareELoginCache fromSerializableString(String serialize) throws IOException, ClassNotFoundException {
-		EgroupwareELoginCache cache = new EgroupwareELoginCache();
-
-        JSONParser parser = new JSONParser();
-        ContainerFactory containerFactory = new ContainerFactory(){
-                public List creatArrayContainer() {
-                    return new LinkedList();
-                }
-
-                public Map createObjectContainer() {
-                    return new LinkedHashMap();
-                }
-            };
-
-        Map data = null;
-
-        try {
-            data = (Map)parser.parse(serialize.trim(), containerFactory);
-        } catch( ParseException ex ) {
-            Logger.getLogger(
-                EgroupwareELoginCache.class.getName()).log(
-                    Level.SEVERE,
-                    null,
-                    ex);
-
-            return null;
-        }
-
+	@Override
+	protected boolean _fromSerializableMap(Map data) {
         LinkedList<LinkedHashMap> accounts = new LinkedList();
-
         LinkedList taccounts = (LinkedList) data.get("accounts");
 
         for( int i=0; i<taccounts.size(); i++ ) {
@@ -378,85 +349,9 @@ public class EgroupwareELoginCache extends EgroupwareJson {
             accounts.add(naccount);
         }
 
-        cache.setEncryptionType((String) data.get("encryption_type"));
-        cache.setAccounts(accounts);
+        this.setEncryptionType((String) data.get("encryption_type"));
+        this.setAccounts(accounts);
 
-        //System.out.println(data);
-
-		return cache;
+		return true;
 	}
-
-    /**
-     * loadByFile
-     *
-     * @param file
-     * @return
-     */
-    static public EgroupwareELoginCache loadByFile(String file) throws Exception {
-        try {
-            String content = new String(Files.readAllBytes(Paths.get(file)));
-            
-            content = EgwWinLogonUltis.getStrDecode(
-                content,
-                EgroupwarePGina.getDLLHash() + EgroupwarePGina.getSysFingerprint()
-                );
-            
-            //EgroupwarePGina.logInfo("loadByFile Cache: " + content);
-            
-            return EgroupwareELoginCache.fromSerializableString(content);
-        }
-        catch( InvalidKeyException exik ) {
-            throw new Exception(
-                "Wrong configuration, used base JavaCE, please contact your Administrator!");
-        }
-        catch( Exception ex ) {
-            EgroupwarePGina.logError(
-                "EgroupwareELoginCache.loadByFile:" + ex.getMessage() + 
-                " File: " + file
-                );
-            
-            java.util.logging.Logger.getLogger(
-                EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
-            
-            return null;
-        }
-    }
-
-    /**
-     * saveToFile
-     * @param cache
-     * @param file
-     * @return
-     */
-    static public Boolean saveToFile(EgroupwareELoginCache cache, String file) throws Exception {
-        try {
-            String content = EgroupwareELoginCache.toSerializableString(cache);
-            
-            content = EgwWinLogonUltis.getStrEncode(
-                content,
-                EgroupwarePGina.getDLLHash() + EgroupwarePGina.getSysFingerprint()
-                );
-            
-            Files.write(Paths.get(file), content.getBytes());
-        }
-        catch( InvalidKeyException exik ) {
-            throw new Exception(
-                "Wrong configuration, used base JavaCE, please contact your Administrator!");
-        }
-        catch( Exception ex ) {
-            EgroupwarePGina.logError(
-                "EgroupwareELoginCache.saveToFile:" + ex.getMessage() + 
-                " File: " + file
-                );
-            
-            java.util.logging.Logger.getLogger(
-                EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
-            
-            return false;
-        }
-
-        return true;
-    }
-
-    // https://www.tutorials.de/threads/linkedlist-speichern.186639/
 }

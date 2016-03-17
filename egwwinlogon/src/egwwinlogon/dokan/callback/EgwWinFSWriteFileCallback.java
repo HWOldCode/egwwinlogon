@@ -46,6 +46,10 @@ public class EgwWinFSWriteFileCallback implements WriteFileCallback, IEgwWinFSVo
 	 */
 	@Override
 	public int invoke(WString path, Pointer buffer, int numberOfBytesToWrite, IntByReference numberOfBytesWritten, long offset, DokanFileInfo dokanFileInfo) {
-		return -WinNT.ERROR_ACCESS_DENIED;
+		if( this._volume != null ) {
+			return this._volume.onWriteFile(path, buffer, numberOfBytesToWrite, numberOfBytesWritten, offset, dokanFileInfo);
+		}
+		
+		return WinNT.ERROR_SUCCESS;
 	}
 }

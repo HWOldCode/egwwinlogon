@@ -5,6 +5,7 @@
  */
 package egwwinlogon.dokan.callback;
 
+import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinNT;

@@ -7,6 +7,7 @@ package egwwinlogon.dokan.callback;
 
 import com.sun.jna.NativeLong;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import egwwinlogon.dokan.EgwWinFSVolume;
@@ -47,6 +48,10 @@ public class EgwWinFSSetFileSecurityCallback implements SetFileSecurityCallback,
 	 */
 	@Override
 	public int invoke(WString path, IntByReference pSecurityInformation, SecurityDescriptor securityDescriptor, NativeLong bufferLength, LongByReference lengthNeeded, DokanFileInfo dokanFileInfo) {
-		return 0;
+		if( this._volume != null ) {
+			return this._volume.onSetFileSecurity(path, pSecurityInformation, securityDescriptor, bufferLength, lengthNeeded, dokanFileInfo);
+		}
+		
+		return WinNT.ERROR_SUCCESS;
 	}
 }

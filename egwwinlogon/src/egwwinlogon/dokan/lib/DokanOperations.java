@@ -119,7 +119,7 @@ public class DokanOperations extends Structure {
         public static int SHARE_READ = 0x1;
         public static int SHARE_WRITE = 0x2;
 
-        int invoke(WString path, int desiredAccess, int shareMode, int creationDisposition, int flagsAndAttributes, DokanFileInfo dokanFileInfo);
+        int invoke(WString path, IntByReference securityContext, int desiredAccess, int fileAttributes, int shareAccess, int createDisposition, int createOptions, DokanFileInfo dokanFileInfo);
     }
 
     public interface OpenDirectoryCallback extends Callback {

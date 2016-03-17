@@ -52,12 +52,6 @@ public class EgwWinFSGetVolumeInformationCallback implements GetVolumeInformatio
 			return this._volume.onGetVolumeInformation(volumeNameBuffer, volumeNameSize, volumeSerialNumber, maximumComponentLength, fileSystemFlags, fileSystemNameBuffer, fileSystemNameSize, dokanFileInfo);
 		}
 		
-		volumeNameBuffer.setString(0, "EgwWinFs" + "\0", true);
-		volumeSerialNumber.setValue(0xBEAF);
-		maximumComponentLength.setValue(MAX_PATH);
-		fileSystemFlags.setValue(WinNT.FILE_UNICODE_ON_DISK | WinNT.FILE_CASE_PRESERVED_NAMES);
-		fileSystemNameBuffer.setString(0, "EgwWinFs" + "\0", true);
-		
 		return WinNT.ERROR_SUCCESS;
 	}
 }

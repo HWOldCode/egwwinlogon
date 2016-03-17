@@ -15,20 +15,20 @@ import com.sun.jna.WString;
 public class MprHelper {
     
     public static void mountA(String remotepath, String username, String password) {
-        NETRESOURCEA lpNetResource;
+        NETRESOURCEW lpNetResource;
         
         int dwFlags;
         int errorCode;
 
-        lpNetResource = new NETRESOURCEA();
-        lpNetResource.dwScope = 0;
-        lpNetResource.dwType = NETRESOURCE.RESOURCETYPE_DISK;
+        lpNetResource = new NETRESOURCEW();
+        lpNetResource.dwScope		= 0;
+        lpNetResource.dwType		= NETRESOURCE.RESOURCETYPE_DISK;
         lpNetResource.dwDisplayType = NETRESOURCE.RESOURCEDISPLAYTYPE_SHARE;
-        lpNetResource.dwUsage = NETRESOURCE.RESOURCEUSAGE_CONNECTABLE;
-        lpNetResource.lpLocalName = "G:";
-        lpNetResource.lpRemoteName = remotepath;
-        lpNetResource.lpComment = null;
-        lpNetResource.lpProvider = null;
+        lpNetResource.dwUsage		= NETRESOURCE.RESOURCEUSAGE_CONNECTABLE;
+        lpNetResource.lpLocalName	= new WString("G:");
+        lpNetResource.lpRemoteName	= new WString(remotepath);
+        lpNetResource.lpComment		= null;
+        lpNetResource.lpProvider	= null;
         
         String lpPassword = password;
         String lpUserName = username;
@@ -37,10 +37,10 @@ public class MprHelper {
         
         System.out.println("Mounting Windows Share [" + lpNetResource.lpRemoteName + "] [" + lpUserName + "] ...");
 
-        errorCode = Mpr.INSTANCE.WNetAddConnection2A(
+        errorCode = Mpr.INSTANCE.WNetAddConnection2W(
             lpNetResource, 
-            lpPassword, 
-            lpUserName, 
+            new WString(lpPassword), 
+            new WString(lpUserName), 
             dwFlags
             );
 

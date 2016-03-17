@@ -1,0 +1,31 @@
+{
+	"S-1-5-21-1062538719-3308691286-404400658-1001": {
+		"mounts": [
+			{
+				"type": "smb",
+				"name": "public",
+				"ip": "192.168.11.4",
+				"username": "admin",
+				"password": "1234"
+			},
+			{
+				"type": "smb",
+				"name": "win.logon",
+				"ip": "192.168.11.4",
+				"username": "admin",
+				"password": "1234"
+			}
+		]
+	},
+	"S-1-5-21-1318477050-3409206289-4093497550-1000": {
+		"mounts": [
+			{
+				"type": "smb",
+				"name": "test.test",
+				"ip": "192.168.10.5",
+				"username": "test.test",
+				"password": "Za3bCmJNz2FE"
+			}
+		]
+	}
+}

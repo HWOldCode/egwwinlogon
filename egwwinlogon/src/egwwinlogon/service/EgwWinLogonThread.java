@@ -6,7 +6,12 @@ import com.jegroupware.egroupware.events.EgroupwareEvent;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.events.EgroupwareEventRequest;
 import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.Advapi32Util.Account;
+import egwwinlogon.dokan.volume.multiresource.EgwWinFSMultiResourceSMBMount;
+import egwwinlogon.dokan.volume.multiresource.EgwWinFSMultiResourceWebDavMount;
 import egwwinlogon.egroupware.EgroupwareCommand;
+import egwwinlogon.egroupware.EgroupwareNetShares;
 import egwwinlogon.winapi.ProcessList;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,12 +77,12 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
     /**
      * egw instance
      */
-    protected Egroupware _egw   = null;
-    
+    protected Egroupware _egw = null;
+	
     /**
      * session id
      */
-    protected int _sessionId    = -1;
+    protected int _sessionId = -1;
     
     /**
      * session status
@@ -97,10 +102,10 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
     /**
      * EgwWinLogonThread
      * @param egw 
+	 * @param volume 
      */
     public EgwWinLogonThread(Egroupware egw) {
         this._egw = egw;
-        
         this._egw.addListener(this);
         
         this._runnable = true;
@@ -339,7 +344,34 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      * _changeSessionLogon
      */
     private void _changeSessionLogon() {
+		// ---------------------------------------------------------------------
+		
+		//this._setVolumeMounts();
+		
+        // ---------------------------------------------------------------------
+		
         if( this._sessionId != -1 ) {
+			try {
+				try {
+					this._egw.request(EgroupwareNetShares.getInstance());
+
+					EgroupwareNetShares.saveToFile(
+						EgroupwareNetShares.getInstance(), 
+						EgroupwarePGina.getAppDirCache() + "ns.cache"
+						);
+				}
+				catch( Exception e ) {
+					// offline
+					logger.error(e.getMessage());
+				}
+				
+				// all mount
+				EgroupwareNetShares.getInstance().mountAllBySession(this._sessionId);
+			}
+			catch( Exception e ) {
+				logger.error(e.getMessage());
+			}
+			
 			try {
 				EgroupwareCommand.instance.executeEvent(
 					this._sessionId, 
@@ -352,7 +384,8 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
 			}
         }
         
-        // ---------------------------------------------------------------------
+		// ---------------------------------------------------------------------
+		
         // call cmd by server
         if( this._egw.isLogin() ) {
             /*EgroupwareCommand egwcmd = new EgroupwareCommand(
@@ -373,6 +406,18 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      * _changeSessionLogoff
      */
     private void _changeSessionLogoff() {
+		// ---------------------------------------------------------------------
+		
+		//this._removeVolumeMounts();
+		try {
+			EgroupwareNetShares.getInstance().unmountAllBySession(this._sessionId);
+		}
+		catch( Exception e ) {
+			logger.error(e.getMessage());
+		}
+		
+        // ---------------------------------------------------------------------
+		
 		try {
 			EgroupwareCommand.instance.executeEvent(
 				this._sessionId, 
@@ -382,7 +427,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
 		}
 		catch( Exception e ) {
 			logger.error(e.getMessage());
-		}
+		}		
     }
 
     /**
@@ -421,6 +466,57 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
         }
     }
 
+	/**
+	 * _setVolumeMounts
+	 */
+	/*protected void _setVolumeMounts() {
+		logger.info("_setVolumeMounts start");
+		
+		if( this._volume != null ) {
+			logger.info("start volume: " + this._volume.getLabel());
+			
+			String username = EgroupwarePGina.getUsername(this._sessionId);
+			
+			logger.info("Username convert to sid: " + username + " sessionid: " + String.valueOf(this._sessionId));
+			
+			Account _account = Advapi32Util.getAccountByName(username);
+			
+			if( _account != null ) {
+				//String sid = Advapi32Util.convertSidToStringSid(new WinNT.PSID(_account.sid));
+				String sid = _account.sidString;
+				
+				logger.info("Check and Add Sid Owner: " + sid);
+				
+				if( !"".equals(sid) ) {
+					this._volume.addOwnerSid(sid);
+					
+					logger.info("Add Mounts");
+					
+					//TODO Mounts
+					this._volume.addMount(sid, new EgwWinFSMultiResourceSMBMount("public", "192.168.11.4", "admin", "1234"));
+					this._volume.addMount(sid, new EgwWinFSMultiResourceSMBMount("win.logon", "192.168.11.4", "admin", "1234"));
+					this._volume.addMount(sid, new EgwWinFSMultiResourceWebDavMount("home", "", "", ""));
+				}
+				else {
+					logger.error("Sid by Username is empty: " + username);
+				}
+			}
+			else {
+				logger.error("Account by Username is empty: " + username);
+			}
+		}
+		else {
+			logger.error("Volume for mount not found!");
+		}
+	}*/
+	
+	/**
+	 * _removeVolumeMounts
+	 */
+	/*protected void _removeVolumeMounts() {
+		
+	}*/
+	
     /**
      * authentificationSucceeded
      * @param e 

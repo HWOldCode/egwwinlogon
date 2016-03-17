@@ -237,13 +237,37 @@
                     $ecmd->setCommand($cmd);
                     $ecmd->setSystem($system);
 					$ecmd->setName("shareuser");
-					
+
                     return $ecmd;
                 }
             }
 
             return null;
         }
+
+		/**
+		 * toArray
+		 * @return array
+		 */
+		public function toArray($system=null) {
+			$array = array();
+
+			if( $system == null ) {
+                $system = elogin_bo::SYSTEM_WIN;
+            }
+
+			$us = $this->getUsershare();
+
+            $array['username']	= $us->getUsername();
+			$array['password']	= $us->getSharePassword();
+			$array['mountname'] = $this->getMountname();
+			$array['server']	= $us->getProvider(true)->getMountAddress();
+			$array['sharename']	= $this->getShareSource();
+			$array['accountid']	= $us->getUserId();
+			$array['system']	= $system;
+
+			return $array;
+		}
 
         /**
          * save

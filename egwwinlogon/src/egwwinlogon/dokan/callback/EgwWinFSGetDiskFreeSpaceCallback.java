@@ -46,10 +46,6 @@ public class EgwWinFSGetDiskFreeSpaceCallback implements GetDiskFreeSpaceCallbac
 			return this._volume.onGetDiskFreeSpace(freeBytesAvailable, totalNumbersOfBytes, totalNumberOfFreeBytes, dokanFileInfo);
 		}
 		
-		freeBytesAvailable.setValue(100000);
-		totalNumbersOfBytes.setValue(100000);
-		totalNumberOfFreeBytes.setValue(100000);
-		
 		return WinNT.ERROR_SUCCESS;
 	}
 }

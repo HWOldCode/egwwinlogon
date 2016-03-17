@@ -39,4 +39,17 @@ public interface Kernel32 extends StdCallLibrary, com.sun.jna.platform.win32.Ker
     boolean QueryFullProcessImageName(
             HANDLE hProcess, DWORD dwFlags,
             char[] lpExeName, IntByReference lpdwSize);
+	
+	/**
+	 * ProcessIdToSessionId
+	 * BOOL ProcessIdToSessionId(
+	 *	_In_  DWORD dwProcessId,
+	 *	_Out_ DWORD *pSessionId
+	 * );
+	 * 
+	 * @param dwProcessId
+	 * @param pSessionId
+	 * @return 
+	 */
+	boolean ProcessIdToSessionId(DWORD dwProcessId, DWORDByReference pSessionId);
 }

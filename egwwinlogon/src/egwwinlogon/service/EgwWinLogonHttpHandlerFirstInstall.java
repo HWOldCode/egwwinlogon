@@ -73,7 +73,7 @@ public class EgwWinLogonHttpHandlerFirstInstall extends LogonHttpServerHandler {
             String response = "";
             
             if( "/firstinstall/".equals(path) ) {
-                _eLoginCache = EgroupwareELoginCache.loadByFile(
+                _eLoginCache = (EgroupwareELoginCache) EgroupwareELoginCache.loadByFile(
                     EgroupwarePGina.getAppDirCache() + "/elogin.cache");
 
                 if( _eLoginCache == null ) {

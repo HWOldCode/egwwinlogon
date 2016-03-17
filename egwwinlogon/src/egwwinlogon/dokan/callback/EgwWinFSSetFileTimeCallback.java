@@ -7,6 +7,7 @@ package egwwinlogon.dokan.callback;
 
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinBase;
+import com.sun.jna.platform.win32.WinNT;
 import egwwinlogon.dokan.EgwWinFSVolume;
 import egwwinlogon.dokan.IEgwWinFSVolumeCallback;
 import egwwinlogon.dokan.lib.DokanFileInfo;
@@ -43,6 +44,10 @@ public class EgwWinFSSetFileTimeCallback implements SetFileTimeCallback, IEgwWin
 	 */
 	@Override
 	public int invoke(WString path, WinBase.FILETIME creationTime, WinBase.FILETIME lastAccessTime, WinBase.FILETIME lastWriteTime, DokanFileInfo dokanFileInfo) {
-		return 0;
+		if( this._volume != null ) {
+			return this._volume.onSetFileTime(path, creationTime, lastAccessTime, lastWriteTime, dokanFileInfo);
+		}
+		
+		return WinNT.ERROR_SUCCESS;
 	}
 }

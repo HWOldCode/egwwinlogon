@@ -35,7 +35,7 @@ import org.json.simple.parser.ParseException;
  * 
  * @author Stefan Werfling
  */
-public class EgroupwareCommand extends EgroupwareJson {
+public class EgroupwareCommand extends EgroupwareCacheList {
 
     /**
      * logger
@@ -94,7 +94,7 @@ public class EgroupwareCommand extends EgroupwareJson {
         Map<String, String> data = new HashMap<>();
 
         data.put("json_data", "{\"request\":{\"parameters\":[" +
-            "{\"uid\": \"" + EgroupwarePGina.getSysFingerprint() + "\"}" +
+            "{\"uid\": \"" + EgroupwarePGina.getSysFingerprint() + "\", \"netdrivedisable\": \"1\"}" +
             "]}}");
 
         return data;
@@ -521,22 +521,20 @@ public class EgroupwareCommand extends EgroupwareJson {
     }
     
     /**
-	 * toSerializableString
-	 *
-	 * @param commands
+	 * _toSerializableString
 	 * @return
-	 * @throws IOException
 	 */
-	static public String toSerializableString(EgroupwareCommand commands) throws IOException {
+	@Override
+	protected String _toSerializableString() {
         JSONObject serializable = new JSONObject();
         JSONArray jsonList = new JSONArray();
         
-        if( commands.getCmdCount() == 0 ) {
+        if( this.getCmdCount() == 0 ) {
             return null;
         }
         
-        for( int i=0; i<commands.getCmdCount(); i++ ) {
-            LinkedHashMap cmdData = commands.getCmd(i);
+        for( int i=0; i<this.getCmdCount(); i++ ) {
+            LinkedHashMap cmdData = this.getCmd(i);
             
             if( cmdData != null ) {
                 JSONArray jsonCmdDataList = new JSONArray();
@@ -557,47 +555,20 @@ public class EgroupwareCommand extends EgroupwareJson {
         Timestamp stamp = new Timestamp(System.currentTimeMillis());
         serializable.put("save_time", stamp.getTime());
         
+		// todo to main class
+		serializable.put("classname", this.getClass().getName());
+		
         return serializable.toJSONString();
     }
     
     /**
-	 * fromSerializableString
-	 *
-	 * @param serialize
-	 * @return
-	 * @throws IOException
-	 * @throws ClassNotFoundException
+	 * _fromSerializableMap
+	 * @param data
+	 * @return 
 	 */
-	static public EgroupwareCommand fromSerializableString(String serialize) throws IOException, ClassNotFoundException {
-        EgroupwareCommand commands = new EgroupwareCommand();
-        
-        JSONParser parser = new JSONParser();
-        ContainerFactory containerFactory = new ContainerFactory(){
-                public List creatArrayContainer() {
-                    return new LinkedList();
-                }
-
-                public Map createObjectContainer() {
-                    return new LinkedHashMap();
-                }
-            };
-
-        Map data = null;
-
-        try {
-            data = (Map)parser.parse(serialize.trim(), containerFactory);
-        } catch( ParseException ex ) {
-            java.util.logging.Logger.getLogger(
-                EgroupwareCommand.class.getName()).log(
-                    Level.SEVERE,
-                    null,
-                    ex);
-
-            return null;
-        }
-        
+	@Override
+	protected boolean _fromSerializableMap(Map data) {
         LinkedList<LinkedHashMap> mcommands = new LinkedList();
-        
         LinkedList tcommands = (LinkedList) data.get("cmds");
         
         for( int i=0; i<tcommands.size(); i++ ) {
@@ -617,80 +588,8 @@ public class EgroupwareCommand extends EgroupwareJson {
             mcommands.add(ncmd);
         }
         
-        commands.setCmds(mcommands);
+        this.setCmds(mcommands);
         
-        return commands;
-    }
-    
-    /**
-     * loadByFile
-     *
-     * @param file
-     * @return
-     */
-    static public EgroupwareCommand loadByFile(String file) throws Exception {
-        try {
-            String content = new String(Files.readAllBytes(Paths.get(file)));
-            
-            content = EgwWinLogonUltis.getStrDecode(
-                content,
-                EgroupwarePGina.getDLLHash() + EgroupwarePGina.getSysFingerprint()
-                );
-            
-            //EgroupwarePGina.logInfo("loadByFile Cache: " + content);
-            
-            return EgroupwareCommand.fromSerializableString(content);
-        }
-        catch( InvalidKeyException exik ) {
-            throw new Exception(
-                "Wrong configuration, used base JavaCE, please contact your Administrator!");
-        }
-        catch( Exception ex ) {
-            EgroupwarePGina.logError(
-                "EgroupwareCommand.loadByFile:" + ex.getMessage() + 
-                " File: " + file
-                );
-            
-            java.util.logging.Logger.getLogger(
-                EgroupwareCommand.class.getName()).log(Level.SEVERE, null, ex);
-            
-            return null;
-        }
-    }
-    
-    /**
-     * saveToFile
-     * @param commands
-     * @param file
-     * @return
-     */
-    static public Boolean saveToFile(EgroupwareCommand commands, String file) throws Exception {
-        try {
-            String content = EgroupwareCommand.toSerializableString(commands);
-            
-            content = EgwWinLogonUltis.getStrEncode(
-                content,
-                EgroupwarePGina.getDLLHash() + EgroupwarePGina.getSysFingerprint()
-                );
-            
-            Files.write(Paths.get(file), content.getBytes());
-        }
-        catch( InvalidKeyException exik ) {
-            throw new Exception(
-                "Wrong configuration, used base JavaCE, please contact your Administrator!");
-        }
-        catch( Exception ex ) {
-            EgroupwarePGina.logError(
-                "EgroupwareCommand.saveToFile:" + ex.getMessage() + 
-                " File: " + file
-                );
-            
-            java.util.logging.Logger.getLogger(
-                EgroupwareCommand.class.getName()).log(Level.SEVERE, null, ex);
-            
-            return false;
-        }
-
         return true;
     }
 }

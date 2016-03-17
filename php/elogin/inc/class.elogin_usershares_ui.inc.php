@@ -250,4 +250,36 @@
                 }
             }
         }
+
+		/**
+         * ajax_ns_list
+         * @param array $content
+         */
+        public function ajax_ns_list($content=array()) {
+			if( isset($content['uid']) ) {
+                $machine = new elogin_machine_bo($content['uid']);
+
+				 if( $machine->getIsInDb() ) {
+                    $usersahres = $machine->getCurrentUserShares();
+
+					$list = array();
+
+					foreach( $usersahres as $usershare ) {
+						$mounts = array();
+
+						foreach( $usershare->getUserSharesMounts() as $amount ) {
+							$mounts[] = $amount->toArray();
+						}
+
+						$list[$usershare->getUsername()] = $mounts;
+					}
+
+					return egw_json_response::get()->data(array(
+                        'status' => 'ok',
+                        'ns' => $list));
+				 }
+			}
+
+			return egw_json_response::get()->data(array('status' => 'error'));
+		}
     }

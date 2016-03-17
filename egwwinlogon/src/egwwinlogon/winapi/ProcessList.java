@@ -205,9 +205,9 @@ public class ProcessList {
 			PointerByReference psid = new PointerByReference();
 			
 			if( hprocess != null ) {
-				if( MoreAdvApi32.INSTANCE.GetSecurityInfo(
+				if( AdvApi32.INSTANCE.GetSecurityInfo(
 					hprocess, 
-					MoreAdvApi32.SE_KERNEL_OBJECT, 
+					AdvApi32.SE_KERNEL_OBJECT, 
 					OWNER_SECURITY_INFORMATION, 
 					psid, null, null, null, null) == 0 )
 				{

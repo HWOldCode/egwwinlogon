@@ -7,9 +7,11 @@ package egwwinlogon.dokan.callback;
 
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.ptr.IntByReference;
 import egwwinlogon.dokan.EgwWinFSVolume;
 import egwwinlogon.dokan.IEgwWinFSVolumeCallback;
 import egwwinlogon.dokan.lib.DokanFileInfo;
+import egwwinlogon.dokan.lib.DokanIOSecurityContext;
 import egwwinlogon.dokan.lib.DokanOperations.CreateFileCallback;
 
 /**
@@ -35,17 +37,19 @@ public class EgwWinFSCreateFileCallback implements CreateFileCallback, IEgwWinFS
 	/**
 	 * invoke
 	 * @param path
+	 * @param securityContext
 	 * @param desiredAccess
-	 * @param shareMode
-	 * @param creationDisposition
-	 * @param flagsAndAttributes
+	 * @param fileAttributes
+	 * @param shareAccess
+	 * @param createDisposition
+	 * @param createOptions
 	 * @param dokanFileInfo
 	 * @return 
 	 */
 	@Override
-	public int invoke(WString path, int desiredAccess, int shareMode, int creationDisposition, int flagsAndAttributes, DokanFileInfo dokanFileInfo) {
+	public int invoke(WString path, IntByReference securityContext, int desiredAccess, int fileAttributes, int shareAccess, int createDisposition, int createOptions, DokanFileInfo dokanFileInfo) {
 		if( this._volume != null ) {
-			return this._volume.onCreateFile(path, desiredAccess, shareMode, creationDisposition, flagsAndAttributes, dokanFileInfo);
+			return this._volume.onCreateFile(path, securityContext, desiredAccess, fileAttributes, shareAccess, createDisposition, createOptions, dokanFileInfo);
 		}
 		
 		return WinNT.ERROR_SUCCESS;

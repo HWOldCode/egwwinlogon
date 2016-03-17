@@ -5,7 +5,12 @@
  */
 package egwwinlogon.winapi.mpr;
 
+/**
+ * NETRESOURCE
+ * @author Stefan Werfling
+ */
 public class NETRESOURCE {
+	
     public static final int RESOURCE_CONNECTED  = 0x01;
     public static final int RESOURCE_GLOBALNET  = 0x02;
     public static final int RESOURCE_REMEMBERED = 0x03;

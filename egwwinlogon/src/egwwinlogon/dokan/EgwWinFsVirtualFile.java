@@ -5,12 +5,15 @@
  */
 package egwwinlogon.dokan;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinBase;
 import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.ptr.IntByReference;
 import egwwinlogon.dokan.lib.win.ByHandleFileInformation;
 import egwwinlogon.dokan.lib.win.Win32FindData;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,14 +31,15 @@ public class EgwWinFsVirtualFile {
             WinNT.FILE_ATTRIBUTE_OFFLINE | WinNT.FILE_ATTRIBUTE_READONLY |
             WinNT.FILE_ATTRIBUTE_SYSTEM | WinNT.FILE_ATTRIBUTE_TEMPORARY;
 	
-	private String _name;
-    private String _alternativeName;
-    private Date _creationTime;
-    private Date _lastAccessTime;
-    private Date _lastWriteTime;
-    private int _flagsAndAttributes;
+	protected String _name				= null;
+    protected String _alternativeName		= null;
+    protected Date _creationTime			= null;
+    protected Date _lastAccessTime		= null;
+    protected Date _lastWriteTime			= null;
+    protected int _flagsAndAttributes		= 0;
+	protected EgwWinFsVirtualFile _parent = null;
 	
-	private String _content;
+	private EgwWinFsVirtualFileMemoryStream _content = null;
     private Map<String, EgwWinFsVirtualFile> _files;
 	
 	/**
@@ -54,12 +58,12 @@ public class EgwWinFsVirtualFile {
         if( this.isDirectory() ) {
             this._files = new HashMap<>();
         } else {
-            this._content = "";
+            this._content = new EgwWinFsVirtualFileMemoryStream();
         }
     }
 	
 	/**
-	 * 
+	 * getName
 	 * @return 
 	 */
 	public String getName() {
@@ -67,7 +71,7 @@ public class EgwWinFsVirtualFile {
     }
 
 	/**
-	 * 
+	 * getSize
 	 * @return 
 	 */
     public long getSize() {
@@ -78,44 +82,83 @@ public class EgwWinFsVirtualFile {
                 sum += file.getSize();
             }
             return sum;
-        } else {
-            return this._content.length();
+        } 
+		else {
+            return this._content.getSize();
         }
     }
 
 	/**
-	 * 
+	 * setContent
+	 * @param content 
+	 */
+	public void setContent(String content) {
+		this._content.setContent(content);
+	}
+	
+	/**
+	 * getLastWriteTime
 	 * @return 
 	 */
     public Date getLastWriteTime() {
         return this._lastWriteTime;
     }
 
+	/**
+	 * getLastAccessTime
+	 * @return 
+	 */
     public Date getLastAccessTime() {
         return this._lastAccessTime;
     }
 
+	/**
+	 * getCreationTime
+	 * @return 
+	 */
     public Date getCreationTime() {
         return this._creationTime;
     }
 
+	/**
+	 * getFlagsAndAttributes
+	 * @return 
+	 */
     public int getFlagsAndAttributes() {
         return this._flagsAndAttributes;
     }
 	
+	/**
+	 * isReadOnly
+	 * @return 
+	 */
 	public boolean isReadOnly() {
         return EgwWinFsVirtualFile._in(this._flagsAndAttributes, WinNT.FILE_ATTRIBUTE_READONLY);
     }
 
+	/**
+	 * isDirectory
+	 * @return 
+	 */
     public boolean isDirectory() {
         return EgwWinFsVirtualFile._in(this._flagsAndAttributes, WinNT.FILE_ATTRIBUTE_DIRECTORY);
     }
 
+	/**
+	 * isDeleteOnClose
+	 * @return 
+	 */
     public boolean isDeleteOnClose() {
         return EgwWinFsVirtualFile._in(this._flagsAndAttributes, WinNT.FILE_FLAG_DELETE_ON_CLOSE);
     }
 	
-	static private boolean _in(long var, long flag) {
+	/**
+	 * _in
+	 * @param var
+	 * @param flag
+	 * @return 
+	 */
+	static protected boolean _in(long var, long flag) {
         return (var & flag) != 0;
     }
 
@@ -142,8 +185,11 @@ public class EgwWinFsVirtualFile {
         result.creationTime		= new WinBase.FILETIME(this._creationTime);
         result.lastAccess		= new WinBase.FILETIME(this._lastAccessTime);
         result.lastWrite		= new WinBase.FILETIME(this._lastWriteTime);
-        result.sizeHigh			= (int) (this.getSize() >>> 32);
-        result.sizeLow			= (int) (this.getSize());
+		
+		if( !this.isDirectory() ) {
+			result.sizeHigh			= (int) (this.getSize() >>> 32);
+			result.sizeLow			= (int) (this.getSize());
+		}
 
         return result;
     }
@@ -152,21 +198,128 @@ public class EgwWinFsVirtualFile {
 	 * getFiles
 	 * @return 
 	 */
-	public List<EgwWinFsVirtualFile> getFiles() {
-        if (!isDirectory()) {
-            return Collections.emptyList();
-        }
+	public List<EgwWinFsVirtualFile> getFiles(String path) {
+		return this.getFiles(this._parsePath(path));
+	}
+	
+	/**
+	 * getFiles
+	 * @return 
+	 */
+	public List<EgwWinFsVirtualFile> getFiles(String[] path) {
+		if( path.length > 0 ) {
+			if( this._files.containsKey(path[0]) ) {
+				EgwWinFsVirtualFile cfile = this._files.get(path[0]);
+				
+				if( cfile.isDirectory() ) {
+					return cfile.getFiles(Arrays.copyOfRange(path, 1, path.length));
+				}
+			}
+		}
+		else {
+			if( !this.isDirectory() ) {
+				return Collections.emptyList();
+			}
 
-        return new ArrayList<>(this._files.values());
+			return new ArrayList<>(this._files.values());
+		}
+		
+		return Collections.emptyList();
     }
 	
+	/**
+	 * getFile
+	 * @param path
+	 * @return 
+	 */
+	public EgwWinFsVirtualFile getFile(String path) {
+		return this.getFile(this._parsePath(path));
+	}
+	
+	/**
+	 * getFile
+	 * @param path
+	 * @return 
+	 */
+	public EgwWinFsVirtualFile getFile(String[] path) {
+		if( path.length == 0 ) {
+			return null;
+		}
+		
+		if( this._files.containsKey(path[0]) ) {
+			EgwWinFsVirtualFile cfile = this._files.get(path[0]);
+			
+			if( cfile != null ) {
+				if( path.length == 1 ) {
+					return cfile;
+				}
+				else {
+					if( cfile.isDirectory() ) {
+						return cfile.getFile(Arrays.copyOfRange(path, 1, path.length));
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * putFile
+	 * @param file 
+	 */
 	public void putFile(EgwWinFsVirtualFile file) {
-        //file.setParent(this);
+        file.setParent(this);
         this._files.put(file.getName(), file);
     }
 	
 	/**
+	 * createFile
+	 * @param path
+	 * @param flagsAndAttributes
+	 * @return 
+	 */
+	public EgwWinFsVirtualFile createFile(String path, int flagsAndAttributes) {
+		return this.createFile(this._parsePath(path), flagsAndAttributes);
+	}
+	
+	/**
+	 * createFile
 	 * 
+	 * @param path
+	 * @param flagsAndAttributes
+	 * @return 
+	 */
+	public EgwWinFsVirtualFile createFile(String[] path, int flagsAndAttributes) {
+		if( path.length == 0 ) {
+			return this;
+		}
+		
+		if( path.length == 1 ) {
+			EgwWinFsVirtualFile nfile = new EgwWinFsVirtualFile(path[0], flagsAndAttributes);
+			
+			this.putFile(nfile);
+			
+			return nfile;
+		}
+		else {
+			if( this._files.containsKey(path[0]) ) {
+				EgwWinFsVirtualFile cfile = this._files.get(path[0]);
+				
+				if( cfile != null ) {
+					return cfile.createFile(
+						Arrays.copyOfRange(path, 1, path.length), 
+						flagsAndAttributes
+						);
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * fillFileInfo
 	 * @param fileInfo
 	 * @return 
 	 */
@@ -183,13 +336,142 @@ public class EgwWinFsVirtualFile {
         return true;
     }
 	
+	/**
+	 * hashCode
+	 * @return 
+	 */
 	@Override
     public int hashCode() {
         int result = this._name != null ? this._name.hashCode() : 0;
 
         result = 31 * result + (this._alternativeName != null ? this._alternativeName.hashCode() : 0);
-        result = 31 * result + (this.isDirectory() ? 1231 : ((int) this._content.length() + (int) (this._content.length() >>> 32)));
+        result = 31 * result + (this.isDirectory() ? 1231 : ((int) this._content.getSize()+ (int) (this._content.getSize() >>> 32)));
 
         return result;
+    }
+	
+	/**
+	 * _parsePath
+	 * @param path
+	 * @return 
+	 */
+	protected String[] _parsePath(String path) {
+        String trailingsBSlashRemoved = path.toString().replaceAll("^\\\\", "");
+		
+        if (trailingsBSlashRemoved.length() == 0) {
+            return new String[0];
+        }
+		
+        return trailingsBSlashRemoved.split("\\\\+");
+    }
+	
+	/**
+	 * open
+	 * @return 
+	 */
+	public boolean open() {
+		return true;
+	}
+	
+	/**
+	 * close
+	 * @return 
+	 */
+	public boolean close() {
+		return true;
+	}
+	
+	/**
+	 * read
+	 * @param readBuf
+	 * @param offset
+	 * @param bufferLen
+	 * @param bytesRead
+	 * @return 
+	 */
+	public boolean read(Pointer readBuf, long offset, int bufferLen, IntByReference bytesRead) {
+        this.setLastAccessTime(new Date());
+
+        byte[] buf = new byte[bufferLen];
+        int read = this._content.read(buf, offset, bufferLen);
+
+        if( read == -1 ) {
+            bytesRead.setValue(0);
+            return false;
+        } 
+		else {
+            bytesRead.setValue(read);
+            readBuf.write(0, buf, 0, read);
+			
+            return true;
+        }
+    }
+	
+	/**
+	 * write
+	 * @param writeBuf
+	 * @param offset
+	 * @param bytesToWrite
+	 * @param bytesWritten
+	 * @return 
+	 */
+    public boolean write(Pointer writeBuf, long offset, int bytesToWrite, IntByReference bytesWritten) {
+        this.setLastAccessTime(new Date());
+        this.setLastWriteTime(new Date());
+
+        byte[] buf = new byte[bytesToWrite];
+        writeBuf.read(0, buf, 0, bytesToWrite);
+        int written = this._content.write(buf, offset, bytesToWrite);
+        bytesWritten.setValue(written);
+        return true;
+    }
+
+	/**
+	 * setLastAccessTime
+	 * @param lastAccessTime 
+	 */
+	protected void setLastAccessTime(Date lastAccessTime) {
+		this._lastAccessTime = lastAccessTime;
+	}
+
+	/**
+	 * setLastWriteTime
+	 * @param date 
+	 */
+	private void setLastWriteTime(Date lastWriteTime) {
+		this._lastWriteTime = lastWriteTime;
+	}
+
+	/**
+	 * setParent
+	 * @param parent 
+	 */
+	protected void setParent(EgwWinFsVirtualFile parent) {
+		this._parent = parent;
+	}
+	
+	/**
+	 * getParent
+	 * @return 
+	 */
+	public EgwWinFsVirtualFile getParent() {
+		return this._parent;
+	}
+	
+	/**
+	 * _deleteChild
+	 * @param virtualFile
+	 * @return 
+	 */
+	protected EgwWinFsVirtualFile _deleteChild(EgwWinFsVirtualFile virtualFile) {
+        return this._files.remove(virtualFile.getName());
+    }
+	
+	/**
+	 * delete
+	 * @return 
+	 */
+	public boolean delete() {
+		return this._parent._deleteChild(this) != null;
     }
 }

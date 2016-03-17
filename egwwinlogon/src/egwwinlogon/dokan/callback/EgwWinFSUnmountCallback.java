@@ -5,6 +5,7 @@
  */
 package egwwinlogon.dokan.callback;
 
+import com.sun.jna.platform.win32.WinNT;
 import egwwinlogon.dokan.EgwWinFSVolume;
 import egwwinlogon.dokan.IEgwWinFSVolumeCallback;
 import egwwinlogon.dokan.lib.DokanFileInfo;
@@ -37,6 +38,10 @@ public class EgwWinFSUnmountCallback implements UnmountCallback, IEgwWinFSVolume
 	 */
 	@Override
 	public int invoke(DokanFileInfo dokanFileInfo) {
-		return 0;
+		if( this._volume != null ) {
+			return this._volume.onUnmount(dokanFileInfo);
+		}
+		
+		return WinNT.ERROR_SUCCESS;
 	}
 }

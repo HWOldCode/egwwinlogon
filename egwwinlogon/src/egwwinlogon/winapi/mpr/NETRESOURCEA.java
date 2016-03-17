@@ -7,47 +7,55 @@ package egwwinlogon.winapi.mpr;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import java.util.Arrays;
 
 /**
- * http://msdn.microsoft.com/en-us/library/windows/desktop/aa385353(v=vs.85).aspx
+ * NETRESOURCEA
+ * @see http://msdn.microsoft.com/en-us/library/windows/desktop/aa385353(v=vs.85).aspx
+ * @author Stefan Werfling
  */
 public class NETRESOURCEA extends Structure
 {
-  public static final java.util.List<String> fieldOrder = java.util.Arrays.asList(new String[]
-  {
-    "dwScope",
-    "dwType",
-    "dwDisplayType",
-    "dwUsage",
-    "lpLocalName",
-    "lpRemoteName",
-    "lpComment",
-    "lpProvider"
-  });
+	public int dwScope;
+	public int dwType;
+	public int dwDisplayType;
+	public int dwUsage;
+	public String lpLocalName;
+	public String lpRemoteName;
+	public String lpComment;
+	public String lpProvider;
 
-  public int dwScope;
-  public int dwType;
-  public int dwDisplayType;
-  public int dwUsage;
-  public String lpLocalName;
-  public String lpRemoteName;
-  public String lpComment;
-  public String lpProvider;
+	/**
+	 * getFieldOrder
+	 * @return 
+	 */
+	@Override
+	protected java.util.List getFieldOrder() {
+		return Arrays.asList(new String[] {
+			"dwScope",
+			"dwType",
+			"dwDisplayType",
+			"dwUsage",
+			"lpLocalName",
+			"lpRemoteName",
+			"lpComment",
+			"lpProvider"
+		});
+	}
 
-  @Override
-  protected java.util.List getFieldOrder()
-  {
-    return fieldOrder;
-  }
+	/**
+	 * NETRESOURCEA
+	 * @param mem 
+	 */
+	public NETRESOURCEA(Pointer mem) {
+		super(mem);
+		read();
+	}
 
-  public NETRESOURCEA(Pointer mem)
-  {
-      super(mem);
-      read();
-  }
-
-  public NETRESOURCEA()
-  {
-      super();
-  }
+	/**
+	 * NETRESOURCEA
+	 */
+	public NETRESOURCEA() {
+		super();
+	}
 }

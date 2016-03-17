@@ -17,6 +17,10 @@ import java.util.logging.Logger;
  */
 public class PlatformInfo {
 
+	/**
+	 * getInfoList
+	 * @return 
+	 */
     static public Map<String, String> getInfoList() {
         Map<String, String> list = new HashMap<String, String>();
 

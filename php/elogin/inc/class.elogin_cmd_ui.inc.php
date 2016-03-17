@@ -38,13 +38,27 @@
                     $usersahres = $machine->getCurrentUserShares();
                     $cmds = $machine->getCmds();
 
-                    foreach( $usersahres as $usersahre ) {
-                        $tcmds = $usersahre->getCmds();
+					// ---------------------------------------------------------
 
-                        foreach( $tcmds as $tcmd ) {
-                            $cmds[] = $tcmd;
-                        }
-                    }
+					$usd = false;
+
+					if( isset($content['netdrivedisable']) &&
+						($content['netdrivedisable'] == '1') )
+					{
+						$usd = true;
+					}
+
+					if( !$usd ) {
+						foreach( $usersahres as $usersahre ) {
+							$tcmds = $usersahre->getCmds();
+
+							foreach( $tcmds as $tcmd ) {
+								$cmds[] = $tcmd;
+							}
+						}
+					}
+
+					// ---------------------------------------------------------
 
                     $list = array();
 
@@ -139,7 +153,7 @@
 				$content['script_type']		= $cmd->getScriptType();
 				$content['schedulertime']	= $cmd->getSchedulerTime();
 				$content['mountpointcheck']	= $cmd->getMountPointCheck();
-				
+
 				if( $cmd->getOption('trayer_show_contextmenu') == '1' ) {
 					$content['options_trayer_show_contextmenu'] = true;
 				}

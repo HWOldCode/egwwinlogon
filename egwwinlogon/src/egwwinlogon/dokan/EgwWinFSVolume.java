@@ -8,6 +8,7 @@ package egwwinlogon.dokan;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.WinBase;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
@@ -29,40 +30,6 @@ abstract public class EgwWinFSVolume {
 	 * @return 
 	 */
 	public int onCleanup(WString path, DokanFileInfo dokanFileInfo) {
-		return -WinNT.ERROR_FILE_NOT_FOUND;
-	}
-	
-	/**
-	 * onOpenDirectory
-	 * @param path
-	 * @param dokanFileInfo
-	 * @return 
-	 */
-	public int onOpenDirectory(WString path, DokanFileInfo dokanFileInfo) {
-		return -WinNT.ERROR_FILE_NOT_FOUND;
-	}
-
-	/**
-	 * onCreateDirectory
-	 * @param path
-	 * @param dokanFileInfo
-	 * @return 
-	 */
-	public int onCreateDirectory(WString path, DokanFileInfo dokanFileInfo) {
-		return -WinNT.ERROR_FILE_NOT_FOUND;
-	}
-
-	/**
-	 * onCreateFile
-	 * @param path
-	 * @param desiredAccess
-	 * @param shareMode
-	 * @param creationDisposition
-	 * @param flagsAndAttributes
-	 * @param dokanFileInfo
-	 * @return 
-	 */
-	public int onCreateFile(WString path, int desiredAccess, int shareMode, int creationDisposition, int flagsAndAttributes, DokanFileInfo dokanFileInfo) {
 		return WinNT.ERROR_SUCCESS;
 	}
 
@@ -73,7 +40,7 @@ abstract public class EgwWinFSVolume {
 	 * @return 
 	 */
 	public int onCloseFile(WString path, DokanFileInfo dokanFileInfo) {
-		return -WinNT.ERROR_ACCESS_DENIED;
+		return WinNT.ERROR_SUCCESS;
 	}
 
 	/**
@@ -109,13 +76,13 @@ abstract public class EgwWinFSVolume {
 
 	/**
 	 * onFindFilesWithPattern
-	 * @param fileName
+	 * @param path
 	 * @param searchPattern
 	 * @param fillFindDataCallback
 	 * @param dokanFileInfo
 	 * @return 
 	 */
-	public int onFindFilesWithPattern(WString fileName, WString searchPattern, DokanLibrary.FillFindDataCallback fillFindDataCallback, DokanFileInfo dokanFileInfo) {
+	public int onFindFilesWithPattern(WString path, WString searchPattern, DokanLibrary.FillFindDataCallback fillFindDataCallback, DokanFileInfo dokanFileInfo) {
 		return 0;
 	}
 
@@ -123,8 +90,10 @@ abstract public class EgwWinFSVolume {
 	 * onFlushFileBuffers
 	 * @param path
 	 * @param dokanFileInfo 
+	 * @return  
 	 */
-	public void onFlushFileBuffers(WString path, DokanFileInfo dokanFileInfo) {
+	public int onFlushFileBuffers(WString path, DokanFileInfo dokanFileInfo) {
+		return WinNT.ERROR_SUCCESS;
 	}
 
 	/**
@@ -257,6 +226,84 @@ abstract public class EgwWinFSVolume {
 	 * @return 
 	 */
 	public int onSetFileAttributes(WString path, int fileAttributes, DokanFileInfo dokanFileInfo) {
+		return WinNT.ERROR_SUCCESS;
+	}
+
+	/**
+	 * onSetFileSecurity
+	 * @param path
+	 * @param pSecurityInformation
+	 * @param securityDescriptor
+	 * @param bufferLength
+	 * @param lengthNeeded
+	 * @param dokanFileInfo
+	 * @return 
+	 */
+	public int onSetFileSecurity(WString path, IntByReference pSecurityInformation, SecurityDescriptor securityDescriptor, NativeLong bufferLength, LongByReference lengthNeeded, DokanFileInfo dokanFileInfo) {
+		return WinNT.ERROR_SUCCESS;
+	}
+
+	/**
+	 * onSetFileTime
+	 * @param path
+	 * @param creationTime
+	 * @param lastAccessTime
+	 * @param lastWriteTime
+	 * @param dokanFileInfo
+	 * @return 
+	 */
+	public int onSetFileTime(WString path, WinBase.FILETIME creationTime, WinBase.FILETIME lastAccessTime, WinBase.FILETIME lastWriteTime, DokanFileInfo dokanFileInfo) {
+		return WinNT.ERROR_SUCCESS;
+	}
+
+	/**
+	 * onUnlockFile
+	 * @param path
+	 * @param byteOffset
+	 * @param length
+	 * @param dokanFileInfo
+	 * @return 
+	 */
+	public int onUnlockFile(WString path, long byteOffset, long length, DokanFileInfo dokanFileInfo) {
+		return WinNT.ERROR_SUCCESS;
+	}
+
+	/**
+	 * onUnmount
+	 * @param dokanFileInfo
+	 * @return 
+	 */
+	public int onUnmount(DokanFileInfo dokanFileInfo) {
+		return WinNT.ERROR_SUCCESS;
+	}
+
+	/**
+	 * onWriteFile
+	 * @param path
+	 * @param buffer
+	 * @param numberOfBytesToWrite
+	 * @param numberOfBytesWritten
+	 * @param offset
+	 * @param dokanFileInfo
+	 * @return 
+	 */
+	public int onWriteFile(WString path, Pointer buffer, int numberOfBytesToWrite, IntByReference numberOfBytesWritten, long offset, DokanFileInfo dokanFileInfo) {
+		return WinNT.ERROR_SUCCESS;
+	}
+
+	/**
+	 * onCreateFile
+	 * @param path
+	 * @param securityContext
+	 * @param desiredAccess
+	 * @param fileAttributes
+	 * @param shareAccess
+	 * @param createDisposition
+	 * @param createOptions
+	 * @param dokanFileInfo
+	 * @return 
+	 */
+	public int onCreateFile(WString path, IntByReference securityContext, int desiredAccess, int fileAttributes, int shareAccess, int createDisposition, int createOptions, DokanFileInfo dokanFileInfo) {
 		return WinNT.ERROR_SUCCESS;
 	}
 }

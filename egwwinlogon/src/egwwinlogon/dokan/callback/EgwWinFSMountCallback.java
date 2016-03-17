@@ -5,6 +5,7 @@
  */
 package egwwinlogon.dokan.callback;
 
+import com.sun.jna.platform.win32.WinNT;
 import egwwinlogon.dokan.EgwWinFSVolume;
 import egwwinlogon.dokan.IEgwWinFSVolumeCallback;
 import egwwinlogon.dokan.lib.DokanFileInfo;
@@ -41,6 +42,6 @@ public class EgwWinFSMountCallback implements MountCallback, IEgwWinFSVolumeCall
 			return this._volume.onMount(dokanFileInfo);
 		}
 		
-		return 0;
+		return WinNT.ERROR_SUCCESS;
 	}
 }

@@ -7,6 +7,7 @@ import com.jegroupware.egroupware.EgroupwareHttp;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionLoginStatus;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionUserConfig;
+import egwwinlogon.dokan.EgwWinFS;
 import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.egroupware.EgroupwareMachineInfo;
@@ -73,7 +74,7 @@ public class EgwWinLogon {
      * EgwWinLogonDb
      */
     protected EgwWinLogonDb _db = null;
-
+	
     /**
      * initEgroupware
      *
@@ -110,7 +111,7 @@ public class EgwWinLogon {
         // ---------------------------------------------------------------------
 
         try {
-            this._eLoginCache = EgroupwareELoginCache.loadByFile(
+            this._eLoginCache = (EgroupwareELoginCache) EgroupwareELoginCache.loadByFile(
                 EgroupwarePGina.getAppDirCache() + "elogin.cache");
         }
         catch( Exception ex ) {
@@ -125,7 +126,7 @@ public class EgwWinLogon {
         // ---------------------------------------------------------------------
         
         try {
-            EgroupwareCommand.instance = EgroupwareCommand.loadByFile(
+            EgroupwareCommand.instance = (EgroupwareCommand) EgroupwareCommand.loadByFile(
                 EgroupwarePGina.getAppDirCache() + "ecommands.cache");
         }
         catch( Exception ex ) {
@@ -151,7 +152,8 @@ public class EgwWinLogon {
 
             try {
                 this._server.init();
-            } catch( IOException ex ) {
+            } 
+			catch( IOException ex ) {
                 java.util.logging.Logger.getLogger(
                     EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -237,6 +239,8 @@ public class EgwWinLogon {
         if( egwListener != null ) {
             _egw.addListener(egwListener);
         }
+		
+		// ---------------------------------------------------------------------
         
         try {
             try {
@@ -391,7 +395,7 @@ public class EgwWinLogon {
                         if( this._eLoginCache.compareUsernamePassword(username, password) ) {
 
                             // final init wlt
-                            EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(username);
+                            EgwWinLogonThread _wlt = EgwWinLogonThread.getInstance(username);
 
                             if( _wlt == null ) {
                                 _wlt = new EgwWinLogonThread(_egw);
@@ -535,7 +539,16 @@ public class EgwWinLogon {
         // ---------------------------------
         
         if( this._server != null ) {
-
+			/*this._winfs = new EgwWinFS();
+			this._winfs.setVolume(new EgwWinFSVolumeMultiResource());
+			
+			try {
+				this._winfs.start();
+			}
+			catch( Exception ex ) {
+				logger.error("egwStarting: Error load winfs, " + ex.getMessage());
+			}
+			*/
         }
 	}
 

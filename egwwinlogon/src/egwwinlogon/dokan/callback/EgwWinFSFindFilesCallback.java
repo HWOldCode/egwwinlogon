@@ -8,13 +8,10 @@ package egwwinlogon.dokan.callback;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinNT;
 import egwwinlogon.dokan.EgwWinFSVolume;
-import egwwinlogon.dokan.EgwWinFsVirtualFile;
 import egwwinlogon.dokan.IEgwWinFSVolumeCallback;
 import egwwinlogon.dokan.lib.DokanFileInfo;
 import egwwinlogon.dokan.lib.DokanLibrary;
 import egwwinlogon.dokan.lib.DokanOperations.FindFilesCallback;
-import egwwinlogon.dokan.lib.win.Win32FindData;
-import egwwinlogon.winapi.ProcessList;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -50,26 +47,7 @@ public class EgwWinFSFindFilesCallback implements FindFilesCallback, IEgwWinFSVo
 		if( this._volume != null ) {
 			return this._volume.onFindFiles(path, fillFindDataCallback, dokanFileInfo);
 		}
-		
-		/*EgwWinFsVirtualFile vf = new EgwWinFsVirtualFile("/", WinNT.FILE_ATTRIBUTE_DIRECTORY);
-		
-		vf.putFile(new EgwWinFsVirtualFile("public", WinNT.FILE_ATTRIBUTE_DIRECTORY));
-		vf.putFile(new EgwWinFsVirtualFile("public2", WinNT.FILE_ATTRIBUTE_DIRECTORY));
-		
-		for( EgwWinFsVirtualFile file : vf.getFiles() ) {
-            Win32FindData data = file.getWin32FindData();
-            if( data != null ) {
-                fillFindDataCallback.invoke(data, dokanFileInfo);
-            }
-        }
-		
-		if( dokanFileInfo != null ) {
-			ProcessList.ProcessInfo process = ProcessList.getProcessByPId(dokanFileInfo.processId.intValue());
-			System.out.println(process.getProcessExeFile());
-			
-			process.getProcessOwner();
-		}*/
-		
-		return 0;
+	
+		return WinNT.ERROR_SUCCESS;
 	}
 }

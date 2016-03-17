@@ -37,14 +37,14 @@ public class CreateProcessAsUser {
         PROCESS_INFORMATION processInformation  = new PROCESS_INFORMATION();
         STARTUPINFO startupInfo                 = new STARTUPINFO();
         
-        boolean result = MoreAdvApi32.INSTANCE.CreateProcessWithLogonW
+        boolean result = AdvApi32.INSTANCE.CreateProcessWithLogonW
             (new WString(username),                             // user
             nullW,                                              // domain , null if local
             new WString(password),                              // password
-            MoreAdvApi32.LOGON_WITH_PROFILE,                    // dwLogonFlags
+            AdvApi32.LOGON_WITH_PROFILE,                    // dwLogonFlags
             nullW,                                              // lpApplicationName
             new WString(cmdline),                               // command line
-            MoreAdvApi32.CREATE_NO_WINDOW,                      // dwCreationFlags
+            AdvApi32.CREATE_NO_WINDOW,                      // dwCreationFlags
             null,                                               // lpEnvironment
             new WString(directoryLocation),                     // directory
             startupInfo,

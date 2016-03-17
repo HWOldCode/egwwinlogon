@@ -41,7 +41,7 @@ public class EgwWinFSFlushFileBuffersCallback implements FlushFileBuffersCallbac
 	@Override
 	public int invoke(WString path, DokanFileInfo dokanFileInfo) {
 		if( this._volume != null ) {
-			this._volume.onFlushFileBuffers(path, dokanFileInfo);
+			return this._volume.onFlushFileBuffers(path, dokanFileInfo);
 		}
 		return -WinNT.ERROR_FILE_NOT_FOUND;
 	}

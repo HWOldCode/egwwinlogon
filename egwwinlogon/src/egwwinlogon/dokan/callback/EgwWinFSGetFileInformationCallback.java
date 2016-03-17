@@ -47,13 +47,6 @@ public class EgwWinFSGetFileInformationCallback implements GetFileInformationCal
 			return this._volume.onGetFileInformation(path, info, dokanFileInfo);
 		}
 		
-		EgwWinFsVirtualFile vf = new EgwWinFsVirtualFile("/", WinNT.FILE_ATTRIBUTE_DIRECTORY);
-		
-		if( vf.fillFileInfo(info) ) {
-			dokanFileInfo.isDirectory = (byte)1;
-			dokanFileInfo.context = vf.hashCode();
-		}
-		
 		return WinNT.ERROR_SUCCESS;
 	}
 }
