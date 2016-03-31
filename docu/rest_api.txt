@@ -1,0 +1,39 @@
+localhost:8109 <- Debug
+localhost:8108 <- PGina Service
+
+---------------------------------------------------------------------
+
+http://localhost:8108/eworkflow/?trigger=fe84247a-a7ef-7097-090b-c1d467d3c9b2&username=win.logon
+
+-> Post "data" => json string
+
+---------------------------------------------------------------------
+
+http://localhost:8108/eworkflow/?trigger=fe84247a-a7ef-7097-090b-c1d467d3c9b2&username=win.logon&processid=a61d410e-aeae-890b-9bcd-256d4f6e7aad
+
+---------------------------------------------------------------------
+
+return 
+
+{
+	"status" => "ok" 
+}
+
+ok
+error
+stop
+
+{
+	"status" => "ok" 
+	"data" => ".....json...."
+}
+
+{
+	"status" => "stop"
+	"processid" => "id"
+}
+
+{
+	"status" => "error"
+	"msg" => "Fehler..."
+}

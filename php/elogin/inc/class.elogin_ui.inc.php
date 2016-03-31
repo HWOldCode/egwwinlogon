@@ -6,7 +6,7 @@
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -22,8 +22,6 @@
          */
         public $public_functions = array(
             'index'                 => true,
-            'ajax_cache'            => true,
-            'ajax_cmd'              => true,
             'cronjob_hand'          => true,
             );
 
@@ -70,6 +68,10 @@ exit;*/
                 array());
         }
 
+		/**
+		 * cronjob_hand
+		 * @param array $content
+		 */
         public function cronjob_hand($content=array()) {
 			//$GLOBALS['egw']->session->commit_session();
 
@@ -105,17 +107,111 @@ exit;*/
             return egw_json_response::get()->data($cacheData);
         }
 
+		/**
+		 * ajax_eworkflow_request
+		 * @param array $content
+		 */
+		public function ajax_eworkflow_request($content=array()) {
+			$erro_msg = null;
 
+			if( $GLOBALS['egw_info']['user']['apps']['eworkflow'] ) {
+				$fac	= eworkflow_factory_bo::i();
+				$wm		= $fac->getWorkflowManager();
+				$pl		= $wm->getProcessList();
 
-        /**
-         * ajax_cmd
-         *
-         * @param array $content
-         * @return mixed
-         */
-        public function ajax_cmd($content=array()) {
-            error_log(__METHOD__.__LINE__.':'.  var_export($content, true));
-        }
+				if( isset($content['trigger']) ) {
+					$trigger_entry = eworkflow_entrys_bo::loadEntry($content['trigger']);
 
+					if( $trigger_entry instanceof elogin_action_machine_trigger ) {
+						$process	= null;
 
+						$start_entry = eworkflow_entrys_bo::loadEntry(
+							$trigger_entry->getGroupEntryId());
+
+						// Process
+						// -----------------------------------------------------
+						if( isset($content['processid']) ) {
+							$tprocess = $pl->getProcessById($content['processid']);
+
+							if( $tprocess != null ) {
+								if( $tprocess->getWorkflowStart()->getId() == $start_entry->getId() ) {
+									if( !$tprocess->isEnd() ) {
+										$process = $tprocess;
+									}
+								}
+							}
+						}
+						else {
+							$process = $wm->createProcess($start_entry);
+							$process->setCurrentWorkflowEntry($trigger_entry);
+
+							$pl->addProcess($process);
+						}
+
+						if( $process != null ) {
+							// execute
+							// -------------------------------------------------
+							$data = array();
+
+							if( isset($content['data']) ) {
+								if( is_array($content['data']) ) {
+									$data = $content['data'];
+								}
+								elseif( is_string($content['data']) ) {
+									if( strpos($content['data'], "%7B") !== false ) {
+										$content['data'] = urldecode($content['data']);
+									}
+
+									$data = json_decode($content['data'], true);
+								}
+							}
+
+							if( isset($content['uid']) ) {
+								$data['elogin_machineid'] = $content['uid'];
+							}
+
+							$process->execute($data);
+
+							// return
+							// -------------------------------------------------
+
+							if( $process->isEnd() ) {
+								$return_data = array();
+
+								if( $trigger_entry->getReturnParams() == '1' ) {
+									$return_data = $process->getParamList()->getParamsArray();
+								}
+
+								return egw_json_response::get()->data(array(
+									'status'	=> 'ok',
+									'data'		=> $return_data,
+									));
+							}
+							else {
+								return egw_json_response::get()->data(array(
+									'status'	=> 'stop',
+									'processid'	=> $process->getId(),
+									'msg'		=> 'Process issnt end'
+									));
+							}
+						}
+
+						$erro_msg = 'Process not found';
+					}
+
+					$erro_msg = 'Trigger Id not set';
+				}
+
+				$erro_msg = 'Trigger Id not set';
+			}
+
+			if( $erro_msg == null ) {
+				$erro_msg = 'Access denied by app EWorkflow';
+			}
+
+			return egw_json_response::get()->data(array(
+				'status'	=> 'error',
+				'msg'		=> $erro_msg
+				));
+		}
     }

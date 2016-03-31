@@ -171,6 +171,14 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
         }
     }
     
+	/**
+	 * getSessionStatus
+	 * @return 
+	 */
+	public int getSessionStatus() {
+		return this._sessionStatus;
+	}
+	
     /**
      * run
      */

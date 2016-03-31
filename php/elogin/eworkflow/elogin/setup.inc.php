@@ -179,3 +179,27 @@
     $setup_info_spdpspm['depends'] = array();
 
     $setup_info[] = $setup_info_spdpspm;
+
+	// ---- machine trigger ----------------------------------------------------
+
+	$setup_info_mt = array();
+	$setup_info_mt['name']         = 'elogin';
+    $setup_info_mt['app']          = 'elogin';
+    $setup_info_mt['class']        = 'elogin_action_machine_trigger';
+    $setup_info_mt['title']        = 'ELogin Machine Trigger';
+    $setup_info_mt['version']      = '1.0';
+
+    $setup_info_mt['author']       = 'Stefan Werfling';
+    $setup_info_mt['license']      = 'HW license';
+    $setup_info_mt['description']  = 'ELogin Machine Trigger';
+
+    $setup_info_mt['maintainer'] = array(
+		'name' 	=> 'HW-Softwareentwicklung GbR',
+		'email' => 'info@hw-softwareentwicklung.de'
+        );
+
+    $setup_info_mt['settings'] = array();
+
+    $setup_info_mt['depends'] = array();
+
+    $setup_info[] = $setup_info_mt;

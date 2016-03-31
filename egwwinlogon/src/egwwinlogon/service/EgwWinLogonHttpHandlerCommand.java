@@ -7,6 +7,7 @@ package egwwinlogon.service;
 
 import com.sun.net.httpserver.HttpExchange;
 import egwwinlogon.egroupware.EgroupwareCommand;
+import egwwinlogon.egroupware.EgroupwareNetShares;
 import egwwinlogon.http.LogonHttpServerHandler;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -107,14 +108,30 @@ public class EgwWinLogonHttpHandlerCommand extends LogonHttpServerHandler {
 							}
 						}
 						
+						// -----------------------------------------------------
+						
+						LinkedHashMap newcmd = new LinkedHashMap();
+							
+						newcmd.put("name", "Remount-API");
+						newcmd.put("catname", "API");
+						contextCmds.add(newcmd);
+						
+						// -----------------------------------------------------
+						
 						msg = JSONValue.toJSONString(contextCmds);
 					}
 					else if( params.containsKey("exec") ) {
 						String execname = params.get("exec");
 
-						EgroupwareCommand.instance.executeName(
-							sessionId, 
-							execname);
+						if( execname.compareTo("Remount-API") == 0 ) {
+							EgroupwareNetShares.getInstance().unmountAllBySession(sessionId);
+							EgroupwareNetShares.getInstance().mountAllBySession(sessionId);
+						}
+						else {
+							EgroupwareCommand.instance.executeName(
+								sessionId, 
+								execname);
+						}
 						
 						msg = "exec: " + execname;
 					}

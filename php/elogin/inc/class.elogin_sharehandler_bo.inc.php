@@ -16,7 +16,10 @@
      */
     class elogin_sharehandler_bo {
 
-        /**
+		static protected $_logging = false;
+
+
+		/**
          * set_async_job
          *
          * @param boolean $start
@@ -235,7 +238,7 @@
 									$kdshares[$tshare['name']] = $tshare;
 								}
 
-								var_dump($kshares);
+								//var_dump($kshares);
 								// -----
 
 								foreach( $kdshares as $tname => $tdshare ) {
@@ -291,6 +294,10 @@
 		 * @param type $line
 		 */
 		static public function cronjob_error_log($message, $line) {
+			if( !self::$_logging ) {
+				return;
+			}
+
 			if( is_array($message) ) {
 				$message = var_export($message, true);
 			}

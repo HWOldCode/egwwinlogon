@@ -7,7 +7,6 @@ import com.jegroupware.egroupware.EgroupwareHttp;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionLoginStatus;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionUserConfig;
-import egwwinlogon.dokan.EgwWinFS;
 import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareELoginCache;
 import egwwinlogon.egroupware.EgroupwareMachineInfo;
@@ -174,6 +173,9 @@ public class EgwWinLogon {
             
 			EgwWinLogonHttpHandlerCommand httpcmd = new EgwWinLogonHttpHandlerCommand();
 			httpcmd.register(this._server);
+			
+			EgwWinLogonHttpHandlerEWorkflow httpwork = new EgwWinLogonHttpHandlerEWorkflow();
+			httpwork.register(this._server);
 			
             try {
                 this._server.start();

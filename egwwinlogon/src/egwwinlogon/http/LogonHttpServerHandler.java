@@ -5,12 +5,19 @@
  */
 package egwwinlogon.http;
 
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -80,4 +87,57 @@ public class LogonHttpServerHandler implements HttpHandler {
     static public InputStream getFile(String file) {
         return ClassLoader.getSystemClassLoader().getResourceAsStream(file);
     }
+	
+	/**
+	 * postToMap
+	 * @param exchange
+	 * @throws IOException 
+	 */
+	static public Map<String, String> postToMap(HttpExchange exchange) throws IOException {
+		
+		Headers reqHeaders	= exchange.getRequestHeaders();
+		String contentType	= reqHeaders.getFirst("Content-Type");
+		String encoding		= "ISO-8859-1";
+		
+		if( contentType != null ) {
+			/*Map<String,String> parms = ValueParser.parse(contentType);
+			
+			if( parms.containsKey("charset") ) {
+				encoding = parms.get("charset");
+			}*/
+		}
+		
+		String qry;
+		InputStream in = exchange.getRequestBody();
+
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			byte buf[] = new byte[4096];
+    
+			for(int n=in.read(buf); n>0; n=in.read(buf) ) {
+				out.write(buf, 0, n);
+			}
+			
+			qry = new String(out.toByteArray(), encoding);
+		} 
+		finally {
+			in.close();
+		}
+		
+		Map<String, String> result = new HashMap<String, String>();
+
+        if( qry != null ) {
+            for( String param : qry.split("&") ) {
+                String pair[] = param.split("=");
+
+                if( pair.length>1 ) {
+                    result.put(pair[0], pair[1]);
+                } else {
+                    result.put(pair[0], "");
+                }
+            }
+        }
+
+        return result;
+	}
 }
