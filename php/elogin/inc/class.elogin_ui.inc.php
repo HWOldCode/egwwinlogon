@@ -125,6 +125,32 @@ exit;*/
 					if( $trigger_entry instanceof elogin_action_machine_trigger ) {
 						$process	= null;
 
+						$data = array();
+
+						if( isset($content['data']) ) {
+							if( is_array($content['data']) ) {
+								$data = $content['data'];
+							}
+							elseif( is_string($content['data']) ) {
+								if( strpos($content['data'], "%7B") !== false ) {
+									$content['data'] = urldecode($content['data']);
+								}
+
+								$data = json_decode($content['data'], true);
+
+								if( $data == null ) {
+									return egw_json_response::get()->data(array(
+										'status'	=> 'error',
+										'msg'		=> 'json decode: ' . $content['data']
+										));
+								}
+							}
+						}
+
+						if( isset($content['uid']) ) {
+							$data['elogin_machineid'] = $content['uid'];
+						}
+
 						$start_entry = eworkflow_entrys_bo::loadEntry(
 							$trigger_entry->getGroupEntryId());
 
@@ -151,25 +177,7 @@ exit;*/
 						if( $process != null ) {
 							// execute
 							// -------------------------------------------------
-							$data = array();
-
-							if( isset($content['data']) ) {
-								if( is_array($content['data']) ) {
-									$data = $content['data'];
-								}
-								elseif( is_string($content['data']) ) {
-									if( strpos($content['data'], "%7B") !== false ) {
-										$content['data'] = urldecode($content['data']);
-									}
-
-									$data = json_decode($content['data'], true);
-								}
-							}
-
-							if( isset($content['uid']) ) {
-								$data['elogin_machineid'] = $content['uid'];
-							}
-
+							
 							$process->execute($data);
 
 							// return
