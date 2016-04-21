@@ -22,7 +22,9 @@ public class NetShare {
 	 * @param args 
 	 */
 	public static void main(String[] args) {
-		int session = 2;
+		PInvokes.getCredentials("Test", "Hallo?");
+		
+		/*int session = 2;
 		
 		try {
 			//PInvokes.mapDriveInSession(session, "\\\\192.168.11.4\\public", "G:", "admin", "1234");
@@ -32,6 +34,6 @@ public class NetShare {
 		}
 		
 		Mpr.INSTANCE.WNetCancelConnection2W(new WString("G:"), 0, 0);
-		System.out.println("Test");
+		System.out.println("Test");*/
 	}
 }

@@ -6,12 +6,14 @@ import com.jegroupware.egroupware.events.EgroupwareEvent;
 import com.jegroupware.egroupware.events.EgroupwareEventListener;
 import com.jegroupware.egroupware.events.EgroupwareEventRequest;
 import com.jegroupware.egroupware.events.EgroupwareLogoutEvent;
+import com.jegroupware.egroupware.exceptions.EGroupwareExceptionLoginStatus;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
 import egwwinlogon.dokan.volume.multiresource.EgwWinFSMultiResourceSMBMount;
 import egwwinlogon.dokan.volume.multiresource.EgwWinFSMultiResourceWebDavMount;
 import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareNetShares;
+import egwwinlogon.winapi.PInvokes;
 import egwwinlogon.winapi.ProcessList;
 import java.util.ArrayList;
 import java.util.List;
@@ -339,9 +341,25 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
         if( !this._egw.isLogin() ) {
             if( EgwWinLogonUltis.pingUrl(this._egw.getConfig().getUrl()) ) {
                 try {
-                    this._egw.login();
+					this._egw.login();
                 }
                 catch( Exception e ) {
+					if( e instanceof EGroupwareExceptionLoginStatus ) {
+						EGroupwareExceptionLoginStatus els = (EGroupwareExceptionLoginStatus) e;
+						
+						if( els.getStatus() == 5 ) {
+							
+							PInvokes.getCredentialsInSession(
+								this._sessionId,
+								"EGroupware Login", 
+								"Beim Login ist ein fehler aufgetreten, wurde " + 
+									"das Passwort geändert? Bitte geben Sie " + 
+									"erneut Ihre Login Daten ein.");
+							
+							
+						}
+					}
+					
                     logger.error(e.getMessage());
                 }
             }

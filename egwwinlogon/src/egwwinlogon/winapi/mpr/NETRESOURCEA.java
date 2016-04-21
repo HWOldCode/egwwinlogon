@@ -11,6 +11,18 @@ import java.util.Arrays;
 
 /**
  * NETRESOURCEA
+ * 
+ * typedef struct _NETRESOURCE {
+ * DWORD  dwScope;
+ * DWORD  dwType;
+ * DWORD  dwDisplayType;
+ * DWORD  dwUsage;
+ * LPTSTR lpLocalName;
+ * LPTSTR lpRemoteName;
+ * LPTSTR lpComment;
+ * LPTSTR lpProvider;
+ * } NETRESOURCE;
+ * 
  * @see http://msdn.microsoft.com/en-us/library/windows/desktop/aa385353(v=vs.85).aspx
  * @author Stefan Werfling
  */

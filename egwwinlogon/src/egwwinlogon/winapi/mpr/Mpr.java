@@ -38,6 +38,14 @@ public interface Mpr extends WinNT
 
 	/**
 	 * WNetAddConnection2A
+	 * 
+	 * DWORD WNetAddConnection2(
+	 * _In_ LPNETRESOURCE lpNetResource,
+	 * _In_ LPCTSTR       lpPassword,
+	 * _In_ LPCTSTR       lpUsername,
+	 * _In_ DWORD         dwFlags
+	 * );
+	 * 
 	 * @param lpNetResource
 	 * @param lpPassword
 	 * @param lpUserName

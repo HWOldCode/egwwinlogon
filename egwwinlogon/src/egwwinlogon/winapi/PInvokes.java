@@ -6,9 +6,12 @@
 package egwwinlogon.winapi;
 
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
+import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import egwwinlogon.winapi.mpr.Mpr;
 import egwwinlogon.winapi.mpr.NETRESOURCEW;
@@ -134,6 +137,62 @@ public class PInvokes {
 			if( _handle != null ) {
 				Kernel32.INSTANCE.CloseHandle(_handle);
 			}
+		}
+	}
+	
+	static public void getCredentialsInSession(int session, String caption, String message) {
+		PointerByReference userToken = new PointerByReference();
+		
+		if( !Wtsapi32.INSTANCE.WTSQueryUserToken(session, userToken) ) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+		
+		HANDLE _handle = new WinNT.HANDLE(userToken.getValue());
+		
+		try {
+			if( !AdvApi32.INSTANCE.ImpersonateLoggedOnUser(_handle) ) {
+				throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+			}
+			
+			PInvokes.getCredentials(caption, message);
+		}
+		finally {
+			AdvApi32.INSTANCE.RevertToSelf();
+			
+			if( _handle != null ) {
+				Kernel32.INSTANCE.CloseHandle(_handle);
+			}
+		}
+	}
+	
+	static public void getCredentials(String caption, String message) {
+		Credui.CREDUI_INFO info = new Credui.CREDUI_INFO();
+		
+		info.pszCaptionText = new WString(caption);
+		info.pszMessageText = new WString(message);
+		info.hwndParent		= User32Ex.INSTANCE.GetDesktopWindow();
+		info.cbSize			= info.size();
+		
+		WinDef.ULONGByReference authPackage = new WinDef.ULONGByReference();
+		PointerByReference outCredBuffer = new PointerByReference();
+		WinDef.ULONGByReference outCredSize = new WinDef.ULONGByReference();
+		IntByReference save = new IntByReference(0);
+		WinDef.ULONG ulInAuthBufferSize = new WinDef.ULONG(0);
+		
+		int result = Credui.INSTANCE.CredUIPromptForWindowsCredentialsW(
+			info,
+			0,
+			authPackage,
+			null,
+			ulInAuthBufferSize,
+			outCredBuffer,
+			outCredSize,
+			save,
+			0
+			);
+		
+		if( result == 0 ) {
+			
 		}
 	}
 	
