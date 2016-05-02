@@ -141,7 +141,6 @@ public class EgwWinLogonClient  {
 	
 	/**
 	 * getCommands
-	 * 
 	 * @param user
 	 * @param url
 	 * @return 
@@ -188,7 +187,7 @@ public class EgwWinLogonClient  {
 	}
 	
 	/**
-	 * 
+	 * execCommand
 	 * @param user
 	 * @param cmdname
 	 * @param url
@@ -212,5 +211,35 @@ public class EgwWinLogonClient  {
         }
 		
 		return "";
+	}
+	
+	/**
+	 * setRelogin
+	 * @param username
+	 * @param password
+	 * @param url
+	 * @return 
+	 */
+	public boolean setRelogin(String username, String password, String url) throws Exception {
+		try {
+			if( url == null ) {
+                url = EgwWinLogonClient.URL;
+            }
+		
+			String request = url + EgwWinLogonClient.REQUEST_CONFIG + 
+				"/?relogin=1&username=" + EgwWinLogonUltis.encodeURIComponent(username) + 
+				"&password=" + EgwWinLogonUltis.encodeURIComponent(password);
+			
+			String buffer = this._client.sendGET(request);
+			
+			if( "OK".equals(buffer.trim()) ) {
+				return true;
+			}
+			
+			throw new Exception(buffer.trim());
+		}
+		catch( Exception e ) {
+			throw e;
+        }
 	}
 }

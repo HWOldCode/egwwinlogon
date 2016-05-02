@@ -29,6 +29,14 @@ public class EgroupwarePGina {
     static public void setUseEmulator(Boolean use) {
         EgroupwarePGina._useEmulator = use;
     }
+	
+	/**
+	 * isUseEmulator
+	 * @return 
+	 */
+	static public Boolean isUseEmulator() {
+		return EgroupwarePGina._useEmulator;
+	}
     
     /**
      * isRunAsService

@@ -5,10 +5,14 @@
  */
 package egwwinlogon.winapi;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
@@ -165,7 +169,13 @@ public class PInvokes {
 		}
 	}
 	
-	static public void getCredentials(String caption, String message) {
+	/**
+	 * getCredentials
+	 * @param caption
+	 * @param message
+	 * @return 
+	 */
+	static public CredentialData getCredentials(String caption, String message) {
 		Credui.CREDUI_INFO info = new Credui.CREDUI_INFO();
 		
 		info.pszCaptionText = new WString(caption);
@@ -179,7 +189,7 @@ public class PInvokes {
 		IntByReference save = new IntByReference(0);
 		WinDef.ULONG ulInAuthBufferSize = new WinDef.ULONG(0);
 		
-		int result = Credui.INSTANCE.CredUIPromptForWindowsCredentialsW(
+		int result = Credui.INSTANCE.CredUIPromptForWindowsCredentials(
 			info,
 			0,
 			authPackage,
@@ -188,18 +198,60 @@ public class PInvokes {
 			outCredBuffer,
 			outCredSize,
 			save,
-			0
+			Credui.CREDUIWIN_GENERIC
 			);
 		
 		if( result == 0 ) {
+			char[] usernameBuf	= new char[100];
+			char[] passwordBuf	= new char[100];
+			char[] domainBuf	= new char[100];
 			
+			DWORDByReference maxUserName	= new DWORDByReference(new DWORD(100));
+			DWORDByReference maxDomain		= new DWORDByReference(new DWORD(100));
+			DWORDByReference maxPassword	= new DWORDByReference(new DWORD(100));
+			
+			PVOID toutCredBuffer = new WinDef.PVOID(outCredBuffer.getValue());
+			int toutCredSize = outCredSize.getValue().intValue();
+			
+			boolean presult = Credui.INSTANCE.CredUnPackAuthenticationBuffer(
+					0, toutCredBuffer, 
+					toutCredSize, 
+					usernameBuf, maxUserName, 
+					domainBuf, maxDomain, 
+					passwordBuf, maxPassword);
+			
+			if( presult )  {
+				return new CredentialData(usernameBuf, passwordBuf, domainBuf);
+			}
 		}
+		
+		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 	}
 	
 	/**
-	 * test
+	 * CredentialData
 	 */
-	static void test() {
-		Kernel32.INSTANCE.ProcessIdToSessionId(null, null);
+	public static class CredentialData {
+		
+		public String username	= null;
+		public String password	= null;
+		public String domain	= null;
+		
+		/**
+		 * CredentialData
+		 */
+		public CredentialData() {}
+		
+		/**
+		 * CredentialData
+		 * @param cusername
+		 * @param cpassword
+		 * @param cdomain 
+		 */
+		public CredentialData(char[] cusername, char[] cpassword, char[] cdomain) {
+			this.username = new String(cusername);
+			this.password = new String(cpassword);
+			this.domain = new String(cdomain);
+		}
 	}
 }

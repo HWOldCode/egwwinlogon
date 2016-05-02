@@ -13,6 +13,7 @@ import egwwinlogon.dokan.volume.multiresource.EgwWinFSMultiResourceSMBMount;
 import egwwinlogon.dokan.volume.multiresource.EgwWinFSMultiResourceWebDavMount;
 import egwwinlogon.egroupware.EgroupwareCommand;
 import egwwinlogon.egroupware.EgroupwareNetShares;
+import egwwinlogon.user.EgwWinPromptCredentials;
 import egwwinlogon.winapi.PInvokes;
 import egwwinlogon.winapi.ProcessList;
 import java.util.ArrayList;
@@ -100,6 +101,11 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
      * userapp process id
      */
     protected int _userappProcessId = -1;
+	
+	/**
+	 * _relogin error
+	 */
+	protected boolean _reloginError = false;
     
     /**
      * EgwWinLogonThread
@@ -340,30 +346,34 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
     protected void _reInitEgroupware() {
         if( !this._egw.isLogin() ) {
             if( EgwWinLogonUltis.pingUrl(this._egw.getConfig().getUrl()) ) {
-                try {
-					this._egw.login();
-                }
-                catch( Exception e ) {
-					if( e instanceof EGroupwareExceptionLoginStatus ) {
-						EGroupwareExceptionLoginStatus els = (EGroupwareExceptionLoginStatus) e;
-						
-						if( els.getStatus() == 5 ) {
-							
-							PInvokes.getCredentialsInSession(
-								this._sessionId,
-								"EGroupware Login", 
-								"Beim Login ist ein fehler aufgetreten, wurde " + 
-									"das Passwort geändert? Bitte geben Sie " + 
-									"erneut Ihre Login Daten ein.");
-							
-							
-						}
+				if( !this._reloginError ) {
+					try {
+						this._egw.login();
 					}
-					
-                    logger.error(e.getMessage());
-                }
+					catch( Exception e ) {
+						if( e instanceof EGroupwareExceptionLoginStatus ) {
+							EGroupwareExceptionLoginStatus els = (EGroupwareExceptionLoginStatus) e;
+
+							if( els.getStatus() == 5 ) {
+								if( EgroupwarePGina.isUseEmulator() ) {
+									EgwWinPromptCredentials.main(null);
+								}
+								else {
+									EgroupwarePGina.startUserProcessInSession(
+										this._sessionId, EgwWinLogonUltis.getReLoginAppCmd());
+								}
+							}
+						}
+						
+						this._reloginError = true;
+						logger.error(e.getMessage());
+					}
+				}
             }
         }
+		else {
+			this._reloginError = false;
+		}
     }
     
     /**

@@ -5,6 +5,7 @@
  */
 package egwwinlogon.service;
 
+import com.jegroupware.egroupware.Egroupware;
 import com.sun.net.httpserver.HttpExchange;
 import egwwinlogon.http.LogonHttpServerHandler;
 import egwwinlogon.winapi.PlatformInfo;
@@ -56,7 +57,6 @@ public class EgwWinLogonHttpHandlerConfig extends LogonHttpServerHandler {
                     String value = params.get("json");
 
                     if( "info".equals(value) ) {
-
                         String response = "";
 
                         Map<String, String> info = PlatformInfo.getInfoList();
@@ -76,6 +76,46 @@ public class EgwWinLogonHttpHandlerConfig extends LogonHttpServerHandler {
                         return;
                     }
                 }
+				else if( params.containsKey("relogin") ) {
+					String value = params.get("relogin");
+					
+					if( "1".equals(value) ) {
+						if( params.containsKey("username") && params.containsKey("password") ) {
+							String username = params.get("username");
+							String password = params.get("password");
+							
+							EgwWinLogonThread _thread = EgwWinLogonThread.getInstance(username);
+							
+							if( (_thread.getSessionStatus() == 5) || (_thread.getSessionStatus() == 8) ) {
+								Egroupware _egw = _thread.getEgroupware();
+								
+								if( _egw != null ) {
+									if( !_egw.isLogin() ) {
+										if( _egw.getConfig().getUser().equals(username) ) {
+											_egw.getConfig().setPassword(password);
+											
+											String rMsg = "OK";
+											
+											try {
+												_egw.login();
+											}
+											catch( Exception e ){
+												rMsg = e.getMessage();
+											}
+											
+											t.sendResponseHeaders(200, rMsg.length());
+											OutputStream os = t.getResponseBody();
+											os.write(rMsg.getBytes());
+											os.close();
+
+											return;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
             }
 
             InputStream file = null;

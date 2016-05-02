@@ -84,6 +84,17 @@ public interface AdvApi32 extends Advapi32 {
 	
 	/**
 	 * GetSecurityInfo
+	 * DWORD WINAPI GetSecurityInfo(
+	 * _In_      HANDLE               handle,
+	 * _In_      SE_OBJECT_TYPE       ObjectType,
+	 * _In_      SECURITY_INFORMATION SecurityInfo,
+	 * _Out_opt_ PSID                 *ppsidOwner,
+	 * _Out_opt_ PSID                 *ppsidGroup,
+	 * _Out_opt_ PACL                 *ppDacl,
+	 * _Out_opt_ PACL                 *ppSacl,
+	 * _Out_opt_ PSECURITY_DESCRIPTOR *ppSecurityDescriptor
+	 * );
+	 * 
 	 * @param handle
 	 * @param ObjectType
 	 * @param SecurityInfo

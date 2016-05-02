@@ -8,7 +8,10 @@ package egwwinlogon.service;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
+import com.sun.jna.platform.win32.Secur32;
+import com.sun.jna.platform.win32.Secur32Util;
 import com.sun.jna.platform.win32.WinReg;
+import com.sun.jna.ptr.IntByReference;
 import egwwinlogon.service.crypt.EgwWinLogonCryptAes;
 import egwwinlogon.updater.WinLogonUpdater;
 import egwwinlogon.winapi.AdvApi32;
@@ -140,6 +143,27 @@ public class EgwWinLogonUltis {
         return appCmd;
     }
     
+	/**
+	 * getReLoginAppCmd
+	 * @return 
+	 */
+	static public String getReLoginAppCmd() {
+		String appDir = "";
+        
+        try {
+            appDir = EgroupwarePGina.getAppDir();
+        }
+        catch( Exception ex ) {
+            logger.error("Error getReLoginAppCmd: " + ex.getMessage());
+        }
+        
+        String appCmd = "\"" + EgwWinLogonUltis.getJavaInstallationPath() + 
+            "\\bin\\javaw.exe\" -cp \"" + appDir + 
+            "egwwinlogon.jar\" egwwinlogon.user.EgwWinPromptCredentials ";
+        
+        return appCmd;
+	}
+	
     /**
      * pingUrl
      * 
@@ -407,5 +431,13 @@ public class EgwWinLogonUltis {
 		}
 
 		return result;
+	}
+	
+	/**
+	 * getCurrentSystemUser
+	 * @return 
+	 */
+	public static String getCurrentSystemUser() {
+		return Advapi32Util.getUserName();
 	}
 }

@@ -12,12 +12,17 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Sspi;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.W32APIOptions;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,10 +32,19 @@ import java.util.List;
  */
 public interface Credui extends Library {
 	
+	public static final int CREDUIWIN_GENERIC					= 0x1;
+	public static final int CREDUIWIN_CHECKBOX					= 0x2;
+	public static final int CREDUIWIN_AUTHPACKAGE_ONLY			= 0x10;
+	public static final int CREDUIWIN_IN_CRED_ONLY				= 0x20;
+	public static final int CREDUIWIN_ENUMERATE_ADMINS			= 0x100;
+	public static final int CREDUIWIN_ENUMERATE_CURRENT_USER	= 0x200;
+	public static final int CREDUIWIN_SECURE_PROMPT				= 0x1000;
+	public static final int CREDUIWIN_PACK_32_WOW				= 0x10000000;
+	
 	/**
 	 * INSTANCE
 	 */
-	Credui INSTANCE = (Credui) Native.loadLibrary("Credui", Credui.class);
+	Credui INSTANCE = (Credui) Native.loadLibrary("Credui", Credui.class, W32APIOptions.UNICODE_OPTIONS);
 	
 	/**
 	 * CredUIPromptForCredentials
@@ -63,7 +77,7 @@ public interface Credui extends Library {
 			);
 	
 	/**
-	 * CredUIPromptForWindowsCredentialsW
+	 * CredUIPromptForWindowsCredentials
 	 * DWORD WINAPI CredUIPromptForWindowsCredentials(
 	 * _In_opt_    PCREDUI_INFO pUiInfo,
 	 * _In_        DWORD        dwAuthError,
@@ -78,7 +92,7 @@ public interface Credui extends Library {
 	 * 
 	 * @return 
 	 */
-	int CredUIPromptForWindowsCredentialsW(
+	int CredUIPromptForWindowsCredentials(
 		CREDUI_INFO pUiInfo,
 		int dwAuthError,
 		ULONGByReference pulAuthPackage,
@@ -88,6 +102,34 @@ public interface Credui extends Library {
 		ULONGByReference pulOutAuthBufferSize,
 		IntByReference pfSave,
 		int dwFlags
+		);
+	
+	/**
+	 * CredUnPackAuthenticationBuffer
+	 * BOOL WINAPI CredUnPackAuthenticationBuffer(
+	 * _In_    DWORD  dwFlags,
+	 * _In_    PVOID  pAuthBuffer,
+	 * _In_    DWORD  cbAuthBuffer,
+	 * _Out_   LPTSTR pszUserName,
+	 * _Inout_ DWORD  *pcchMaxUserName,
+	 * _Out_   LPTSTR pszDomainName,
+	 * _Inout_ DWORD  *pcchMaxDomainname,
+	 * _Out_   LPTSTR pszPassword,
+	 * _Inout_ DWORD  *pcchMaxPassword
+	 * );
+	 * 
+	 * @return 
+	 */
+	boolean CredUnPackAuthenticationBuffer(
+		int dwFlags,
+		PVOID pAuthBuffer,
+		int cbAuthBuffer,
+		char[] pszUserName,
+		DWORDByReference pcchMaxUserName,
+		char[] pszDomainName,
+		DWORDByReference pcchMaxDomainname,
+		char[] pszPassword,
+		DWORDByReference pcchMaxPassword
 		);
 	
 	/**

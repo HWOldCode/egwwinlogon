@@ -24,6 +24,7 @@ import java.awt.event.MouseListener;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.logging.Level;
+import javax.swing.JOptionPane;
 import org.apache.log4j.Logger;
 
 /**
@@ -109,8 +110,8 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
      * @param username 
      */
     public EgwWinTrayer(String username, String url) {
-        this._username = username;
-        this._url = url;
+        this._username	= username;
+        this._url		= url;
         
         this._client        = new EgwWinLogonClient();
         this._egw           = this._client.getEgroupwareInstance(username, url);
@@ -155,7 +156,6 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
 		}
 		
         this._pmenu.addActionListener(this);
-        
         this._trayer.setPopupMenu(this._pmenu);
         
         if( (this._egw != null) && this._egw.isLogin() ) {
@@ -191,8 +191,20 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
      * Thread check is egroupware offline to online
      */
     public void reloadEgroupwareInstance() {
-        if( (this._egw == null) || ((this._egw != null) && !this._egw.isLogin()) ) {
-            Thread thread = new Thread(){
+		this._egw = this._client.getEgroupwareInstance(this._username, this._url);
+		
+        /*if( (this._egw == null) || ((this._egw != null) && !this._egw.isLogin()) ) {
+			_egw = _client.getEgroupwareInstance(_username, _url);
+                        
+			if( (_egw != null) && (_egw.isLogin()) ) {
+				/*if( _trayer != null ) {
+					_trayer.displayMsgInfo(
+						"Egroupware", 
+						"Benutzer ist eingeloggt.");
+				}*/
+			//}
+			
+            /*Thread thread = new Thread(){
                 
                 @Override
                 public void run(){
@@ -214,7 +226,7 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
 							}
 						}*/
                         
-                        try {
+                        /*try {
                             Thread.sleep(1000);
                         } catch (InterruptedException ex) {
                             java.util.logging.Logger.getLogger(
@@ -225,8 +237,8 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
                 }
             };
             
-            thread.start();
-        }
+            thread.start();*/
+        //}
     }
 
     /**
@@ -308,6 +320,8 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
 			String[] acmd = e.getActionCommand().split(":");
 			String egwurl = null;
 			
+			this.reloadEgroupwareInstance();
+			
 			if( acmd.length == 2 ) {
 				if( "intern".equals(acmd[0]) ) {
 					
@@ -366,6 +380,9 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
 				else {
 					this._trayer.displayMsgInfo("EGroupware", 
 						"Offline modus, kein Internet?");
+					
+					/*if( JOptionPane.showConfirmDialog(null, "Client Daten neu anfordern?") == JOptionPane.YES_OPTION ) {
+					}*/
 				}
             }
         }
@@ -391,6 +408,8 @@ public class EgwWinTrayer implements EgroupwareEventListener, ActionListener, Mo
             (e.getClickCount() >= 2) ) 
         {
             try {
+				this.reloadEgroupwareInstance();
+				
                 if( this._egw.isLogin() ) {
                     this._trayer.displayMsgInfo(
                         this._trayerTitle, 

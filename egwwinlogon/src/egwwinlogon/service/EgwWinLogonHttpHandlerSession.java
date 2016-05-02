@@ -7,11 +7,14 @@ package egwwinlogon.service;
 
 import com.jegroupware.egroupware.Egroupware;
 import com.jegroupware.egroupware.EgroupwareConfig;
+import com.jegroupware.egroupware.EgroupwareNotifications;
 import com.jegroupware.egroupware.EgroupwareSession;
 import com.sun.net.httpserver.HttpExchange;
 import egwwinlogon.http.LogonHttpServerHandler;
+import egwwinlogon.user.EgwWinPromptCredentials;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.codec.binary.Base64;
@@ -43,15 +46,30 @@ public class EgwWinLogonHttpHandlerSession extends LogonHttpServerHandler {
                 Egroupware egw = Egroupware.findInstance(user);
 
                 if( egw != null ) {
+					
+					// test request, is session activ
+					// ---------------------------------------------------------
+					try {
+						EgroupwareNotifications notif = new EgroupwareNotifications();
+						egw.request(notif);
+					}
+					catch( Exception e ) {
+					}
+					// ---------------------------------------------------------
+					
                     String response = "";
 
                     String config = EgroupwareConfig.toSerializableString(egw.getConfig());
                     response = response + "config:" + new String(
                         Base64.encodeBase64(config.getBytes())) + ";";
 
-                    String session = EgroupwareSession.toSerializableString(egw.getSession());
-                    response = response + "session:" + new String(
-                        Base64.encodeBase64(session.getBytes())) + ";";
+					EgroupwareSession _session = egw.getSession();
+					
+					if( _session != null ) {
+						String session = EgroupwareSession.toSerializableString(_session);
+						response = response + "session:" + new String(
+							Base64.encodeBase64(session.getBytes())) + ";";
+					}
 
                     t.sendResponseHeaders(200, response.length());
                     OutputStream os = t.getResponseBody();
