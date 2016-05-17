@@ -33,6 +33,10 @@ public class EgwWinLogonHttpHandlerSession extends LogonHttpServerHandler {
         return "/session";
     }
 
+	/**
+	 * handle
+	 * @param t 
+	 */
     @Override
     public void handle(HttpExchange t) {
         try {

@@ -8,6 +8,7 @@ package egwwinlogon.winapi;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.Tlhelp32;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
@@ -16,6 +17,7 @@ import static com.sun.jna.platform.win32.WinNT.OWNER_SECURITY_INFORMATION;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +53,7 @@ public class ProcessList {
 				int ret = kernel.GetProcessId(handle);
 				
 				return Long.valueOf(ret);
-			} 
+			}
 			catch( Throwable e ) {
 				e.printStackTrace();
 			}
@@ -158,9 +160,9 @@ public class ProcessList {
          * @param exefile 
          */
         public ProcessInfo(int processid, int parentProcessid, String exefile) {
-            this._processid = processid;
-            this._parentProcessid = parentProcessid;
-            this._exefile = exefile;
+            this._processid			= processid;
+            this._parentProcessid	= parentProcessid;
+            this._exefile			= exefile;
         }
         
         /**
@@ -190,7 +192,7 @@ public class ProcessList {
 				);
 			
 			return kernel32.OpenProcess(
-				Kernel32.PROCESS_QUERY_INFORMATION | Kernel32.GENERIC_READ, 
+				Kernel32.PROCESS_QUERY_INFORMATION | Kernel32.GENERIC_READ | Kernel32.PROCESS_TERMINATE, 
 				false, 
 				this._processid
 				);
@@ -214,11 +216,31 @@ public class ProcessList {
 					PSID tpid		= new PSID(psid.getValue());
 					String strsid	= Advapi32Util.convertSidToStringSid(tpid);
 					
+					Kernel32.INSTANCE.CloseHandle(hprocess);
+					
 					return strsid;
 				}
 			}
 			
 			return null;
+		}
+		
+		/**
+		 * terminate
+		 * @source http://stackoverflow.com/questions/10124299/how-do-i-terminate-a-process-tree-from-java
+		 * @throws IOException 
+		 */
+		public void terminate() throws IOException {
+			HANDLE processHandle = this.getHandle();
+			
+			if( processHandle == null ) {
+				throw new IOException ("OpenProcess failed: " + 
+                    Kernel32Util.formatMessageFromLastErrorCode(
+						Kernel32.INSTANCE.GetLastError()));
+			}
+			
+			Kernel32.INSTANCE.TerminateProcess(processHandle, 1);
+			Kernel32.INSTANCE.CloseHandle(processHandle);
 		}
     }
 }

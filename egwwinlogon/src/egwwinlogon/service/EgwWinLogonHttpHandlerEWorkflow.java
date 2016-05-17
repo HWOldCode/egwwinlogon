@@ -9,7 +9,6 @@ import com.jegroupware.egroupware.Egroupware;
 import com.sun.net.httpserver.HttpExchange;
 import egwwinlogon.egroupware.EgroupwareEWorkflowRequest;
 import egwwinlogon.http.LogonHttpServerHandler;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 import java.util.logging.Level;

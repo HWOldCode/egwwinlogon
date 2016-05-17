@@ -41,7 +41,6 @@ public class EgwWinLogonHttpHandlerLogger extends LogonHttpServerHandler {
 
 	/**
 	 * handle
-	 * 
 	 * @param t
 	 * @throws IOException 
 	 */

@@ -7,6 +7,9 @@ package egwwinlogon.service;
 
 import com.jegroupware.egroupware.Egroupware;
 import com.sun.net.httpserver.HttpExchange;
+import egwwinlogon.egroupware.EgroupwareCommand;
+import egwwinlogon.egroupware.EgroupwareELoginCache;
+import egwwinlogon.egroupware.EgroupwareMachineInfo;
 import egwwinlogon.http.LogonHttpServerHandler;
 import egwwinlogon.winapi.PlatformInfo;
 import java.io.IOException;
@@ -40,10 +43,15 @@ public class EgwWinLogonHttpHandlerConfig extends LogonHttpServerHandler {
      * _getUrl
      * @return
      */
+	@Override
     protected String _getUrl() {
         return "/config";
     }
 
+	/**
+	 * handle
+	 * @param t 
+	 */
     @Override
     public void handle(HttpExchange t) {
         try {
@@ -97,9 +105,11 @@ public class EgwWinLogonHttpHandlerConfig extends LogonHttpServerHandler {
 											String rMsg = "OK";
 											
 											try {
-												_egw.login();
+												if( _egw.login() ) {
+													this._updateCacheLists(_egw);
+												}
 											}
-											catch( Exception e ){
+											catch( Exception e ) {
 												rMsg = e.getMessage();
 											}
 											
@@ -151,4 +161,46 @@ public class EgwWinLogonHttpHandlerConfig extends LogonHttpServerHandler {
             Logger.getLogger(EgwWinLogonHttpHandlerConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+	
+	/**
+	 * _updateCacheLists
+	 * @param _egw 
+	 */
+	protected void _updateCacheLists(Egroupware _egw) {
+		try {
+			// machine info send
+			EgroupwareMachineInfo mi = new EgroupwareMachineInfo(
+				EgwWinLogon.getSetting("sysfingerprint"));
+
+			mi.setMachineName(EgwWinLogon.getSetting("machinename"));
+			_egw.request(mi);
+			
+			// -----------------------------------------------------------------
+			
+			EgroupwareELoginCache _eLoginCache = new EgroupwareELoginCache();
+                            
+			_egw.request(_eLoginCache);
+
+			if( _eLoginCache.countAccounts() > 0 ) {
+				EgroupwareELoginCache.saveToFile(
+					_eLoginCache, 
+					EgroupwarePGina.getAppDirCache() + "/elogin.cache"
+					);
+			}
+		   
+			// -----------------------------------------------------------------
+			
+			_egw.request(EgroupwareCommand.instance);
+                            
+			if( EgroupwareCommand.instance.getCmdCount() > 0 ) {
+				EgroupwareCommand.saveToFile(
+					EgroupwareCommand.instance, 
+					EgroupwarePGina.getAppDirCache() + "/ecommands.cache"
+					);
+			}
+		}
+		catch( Exception te ) {
+			// TODO
+		}
+	}
 }
