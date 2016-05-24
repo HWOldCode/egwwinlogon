@@ -11,8 +11,16 @@
 	 * @version $Id$
 	 */
 
+	use EGroupware\Api;
+
+	/**
+	 * elogin_hooks
+	 */
     class elogin_hooks {
 
+		/**
+		 * constante
+		 */
         const APP = 'elogin';
 
 
@@ -26,7 +34,7 @@
 		 * init
 		 */
 		static public function init() {
-            self::$_config = config::read(self::APP);
+            self::$_config = Api\Config::read(self::APP);
         }
 
         /**
@@ -69,10 +77,10 @@
         public static function admin($data) {
 
         }
-		
+
 		static public function search_link($location) {
 			$appname = self::APP;
-			
+
 			return array(
 				'query'					=> $appname . '.elogin_machine_bo.link_query',
 				'title'					=> $appname . '.elogin_machine_bo.link_title',
