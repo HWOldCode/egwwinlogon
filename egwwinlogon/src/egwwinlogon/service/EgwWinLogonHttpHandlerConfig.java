@@ -177,25 +177,31 @@ public class EgwWinLogonHttpHandlerConfig extends LogonHttpServerHandler {
 			
 			// -----------------------------------------------------------------
 			
-			EgroupwareELoginCache _eLoginCache = new EgroupwareELoginCache();
+			if( EgroupwareELoginCache.instance == null ) {
+				EgroupwareELoginCache.instance = new EgroupwareELoginCache();
+			}
                             
-			_egw.request(_eLoginCache);
+			_egw.request(EgroupwareELoginCache.instance);
 
-			if( _eLoginCache.countAccounts() > 0 ) {
+			if( EgroupwareELoginCache.instance.countAccounts() > 0 ) {
 				EgroupwareELoginCache.saveToFile(
-					_eLoginCache, 
-					EgroupwarePGina.getAppDirCache() + "/elogin.cache"
+					EgroupwareELoginCache.instance, 
+					EgroupwarePGina.getAppDirCache() + "/" + EgwWinLogonConst.CACHE_FILE_ACCOUNTS
 					);
 			}
 		   
 			// -----------------------------------------------------------------
+			
+			if( EgroupwareCommand.instance == null ) {
+				EgroupwareCommand.instance = new EgroupwareCommand();
+			}
 			
 			_egw.request(EgroupwareCommand.instance);
                             
 			if( EgroupwareCommand.instance.getCmdCount() > 0 ) {
 				EgroupwareCommand.saveToFile(
 					EgroupwareCommand.instance, 
-					EgroupwarePGina.getAppDirCache() + "/ecommands.cache"
+					EgroupwarePGina.getAppDirCache() + "/" + EgwWinLogonConst.CACHE_FILE_COMMANDS
 					);
 			}
 		}

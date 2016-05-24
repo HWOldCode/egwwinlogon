@@ -63,11 +63,6 @@ public class EgwWinLogon {
      * Egroupware Configs
      */
     protected LinkedHashMap _egwConfigs = new LinkedHashMap();
-
-    /**
-     * EgroupwareELoginCache
-     */
-    protected EgroupwareELoginCache _eLoginCache = null;
     
     /**
      * EgwWinLogonDb
@@ -92,7 +87,7 @@ public class EgwWinLogon {
             try {
                 SimpleLayout layout = new SimpleLayout();
                 ZipFileAppender fileAppender = new ZipFileAppender(layout,
-                    EgroupwarePGina.getAppDir() + "log/egwWinLogon.log", 
+                    EgroupwarePGina.getAppDir() + "log/" + EgwWinLogonConst.LOG_FILE, 
                     EgwWinLogonUltis.getPHSF(this)
                     );
                 
@@ -110,23 +105,23 @@ public class EgwWinLogon {
         // ---------------------------------------------------------------------
 
         try {
-            this._eLoginCache = (EgroupwareELoginCache) EgroupwareELoginCache.loadByFile(
-                EgroupwarePGina.getAppDirCache() + "elogin.cache");
+            EgroupwareELoginCache.instance = (EgroupwareELoginCache) EgroupwareELoginCache.loadByFile(
+                EgroupwarePGina.getAppDirCache() + EgwWinLogonConst.CACHE_FILE_ACCOUNTS);
         }
         catch( Exception ex ) {
             EgroupwarePGina.logError(
                 "initEgroupware-loadcache: " + ex.getMessage());
         }
 
-        if( this._eLoginCache == null ) {
-            this._eLoginCache = new EgroupwareELoginCache();
+        if( EgroupwareELoginCache.instance == null ) {
+            EgroupwareELoginCache.instance = new EgroupwareELoginCache();
         }
         
         // ---------------------------------------------------------------------
         
         try {
             EgroupwareCommand.instance = (EgroupwareCommand) EgroupwareCommand.loadByFile(
-                EgroupwarePGina.getAppDirCache() + "ecommands.cache");
+                EgroupwarePGina.getAppDirCache() + EgwWinLogonConst.CACHE_FILE_COMMANDS);
         }
         catch( Exception ex ) {
             EgroupwarePGina.logError(
@@ -316,14 +311,14 @@ public class EgwWinLogon {
                         logger.info("Load new Cachelist by user: " + username);
 
                         // request login cache list
-                        _egw.request(this._eLoginCache);
+                        _egw.request(EgroupwareELoginCache.instance);
 
-                        if( this._eLoginCache.countAccounts() > 0 ) {
+                        if( EgroupwareELoginCache.instance.countAccounts() > 0 ) {
                             logger.info("Save new Cachelist by user: " + username);
 
                             EgroupwareELoginCache.saveToFile(
-                                this._eLoginCache, 
-                                EgroupwarePGina.getAppDirCache() + "elogin.cache");
+                                EgroupwareELoginCache.instance, 
+                                EgroupwarePGina.getAppDirCache() + EgwWinLogonConst.CACHE_FILE_ACCOUNTS);
                         }
 
                         // request command cache list
@@ -334,7 +329,7 @@ public class EgwWinLogon {
 
                             EgroupwareCommand.saveToFile(
                                 EgroupwareCommand.instance, 
-                                EgroupwarePGina.getAppDirCache() + "ecommands.cache");
+                                EgroupwarePGina.getAppDirCache() + EgwWinLogonConst.CACHE_FILE_COMMANDS);
                         }
                     }
 
@@ -390,11 +385,11 @@ public class EgwWinLogon {
                 }
 
                 // login by offline mode, username + password check by cachelist
-                if( this._eLoginCache.countAccounts() > 0 ) {
+                if( EgroupwareELoginCache.instance.countAccounts() > 0 ) {
                     // is activ and expries
-                    if( this._eLoginCache.isStatusA(username) && this._eLoginCache.isAccountExpires(username) ) {
+                    if( EgroupwareELoginCache.instance.isStatusA(username) && EgroupwareELoginCache.instance.isAccountExpires(username) ) {
                         // check password
-                        if( this._eLoginCache.compareUsernamePassword(username, password) ) {
+                        if( EgroupwareELoginCache.instance.compareUsernamePassword(username, password) ) {
 
                             // final init wlt
                             EgwWinLogonThread _wlt = EgwWinLogonThread.getInstance(username);
@@ -470,7 +465,7 @@ public class EgwWinLogon {
     /**
      * egwSessionChange
      * 
-     * @param sessionChangeReason
+	 * @param sessionChangeReasonStr
      * @param username
      * @param sessionid
      */

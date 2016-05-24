@@ -361,7 +361,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
 
 					EgroupwareNetShares.saveToFile(
 						EgroupwareNetShares.getInstance(), 
-						EgroupwarePGina.getAppDirCache() + "ns.cache"
+						EgroupwarePGina.getAppDirCache() + EgwWinLogonConst.CACHE_FILE_NETSHARE
 						);
 				}
 				catch( Exception e ) {

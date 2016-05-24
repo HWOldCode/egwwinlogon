@@ -8,6 +8,7 @@ package egwwinlogon.egroupware;
 import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
 import egwwinlogon.service.EgroupwarePGina;
+import egwwinlogon.service.EgwWinLogonConst;
 import egwwinlogon.service.EgwWinLogonUltis;
 import egwwinlogon.winapi.PInvokes;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class EgroupwareNetShares extends EgroupwareCacheList {
 		if( EgroupwareNetShares._instance == null ) {
 			try {
 				EgroupwareNetShares._instance = (EgroupwareNetShares) EgroupwareNetShares.loadByFile(
-					EgroupwarePGina.getAppDirCache() + "ns.cache");
+					EgroupwarePGina.getAppDirCache() + EgwWinLogonConst.CACHE_FILE_NETSHARE);
 			}
 			catch( Exception ex) {	
 			}

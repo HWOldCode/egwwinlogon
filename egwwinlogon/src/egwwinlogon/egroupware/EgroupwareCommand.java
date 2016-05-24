@@ -5,30 +5,20 @@
  */
 package egwwinlogon.egroupware;
 
-import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
 import egwwinlogon.service.EgroupwarePGina;
-import egwwinlogon.service.EgwWinLogonUltis;
 import egwwinlogon.winapi.ProcessList;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.InvalidKeyException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  * EgroupwareCommand
@@ -255,7 +245,7 @@ public class EgroupwareCommand extends EgroupwareCacheList {
 			int pid			= -1;
 			String exec_cmd = "";
 
-			if( withConsole == "1" ) {
+			if( "1".equals(withConsole) ) {
 				logger.info("_executeCommand with console");
 				
 				exec_cmd += "cmd /c ";
@@ -283,7 +273,7 @@ public class EgroupwareCommand extends EgroupwareCacheList {
 			
 			// process waiting
 			// -----------------------------------------------------------------
-			if( process_wait == "1" ) {
+			if( "1".equals(process_wait) ) {
 				logger.info("_executeCommand waiting of process pid: " + String.valueOf(pid));
 				
 				while( ProcessList.existProcessById(pid) ) {
@@ -413,6 +403,7 @@ public class EgroupwareCommand extends EgroupwareCacheList {
      * @param sessionId 
      * @param type
      * @param event
+	 * @throws java.lang.Exception
      */
     public void executeEvent(int sessionId, String type, String event) throws Exception {
 		logger.info(
@@ -429,29 +420,11 @@ public class EgroupwareCommand extends EgroupwareCacheList {
                 LinkedHashMap cmddata = (LinkedHashMap) this._cmds.get(i);
                 
                 try {
-                    //String cmdid        = (String) cmddata.get("id");
                     String machineid    = (String) cmddata.get("machine_id");
                     String cmdname		= (String) cmddata.get("name");
-                    //String accountid    = (String) cmddata.get("account_id");
-                    //String command      = (String) cmddata.get("command");
-                    //String csystem      = (String) cmddata.get("system");
                     String order        = (String) cmddata.get("order");
                     String ctype        = (String) cmddata.get("type");
                     String cevent       = (String) cmddata.get("event");
-                    //String script_type	= (String) cmddata.get("script_type");
-					//String script		= (String) cmddata.get("script");
-					
-                    /*logger.info("EgroupwareCommand found-Cmd: " + 
-                        "ID: '" + cmdid + "' " + 
-                        "MachineId: '" + machineid + "' " + 
-                        "CMD-Name: '" + cmdname + "' " + 
-                        "AccountId: '" + accountid + "' " + 
-                        "Command: '" + command + "' " + 
-                        "System: '" + csystem + "' " + 
-                        "Order: '" + order + "' " + 
-                        "Type: '" + ctype + "' " + 
-                        "Event: '" + cevent + "' "
-                        );*/
 
                     // is right machine
                     if( (!machineid.equals(EgroupwarePGina.getSysFingerprint())) && 

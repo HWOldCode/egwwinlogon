@@ -5,30 +5,16 @@
  */
 package egwwinlogon.egroupware;
 
-import com.jegroupware.egroupware.EgroupwareJson;
 import com.jegroupware.egroupware.core.EgroupwareAuth;
 import com.jegroupware.egroupware.exceptions.EGroupwareExceptionRedirect;
-import egwwinlogon.service.EgroupwarePGina;
-import egwwinlogon.service.EgwWinLogon;
-import egwwinlogon.service.EgwWinLogonUltis;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.InvalidKeyException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  * EgroupwareELogin
@@ -36,6 +22,11 @@ import org.json.simple.parser.ParseException;
  */
 public class EgroupwareELoginCache extends EgroupwareCacheList {
 
+	/**
+     * self instance
+     */
+    public static EgroupwareELoginCache instance = null;
+	
     /**
 	 * serialVersionUID
 	 */

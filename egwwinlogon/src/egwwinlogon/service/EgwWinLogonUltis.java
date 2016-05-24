@@ -8,10 +8,7 @@ package egwwinlogon.service;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
-import com.sun.jna.platform.win32.Secur32;
-import com.sun.jna.platform.win32.Secur32Util;
 import com.sun.jna.platform.win32.WinReg;
-import com.sun.jna.ptr.IntByReference;
 import egwwinlogon.service.crypt.EgwWinLogonCryptAes;
 import egwwinlogon.updater.WinLogonUpdater;
 import egwwinlogon.winapi.AdvApi32;
