@@ -207,8 +207,11 @@ public class EgwWinLogon {
             username + " Domain: " + domain + 
             " Windows-SessionID: " + String.valueOf(sessionid));
 
+		EgwWinLogonThread _wlt = null;
         EgroupwareConfig config = null;
 
+		// ---------------------------------------------------------------------
+		
         if( this._egwConfigs.containsKey(username) ) {
             config = (EgroupwareConfig) _egwConfigs.get(username);
 
@@ -241,29 +244,42 @@ public class EgwWinLogon {
         
         try {
             try {
-                try {
-                    _egw.login();
-                }
-				catch( EGroupwareExceptionUserConfig e ) {
-					EgwWinLogon._error = "Please check your username or password!";
-					
-					return 0;
-				}
-				catch( EGroupwareExceptionLoginStatus e ) {
-					EgwWinLogon._error = "EGroupware response status: " + 
-						EGroupwareExceptionLoginStatus.getStatusMessage(e.getStatus());
-					
-					return 0;
-				}
-                catch( Exception te ) {
-                    throw new EgwWinLogonException(
-                        EgwWinLogonException.EC_SERVER_CONNECTION);
-                }
+				_wlt  = EgwWinLogonThread.getInstance(username);
+				
+				if( _wlt == null ) {
+					try {
+						_egw.login();
+					}
+					catch( EGroupwareExceptionUserConfig e ) {
+						EgwWinLogon._error = "Please check your username or password!";
 
+						return 0;
+					}
+					catch( EGroupwareExceptionLoginStatus e ) {
+						EgwWinLogon._error = "EGroupware response status: " + 
+							EGroupwareExceptionLoginStatus.getStatusMessage(e.getStatus());
+
+						return 0;
+					}
+					catch( Exception te ) {
+						throw new EgwWinLogonException(
+							EgwWinLogonException.EC_SERVER_CONNECTION);
+					}
+				}
+				else {
+					// check user
+					if( EgroupwareELoginCache.instance.isStatusA(username) && 
+						EgroupwareELoginCache.instance.isAccountExpires(username) ) 
+					{
+                        // check password
+                        if( EgroupwareELoginCache.instance.compareUsernamePassword(username, password) ) {
+							_egw = _wlt.getEgroupware();	// current egw instance use
+						}
+					}
+				}
+
+				// is login
                 if( _egw.isLogin() ) {
-                    // final init wlt
-                    EgwWinLogonThread _wlt  = EgwWinLogonThread.getInstance(username);
-                    
                     // only by first login
                     if( _wlt == null ) {
                         try {
@@ -392,8 +408,8 @@ public class EgwWinLogon {
                         if( EgroupwareELoginCache.instance.compareUsernamePassword(username, password) ) {
 
                             // final init wlt
-                            EgwWinLogonThread _wlt = EgwWinLogonThread.getInstance(username);
-
+							_wlt = EgwWinLogonThread.getInstance(username);
+							
                             if( _wlt == null ) {
                                 _wlt = new EgwWinLogonThread(_egw);
                             }

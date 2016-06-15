@@ -71,8 +71,9 @@ public class EgwWinLogonHttpHandlerEWorkflow extends LogonHttpServerHandler {
 					EgwWinLogonThread thread = EgwWinLogonThread.getInstance(username);
 					
 					if( thread != null ) {
-						if( thread.getSessionStatus() == 5 ) {
+						if( (thread.getSessionStatus() == 5) || (thread.getSessionStatus() == 8) ) {
 							Egroupware _egw = thread.getEgroupware();
+							
 							if( _egw.isLogin() ) {
 								try {
 									EgroupwareEWorkflowRequest _request = new EgroupwareEWorkflowRequest();
