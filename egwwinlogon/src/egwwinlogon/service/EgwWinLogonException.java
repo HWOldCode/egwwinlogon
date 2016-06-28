@@ -11,14 +11,17 @@ package egwwinlogon.service;
  */
 public class EgwWinLogonException extends Exception {
     
-    public static final int EC_SERVER_CONNECTION    = 1;
-    public static final int EC_LOGIN_FALSE          = 2;
-    
-    
-    public static final String MSG_SERVER_CONNECTION    = "Server connection can`t open";
-    public static final String MSG_UNKNOW_ERROR         = "Unknow Error";
-    public static final String MSG_LOGIN_FALSE          = "Login return false";
-    
+    public static final int EC_SERVER_CONNECTION			= 1;
+    public static final int EC_LOGIN_FALSE					= 2;
+    public static final int EC_UNKNOW_USER					= 3;
+	public static final int EC_USER_OR_PASSWORD_INCORRECT	= 4;		
+	
+    public static final String MSG_SERVER_CONNECTION			= "Server connection can`t open";
+    public static final String MSG_UNKNOW_ERROR					= "Unknow Error";
+    public static final String MSG_LOGIN_FALSE					= "Login return false";
+	public static final String MSG_UNKNOW_USER					= "Unknow user or user account expires";
+    public static final String MSG_USER_OR_PASSWORD_INCORRECT	= "Username or password is incorrect";
+	
     /**
      * error code
      */
@@ -57,6 +60,14 @@ public class EgwWinLogonException extends Exception {
             case EgwWinLogonException.EC_LOGIN_FALSE:
                 msg = EgwWinLogonException.MSG_LOGIN_FALSE;
                 break;
+				
+			case EgwWinLogonException.EC_UNKNOW_USER:
+				msg = EgwWinLogonException.MSG_UNKNOW_USER;
+                break;
+				
+			case EgwWinLogonException.EC_USER_OR_PASSWORD_INCORRECT:
+				msg = EgwWinLogonException.MSG_USER_OR_PASSWORD_INCORRECT;
+				break;
         }
         
         return msg;

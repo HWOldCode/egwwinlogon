@@ -275,6 +275,14 @@ public class EgwWinLogon {
                         if( EgroupwareELoginCache.instance.compareUsernamePassword(username, password) ) {
 							_egw = _wlt.getEgroupware();	// current egw instance use
 						}
+						else {
+							throw new EgwWinLogonException(
+								EgwWinLogonException.EC_USER_OR_PASSWORD_INCORRECT);
+						}
+					}
+					else {
+						throw new EgwWinLogonException(
+							EgwWinLogonException.EC_UNKNOW_USER);
 					}
 				}
 
@@ -283,7 +291,7 @@ public class EgwWinLogon {
                     // only by first login
                     if( _wlt == null ) {
                         try {
-                            // ---------------------------------------------------------
+                            // -------------------------------------------------
                             logger.info("Send MachineInfo ...");
 
                             // machine info send
@@ -292,7 +300,7 @@ public class EgwWinLogon {
 
                             mi.setMachineName((String) EgwWinLogon._settings.get("machinename"));
                             _egw.request(mi);
-                            // ---------------------------------------------------------
+                            // -------------------------------------------------
 
                             logger.info("Set Machine Logging ...");
 
@@ -302,7 +310,7 @@ public class EgwWinLogon {
                             Logger tlogger = Logger.getRootLogger();
                             tlogger.addAppender(egwlog);
 
-                            // ---------------------------------------------------------
+                            // -------------------------------------------------
 
                             // register machine logger to http logger
                             EgwWinLogonHttpHandlerLogger httpLogger = 
@@ -313,10 +321,10 @@ public class EgwWinLogon {
                                 httpLogger.setMachineLogger(egwlog);
                             }
 
-                            // ---------------------------------------------------------
+                            // -------------------------------------------------
 
                             logger.info("Login by user: " + username + "@" + domain);
-                            // ---------------------------------------------------------
+                            // -------------------------------------------------
                         }
                         catch( Exception ec ) {
                             // nothing
@@ -364,7 +372,7 @@ public class EgwWinLogon {
                             _wlt = new EgwWinLogonThread(_egw);
                         }
 
-                        // ---------------------------------------------------------
+                        // -----------------------------------------------------
 						
 						if( EgwWinLogonUltis.checkWindowsProfile(username) ) {
 							logger.info("Profile is fixed.");
@@ -403,7 +411,9 @@ public class EgwWinLogon {
                 // login by offline mode, username + password check by cachelist
                 if( EgroupwareELoginCache.instance.countAccounts() > 0 ) {
                     // is activ and expries
-                    if( EgroupwareELoginCache.instance.isStatusA(username) && EgroupwareELoginCache.instance.isAccountExpires(username) ) {
+                    if( EgroupwareELoginCache.instance.isStatusA(username) && 
+						EgroupwareELoginCache.instance.isAccountExpires(username) ) 
+					{
                         // check password
                         if( EgroupwareELoginCache.instance.compareUsernamePassword(username, password) ) {
 
@@ -422,7 +432,15 @@ public class EgwWinLogon {
 
                             return 1;
                         }
+						else {
+							throw new EgwWinLogonException(
+								EgwWinLogonException.EC_USER_OR_PASSWORD_INCORRECT);
+						}
                     }
+					else {
+						throw new EgwWinLogonException(
+							EgwWinLogonException.EC_UNKNOW_USER);
+					}
                 }
             }
             catch( Exception e ) {
@@ -430,13 +448,18 @@ public class EgwWinLogon {
             }
         }
         catch( Exception e ) {
-            StringWriter sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
-            
-            logger.info("egwAuthenticateUser, Exception: " + sw.toString());
-            
-            EgwWinLogon._error = "Error by Login with User: " + username + "\n" +
-                "Exception: " + sw.toString();
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			
+			logger.info("egwAuthenticateUser, Exception: " + sw.toString());
+			
+			if( e instanceof EgwWinLogonException ) {
+				EgwWinLogon._error = e.getMessage() + ", please try again!";
+			}
+			else {
+				EgwWinLogon._error = "Error by Login with User: " + username + "\n" +
+					"Exception: " + sw.toString();
+			}
         }
 
         logger.info("egwAuthenticateUser return false by user: " + username);
