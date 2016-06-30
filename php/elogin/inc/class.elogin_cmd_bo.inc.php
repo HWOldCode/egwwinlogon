@@ -161,7 +161,6 @@
 
         /**
          * constructor
-         *
          * @param string $id
          */
         public function __construct($id=null) {

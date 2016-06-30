@@ -2,19 +2,23 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
 
+	/**
+	 * elogin_hooks
+	 */
     class elogin_hooks {
 
+		/**
+		 * APP
+		 */
         const APP = 'elogin';
-
 
         /**
          * config
@@ -63,16 +67,20 @@
 
         /**
          * admin
-         *
          * @param string|array $data hook-data
          */
         public static function admin($data) {
 
         }
-		
+
+		/**
+		 * search_link
+		 * @param mixed $location
+		 * @return array
+		 */
 		static public function search_link($location) {
 			$appname = self::APP;
-			
+
 			return array(
 				'query'					=> $appname . '.elogin_machine_bo.link_query',
 				'title'					=> $appname . '.elogin_machine_bo.link_title',
@@ -84,19 +92,28 @@
                             'title'		=> $appname . '.elogin_cmd_bo.link_title',
                             'titles'	=> $appname . '.elogin_cmd_bo.link_titles',
 							'entry'		=> 'ELogin-Cmd',
-						)
+						),
+					'elogin-link'		=> array(
+							'query'		=> $appname . '.elogin_link_bo.link_query',
+                            'title'		=> $appname . '.elogin_link_bo.link_title',
+                            'titles'	=> $appname . '.elogin_link_bo.link_titles',
+							'entry'		=> 'ELogin-Link',
+							'view'			=> array(
+								'menuaction' => $appname . '.elogin_link_ui.open',
+							),
+							'view_id'		=> 'unid',
+							'view_popup'	=> '750x580',
+						),
 					)
 				);
 		}
 
         /**
 		 * settings
-		 *
 		 * @param mixed $hook_data
 		 * @return array
 		 */
 		static function settings($hook_data=null) {
-
             $settings = array(
                 '1.section' => array(
                     'type'      => 'section',

@@ -235,3 +235,23 @@ function elogin_upgrade1_9_078()
 	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.079';
 }
 
+
+function elogin_upgrade1_9_079()
+{
+	$GLOBALS['egw_setup']->oProc->CreateTable('egw_elogin_link',array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_usershare_id' => array('type' => 'varchar','precision' => '64'),
+			'el_usershare_mount_id' => array('type' => 'varchar','precision' => '64'),
+			'el_filepath' => array('type' => 'varchar','precision' => '512'),
+			'el_options' => array('type' => 'text')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_usershare_id','el_usershare_mount_id','el_filepath'),
+		'uc' => array()
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.080';
+}
+
