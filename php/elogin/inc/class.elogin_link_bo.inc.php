@@ -182,11 +182,16 @@
 		}
 
 		/**
-		 * buildUrl
+		 * buildUri
 		 * @return string
 		 */
-		public function buildUrl() {
-			
+		public function buildUri() {
+			$usershare		= new elogin_usershares_bo($this->_usershare_id);
+			$usersharemount = new elogin_usershares_mount_bo($this->_usershare_mount_id);
+
+			if( $usersharemount->getUsershareId() == $usershare->getId() ) {
+				$uri = $usersharemount->getMountname() . '://' . $this->_filepath;
+			}
 		}
 
 		/**
