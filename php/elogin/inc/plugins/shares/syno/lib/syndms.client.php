@@ -1205,6 +1205,27 @@
 		}
 
 		/**
+		 * getCompressStatus
+		 * @param string $taskid
+		 * @return array|false
+		 */
+		public function getCompressStatus($taskid) {
+			if( $this->_isLogin ) {
+				$data = $this->_queryByService('SYNO.FileStation.Compress', array(
+                    'method'            => 'status',
+                    'version'           => '3',
+					'taskid'			=> $this->_escapePath($taskid),
+					), true);
+
+				if( is_array($data) && isset($data['dest_file_path']) ) {
+					return $data;
+				}
+			}
+
+			return false;
+		}
+
+		/**
 		 * _escapeFolderName
 		 * @param string $name
 		 * @return string
