@@ -30,6 +30,14 @@
 		 * @param array $content
 		 */
 		public function open($content=array()) {
+			$uid = ( isset($content['uid']) ? $content['uid'] : null);
+			$uid = ( $uid == null ? (isset($_GET['uid']) ? $_GET['uid'] : null) : $uid);
+
+			if( $uid == null ) {
+				// error
+			}
+
+			$link = new elogin_link_bo($uid);
 			
 		}
 	}

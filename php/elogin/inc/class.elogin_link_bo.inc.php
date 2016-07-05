@@ -182,6 +182,14 @@
 		}
 
 		/**
+		 * buildUrl
+		 * @return string
+		 */
+		public function buildUrl() {
+			
+		}
+
+		/**
          * save
          */
         public function save() {
