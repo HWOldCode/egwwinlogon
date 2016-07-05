@@ -16,7 +16,7 @@ public class EgwWinLogonConst {
 	 * constsants of WinLogon
 	 */
 	
-	public static final String EGW_WIN_LOGON_VERSION		= "14.4.1";
+	public static final String EGW_WIN_LOGON_VERSION		= "14.4.2";
 	public static final String EGW_WIN_LOGON_TITLE			= "EGroupware";
 	public static final String EGW_WIN_LOGON_DESCRIPTION	= "EGroupware CP Connector";
 	public static final String CACHE_FILE_ACCOUNTS			= "elogin.cache";

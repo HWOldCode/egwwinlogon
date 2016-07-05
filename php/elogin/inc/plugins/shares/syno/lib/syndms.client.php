@@ -10,7 +10,7 @@
      */
     class SyndmsClient {
 
-		const DEBUG				= true;
+		const DEBUG				= false;
 
         const URL_INDEX				= 'webman/index.cgi';
         const URL_LOGOUT			= 'webman/logout.cgi';

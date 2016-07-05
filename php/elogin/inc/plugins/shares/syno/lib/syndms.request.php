@@ -7,7 +7,7 @@
      */
     class SyndmsRequest {
 
-		const DEBUG = true;
+		const DEBUG = false;
 
         /**
          * curlRequest
