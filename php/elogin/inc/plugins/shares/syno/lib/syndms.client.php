@@ -368,7 +368,7 @@
          */
         public function login($username, $password) {
             if( $this->_initConnection() ) {
-                $this->_initServices(); // TODO
+                $this->_initServices();
 
                 $response = $this->_request(self::URL_AUTH, array(
                     'api' => 'SYNO.API.Auth',
@@ -378,7 +378,7 @@
                     'passwd'	=> $password,
                     'session'	=> 'FileStation',
                     'format'	=> 'cookie'));
-            //var_dump($response);
+
                 if( $response ) {
                     $data = json_decode($response['body']);
 
@@ -1088,16 +1088,16 @@
                         return true;
                     }
 
-					error_log("setFileShareACLs realpath: '" .
-						$realpath . "' status: '" . var_export($status, true) . "'");
+					self::client_error_log("setFileShareACLs realpath: '" .
+						$realpath . "' status: '" . var_export($status, true) . "'", __LINE__);
                 }
 
-				error_log("setFileShareACLs realpath: '" .
-						$realpath . "' returndata: '" . var_export($data, true) . "'");
+				self::client_error_log("setFileShareACLs realpath: '" .
+						$realpath . "' returndata: '" . var_export($data, true) . "'", __LINE__);
              }
 
-			 error_log("setFileShareACLs realpath: '" .
-						$realpath . "' login: '" . var_export($this->_isLogin, true) . "'");
+			 self::client_error_log("setFileShareACLs realpath: '" .
+					$realpath . "' login: '" . var_export($this->_isLogin, true) . "'", __LINE__);
 
             return false;
         }
@@ -1265,8 +1265,8 @@
 
 		/**
 		 * client_error_log
-		 * @param type $message
-		 * @param type $line
+		 * @param array|string $message
+		 * @param int|string $line
 		 */
 		static public function client_error_log($message, $line) {
 			if( !self::DEBUG ) {
