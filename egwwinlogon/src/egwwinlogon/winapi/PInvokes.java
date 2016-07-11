@@ -26,6 +26,23 @@ import egwwinlogon.winapi.mpr.NETRESOURCEW;
  */
 public class PInvokes {
 	
+	static public boolean isDesktopLocked() {
+		WinDef.HWND _hwnd = User32Ex.INSTANCE.OpenDesktop(
+			"Default".toCharArray(), 0, false, 0x0100);
+		
+		if( _hwnd != null ) {
+			boolean rtn = User32Ex.INSTANCE.SwitchDesktop(_hwnd);
+			
+			User32Ex.INSTANCE.CloseDesktop(_hwnd);
+			
+			if( rtn == false ) {	
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * mapNetworkDrive
 	 * @param unc
