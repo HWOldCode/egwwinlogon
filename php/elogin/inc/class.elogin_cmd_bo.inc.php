@@ -31,8 +31,8 @@
         const EVENT_LOGIN_PRE   = 'login_pre';
         const EVENT_LOGIN       = 'login';
         const EVENT_LOGIN_AFTER = 'login_after';
-		const EVENT_LOCKT		= 'lockt';
-		const EVENT_UNLOCKT		= 'unlockt';
+		const EVENT_LOCK		= 'lock';
+		const EVENT_UNLOCK		= 'unlock';
 		const EVENT_LOGOFF		= 'logoff';
 
         // seperator

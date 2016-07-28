@@ -207,8 +207,8 @@
                 elogin_cmd_bo::EVENT_LOGIN_PRE      => lang('Login Pre (password accept)'),
                 //elogin_cmd_bo::EVENT_LOGIN          => lang('Login (System session create)'),
                 elogin_cmd_bo::EVENT_LOGIN_AFTER    => lang('Login After (Destop is show)'),
-                elogin_cmd_bo::EVENT_LOCKT			=> lang('Lockt'),
-                elogin_cmd_bo::EVENT_UNLOCKT		=> lang('Unlockt'),
+                elogin_cmd_bo::EVENT_LOCK			=> lang('Lock'),
+                elogin_cmd_bo::EVENT_UNLOCK			=> lang('Unlock'),
 				elogin_cmd_bo::EVENT_LOGOFF			=> lang('Logoff'),
                 );
 
@@ -263,8 +263,8 @@
                 elogin_cmd_bo::EVENT_LOGIN_PRE      => lang('Login Pre (password accept)'),
                 //elogin_cmd_bo::EVENT_LOGIN          => lang('Login (System session create)'),
                 elogin_cmd_bo::EVENT_LOGIN_AFTER    => lang('Login After (Destop is show)'),
-                elogin_cmd_bo::EVENT_LOCKT			=> lang('Lockt'),
-                elogin_cmd_bo::EVENT_UNLOCKT		=> lang('Unlockt'),
+                elogin_cmd_bo::EVENT_LOCK			=> lang('Lock'),
+                elogin_cmd_bo::EVENT_UNLOCK			=> lang('Unlock'),
                 );
 
             $machine = new elogin_machine_bo($query['unid']);
