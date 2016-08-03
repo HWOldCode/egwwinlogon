@@ -15,6 +15,7 @@ import egwwinlogon.http.LogonHttpServer;
 import egwwinlogon.log.ZipFileAppender;
 import egwwinlogon.protocol.EgwWinLogonProtocol;
 import egwwinlogon.service.crypt.EgwWinLogonCryptAes;
+import egwwinlogon.updater.WinLogonUpdater;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -71,7 +72,6 @@ public class EgwWinLogon {
 	
     /**
      * initEgroupware
-     *
      */
     public void initEgroupware() {
 		// add machinename to user agent
@@ -81,6 +81,9 @@ public class EgwWinLogon {
         // init JCE
         EgwWinLogonCryptAes.initJCE();
         
+		// init update ssl certs
+		WinLogonUpdater.initSslCerts();
+		
         // ---------------------------------------------------------------------
         
         if( EgroupwarePGina.isJavaLoggingFile() ) {

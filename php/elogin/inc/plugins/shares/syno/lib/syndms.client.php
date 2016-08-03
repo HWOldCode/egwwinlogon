@@ -1,16 +1,30 @@
 <?php
 
+	/**
+	 * Syndms
+	 * @link http://www.hw-softwareentwicklung.de
+	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @package syno
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
+	 * @version $Id$
+	 */
+
+	/**
+	 * require once
+	 */
     require_once('syndms.request.php');
 
     /**
-     * Description of syndms
-     *
-     * https://global.download.synology.com/ftp/Document/DeveloperGuide/Synology_File_Station_API_Guide.pdf
+     * SyndmsClient
      * @author Stefan Werfling
      */
     class SyndmsClient {
 
-		const DEBUG				= true;
+		/**
+		 * consts
+		 */
+		const DEBUG				= false;
 
         const URL_INDEX				= 'webman/index.cgi';
         const URL_LOGOUT			= 'webman/logout.cgi';
@@ -68,8 +82,8 @@
         protected $_cookies = array();
 
         /**
-         *
-         * @var type
+         * is logged in
+         * @var boolean
          */
         protected $_isLogin = false;
 
@@ -81,7 +95,6 @@
 
         /**
          * __construct
-         *
          * @param string $ip
          * @param int $port
          */
@@ -101,7 +114,6 @@
 
         /**
          * _createUrl
-         *
          * @param string $url
          * @return string
          */
@@ -111,7 +123,6 @@
 
         /**
          * _request
-         *
          * @param string $url
          * @param array $data
          * @return array
@@ -175,7 +186,6 @@
 
         /**
          * _queryByService
-         *
          * @param string $serviceName
          * @param array $query
          * @return array|null
@@ -253,7 +263,6 @@
 
         /**
          * _query
-         *
          * @param array $query
          * @return array
          */
@@ -353,14 +362,13 @@
 
         /**
          * login
-         *
          * @param string $username
          * @param string $password
          * @return boolean
          */
         public function login($username, $password) {
             if( $this->_initConnection() ) {
-                $this->_initServices(); // TODO
+                $this->_initServices();
 
                 $response = $this->_request(self::URL_AUTH, array(
                     'api' => 'SYNO.API.Auth',
@@ -370,7 +378,7 @@
                     'passwd'	=> $password,
                     'session'	=> 'FileStation',
                     'format'	=> 'cookie'));
-            //var_dump($response);
+
                 if( $response ) {
                     $data = json_decode($response['body']);
 
@@ -412,7 +420,6 @@
 
         /**
          * getUsers
-         *
          * @return array|null
          */
         public function getUsers() {
@@ -446,7 +453,6 @@
 
         /**
          * getUserGroups
-         *
          * @param string $username
          * @return array|null
          */
@@ -480,7 +486,6 @@
 
         /**
          * getGroups
-         *
          * @return array|null
          */
         public function getGroups() {
@@ -515,7 +520,6 @@
 
         /**
          * getShares
-         *
          * @return array|null
          */
         public function getShares() {
@@ -550,7 +554,6 @@
 
         /**
          * createUser
-         *
          * @param string $name
          * @param string $password
          * @param boolean $cannot_chg_passwd
@@ -559,9 +562,9 @@
          * @param string $email
          * @return boolean|string
          */
-        public function createUser($name, $password, $cannot_chg_passwd=false, $expired='normal', $description='', $email='') {
-        //var_dump($name);
-        //var_dump($this->_isLogin);
+        public function createUser($name, $password, $cannot_chg_passwd=false,
+				$expired='normal', $description='', $email='')
+		{
             if( $this->_isLogin ) {
                 $query = array(
                     'method'            => 'create',
@@ -576,9 +579,8 @@
                     'send_password'     => 'false',
                     );
 
-            //var_dump($query);
                 $data = $this->_queryByService('SYNO.Core.User', $query);
-            //var_dump($data);
+
                 if( $data ) {
                     if( isset($data['name']) && isset($data['uid']) ) {
                         return $data['uid'];
@@ -591,7 +593,6 @@
 
         /**
          * addUserToGroup
-         *
          * @param string $groupname
          * @param string $username
          * @return boolean
@@ -615,7 +616,6 @@
 
         /**
          * removeUserByGroup
-         *
          * @param string $groupname
          * @param string $username
          * @return boolean
@@ -639,7 +639,6 @@
 
         /**
          * createShare
-         *
          * @param string $name
          * @param string $vol_path
          * @param string $desc
@@ -671,7 +670,6 @@
 
         /**
          * getUser
-         *
          * @param string $username
          * @return boolean
          */
@@ -708,7 +706,6 @@
 
         /**
          * setUser
-         *
          * @param type $username
          * @param type $newpassword
          * @param type $newusername
@@ -718,7 +715,10 @@
          * @param type $expired
          * @return boolean
          */
-        public function setUser($username, $newpassword=null, $newusername=null, $description, $email, $cannot_chg_passwd=false, $expired='normal') {
+        public function setUser($username, $newpassword=null,
+			$newusername=null, $description, $email,
+			$cannot_chg_passwd=false, $expired='normal')
+		{
             if( $this->_isLogin ) {
                 $query = array(
                     'method'            => 'set',
@@ -749,7 +749,6 @@
 
         /**
          * setUserPassword
-         *
          * @param string $username
          * @param string $newpassword
          * @return boolean
@@ -780,7 +779,6 @@
 
         /**
          * disableUser
-         *
          * @param string $username
          * @return boolean
          */
@@ -810,7 +808,6 @@
 
         /**
          * enableUser
-         *
          * @param string $username
          * @return boolean
          */
@@ -840,7 +837,6 @@
 
         /**
          * isUserDisabled
-         *
          * @param string $username
          * @return boolean
          */
@@ -866,7 +862,9 @@
          * @param string $user_group_type
          * @return boolean
          */
-        public function setSharePermission($sharename, $forUsername, $access='r', $user_group_type='local_user') {
+        public function setSharePermission($sharename, $forUsername,
+			$access='r', $user_group_type='local_user')
+		{
             if( $this->_isLogin ) {
                 $data = $this->_queryByService('SYNO.Core.Share.Permission', array(
                     'method'            => 'set',
@@ -894,7 +892,6 @@
 
         /**
          * getUserShares
-         *
          * @param string $username
          * @param string $user_group_type
          * @return boolean|array
@@ -927,6 +924,13 @@
             return false;
         }
 
+		/**
+		 * getFileSharesList
+		 * @param string $sharename
+		 * @param int $limit
+		 * @param array $options
+		 * @return array
+		 */
         public function getFileSharesList($sharename, $limit=1000, $options=array()) {
             if( $this->_isLogin ) {
                 $data = $this->_queryByService('SYNO.FileStation.List', array(
@@ -973,7 +977,6 @@
 
         /**
          * createDirShare
-         *
          * @param string $sharename
          * @param string $dir
          * @return boolean
@@ -1028,7 +1031,6 @@
 
         /**
          * getFileShareACLs
-         *
          * @param string $realpath
          * @return array
          */
@@ -1061,7 +1063,6 @@
 
         /**
          * setFileShareACLs
-         *
          * @param string $volume
          * @param string $realpath
          * @param array $rules
@@ -1087,23 +1088,22 @@
                         return true;
                     }
 
-					error_log("setFileShareACLs realpath: '" .
-						$realpath . "' status: '" . var_export($status, true) . "'");
+					self::client_error_log("setFileShareACLs realpath: '" .
+						$realpath . "' status: '" . var_export($status, true) . "'", __LINE__);
                 }
 
-				error_log("setFileShareACLs realpath: '" .
-						$realpath . "' returndata: '" . var_export($data, true) . "'");
+				self::client_error_log("setFileShareACLs realpath: '" .
+						$realpath . "' returndata: '" . var_export($data, true) . "'", __LINE__);
              }
 
-			 error_log("setFileShareACLs realpath: '" .
-						$realpath . "' login: '" . var_export($this->_isLogin, true) . "'");
+			 self::client_error_log("setFileShareACLs realpath: '" .
+					$realpath . "' login: '" . var_export($this->_isLogin, true) . "'", __LINE__);
 
             return false;
         }
 
         /**
          * _getFileShareACLStatus
-         *
          * @param string $taskid
          * @return boolean
          */
@@ -1125,7 +1125,6 @@
 
 		/**
 		 * polling
-		 *
 		 * @return
 		 */
 		public function polling() {
@@ -1143,7 +1142,6 @@
 
 		/**
 		 * getBackgroundTaskList
-		 *
 		 * @return
 		 */
 		public function getBackgroundTaskList() {
@@ -1163,8 +1161,72 @@
 		}
 
 		/**
+		 * compress
+		 * @param string $sharename
+		 * @param string $path
+		 * @param string $password
+		 * @param string $destFilePath
+		 * @param string $level
+		 * @param string $mode
+		 * @param string $format
+		 * @param string $codepage
+		 * @return false|string return a taks id or false
+		 */
+		public function compress($sharename, $path, $password, $destFilePath=null,
+			$level='normal', $mode='replace', $format='zip', $codepage='ger')
+		{
+			if( $this->_isLogin ) {
+				$sourcePath	= '/' . $sharename . '/' . $path;
+
+				if( $destFilePath == null ) {
+					$destFilePath = $path . '.' . $format;
+				}
+
+				$desPath = '/' . $sharename . '/' . $destFilePath;
+
+				$data = $this->_queryByService('SYNO.FileStation.Compress', array(
+                    'method'            => 'start',
+                    'version'           => '3',
+                    'path'				=> '[' . $this->_escapePath($sourcePath) . ']',
+					'dest_file_path'	=> $this->_escapePath($desPath),
+					'level'				=> '"' . $level . '"',
+					'mode'				=> '"' . $mode . '"',
+					'format'			=> '"' . $format . '"',
+					'password'			=> $this->_escapePath($password),
+					'codepage'			=> '"' . $codepage . '"',
+                    ), true);
+
+				if( is_array($data) && isset($data['task_id']) ) {
+                    return $data['task_id'];
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * getCompressStatus
+		 * @param string $taskid
+		 * @return array|false
+		 */
+		public function getCompressStatus($taskid) {
+			if( $this->_isLogin ) {
+				$data = $this->_queryByService('SYNO.FileStation.Compress', array(
+                    'method'            => 'status',
+                    'version'           => '3',
+					'taskid'			=> $this->_escapePath($taskid),
+					), true);
+
+				if( is_array($data) && isset($data['dest_file_path']) ) {
+					return $data;
+				}
+			}
+
+			return false;
+		}
+
+		/**
 		 * _escapeFolderName
-		 *
 		 * @param string $name
 		 * @return string
 		 */
@@ -1184,7 +1246,6 @@
 
 		/**
 		 * _escapePath
-		 *
 		 * @param string $path
 		 * @return string
 		 */
@@ -1204,9 +1265,8 @@
 
 		/**
 		 * client_error_log
-		 *
-		 * @param type $message
-		 * @param type $line
+		 * @param array|string $message
+		 * @param int|string $line
 		 */
 		static public function client_error_log($message, $line) {
 			if( !self::DEBUG ) {

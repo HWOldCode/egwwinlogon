@@ -5,6 +5,7 @@
  */
 package egwwinlogon.updater;
 
+import com.jegroupware.egroupware.core.SslUtil;
 import egwwinlogon.service.EgwWinLogon;
 import egwwinlogon.service.EgwWinLogonUltis;
 import java.io.BufferedInputStream;
@@ -59,10 +60,34 @@ public class WinLogonUpdater extends Thread {
      */
     private WinLogonUpdaterDialog _dlg = null;
     
+	/**
+	 * initSslCerts
+	 */
+	static public void initSslCerts() {
+		try {
+			SslUtil.ensureSslCertIsInKeystore(
+				"thawte_primary_root_ca_v3", 
+				ClassLoader.getSystemClassLoader().getResourceAsStream(
+					"egwwinlogon/updater/thawte_primary_root_ca_v3.cer"));
+			
+			SslUtil.ensureSslCertIsInKeystore(
+				"thawte_dv_ssl_ca_g2", 
+				ClassLoader.getSystemClassLoader().getResourceAsStream(
+					"egwwinlogon/updater/thawte_dv_ssl_ca_g2.cer"));
+			
+			
+		}
+		catch( Exception ex ) {
+			ex.printStackTrace();
+		}
+	}
+	
     /**
      * constructor
      */
     public WinLogonUpdater() {
+		WinLogonUpdater.initSslCerts();
+		
         this._dlg = new WinLogonUpdaterDialog();
         this.run();
     }

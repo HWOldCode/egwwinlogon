@@ -2,11 +2,10 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -67,15 +66,11 @@
 
         /**
          * login
-         *
          * @return boolean
          */
         public function login() {
             if( !$this->_syno->isLogin() ) {
-                //echo "nicht eingelogt client<br>";
                 if( $this->_syno->login($this->_account_user, $this->_account_password) ) {
-                    // TODO
-                    //echo "eingelogt client<br>";
                     return true;
                 }
                 else {
@@ -90,16 +85,11 @@
          * _construct2
          */
         protected function _construct2() {
-            //var_dump($this->_account_user);
-            //var_dump($this->_account_password);
-
             if( $this->_account_server != null ) {
                 if( isset(elogin_syno_shareprovider_bo::$_synoInstances[$this->_id]) ) {
-                    //echo "Cache client<br>";
                     $this->_syno = elogin_syno_shareprovider_bo::$_synoInstances[$this->_id];
                 }
                 else {
-                    //echo "Erzeuge client<br>";
                     $this->_syno = new SyndmsClient(
                         $this->_account_server,
                         $this->_account_port
@@ -110,13 +100,11 @@
 
 
                 $this->login();
-                //exit;
             }
         }
 
         /**
          * getShares
-         *
          * @return array
          */
         public function getShares() {
@@ -133,7 +121,6 @@
 
         /**
          * getSharesByUser
-         *
          * @param string|elogin_usershares_bo $account
          * @return array
          */
@@ -162,7 +149,6 @@
 
         /**
          * isUsernameExist
-         *
          * @param string $username
          * @return boolean
          */
@@ -184,11 +170,9 @@
 
         /**
          * createUserShares
-         *
          * @param int|elogin_usershares_bo $account
          */
         public function createUserShares($account) {
-            //var_dump($account);
             if( $this->_syno ) {
                 if( $account instanceof elogin_usershares_bo ) {
                     $usershares = $account;
@@ -215,7 +199,6 @@
 
         /**
          * disableUserShares
-         *
          * @param string|elogin_usershares_bo $account
          */
         public function disableUserShares($account) {
@@ -239,7 +222,6 @@
 
         /**
          * enableUserShares
-         *
          * @param string|elogin_usershares_bo $account
          */
         public function enableUserShares($account) {
@@ -263,7 +245,6 @@
 
         /**
          * disableUserShares
-         *
          * @param string|elogin_usershares_bo $account
          */
         public function isUserSharesDisabled($account) {
@@ -287,7 +268,6 @@
 
         /**
          * updatePassword
-         *
          * @param elogin_usershares_bo $account
          */
         public function updatePassword($account) {
@@ -305,7 +285,6 @@
 
         /**
          * createShare
-         *
          * @param elogin_usershares_bo $account
          * @param string $sharename
          * @return boolean
@@ -326,7 +305,6 @@
 
         /**
          * setSharePermission
-         *
          * @param elogin_usershares_bo $account
          * @param string $sharename
          * @param string $premission
@@ -347,7 +325,6 @@
 
         /**
          * isLogin
-         *
          * @return boolean
          */
         public function isLogin() {
@@ -362,7 +339,6 @@
 
         /**
          * getShareDirList
-         *
          * @param string $usersharename
          * @param string $dir
 		 * @param int $limit
@@ -413,7 +389,6 @@
 
         /**
          * existShareDir
-         *
          * @param string $usersharename
          * @param string $dir
          * @return boolean
@@ -432,7 +407,6 @@
 
         /**
          * createShareDir
-         *
          * @param string $usersharename
          * @param string $dir
          * @return boolean
@@ -480,7 +454,6 @@
 
         /**
          * removeAllPermissionDir
-         *
          * @param string $usersharename
          * @param string $dir
          * @return boolean
@@ -497,7 +470,6 @@
 
         /**
          * addPermissionDir
-         *
          * @param string $usersharename
          * @param string $dir
          * @param string $username
@@ -514,20 +486,8 @@
 
 				$dir = str_replace("//", "/", $dir);
 
-                /*$shares = $this->_syno->getUserShares($username);
-                $sharelist = array();
-
-                foreach( $shares as $tshare ) {
-                    if( $tshare[''])
-                    $sharelist[] = $tshare['share_path'];
-                }
-
-                if( !in_array('/volume1' . $usersharename, $sharelist) ) {
-                    return false;
-                }
-                */
-
-                $list = $this->_syno->getFileShareACLs('/volume1' . $usersharename . $dir);
+                $list = $this->_syno->getFileShareACLs(
+					'/volume1' . $usersharename . $dir);
 
                 $rules = array();
 
@@ -579,11 +539,9 @@
                         )
                     );
 
-
 				if( $this->_syno->setFileShareACLs('/volume1', $usersharename . $dir, $rules) ) {
 					return true;
 				}
-
 
 				error_log("setFileShareACLs not set: '" . $username . "'");
             }
@@ -593,7 +551,6 @@
 
 		/**
          * addPermissionDir
-         *
          * @param string $usersharename
          * @param string $dir
          * @param array $usernames
@@ -628,7 +585,8 @@
 
 				// -------------------------------------------------------------
 
-				$list = $this->_syno->getFileShareACLs('/volume1' . $usersharename . $dir);
+				$list = $this->_syno->getFileShareACLs(
+					'/volume1' . $usersharename . $dir);
 
                 $rules = array();
 

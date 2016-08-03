@@ -103,5 +103,18 @@ $phpgw_baseline = array(
 		'fk' => array(),
 		'ix' => array('el_unid','el_machine_id','el_account_id','el_system','el_order','el_type','el_event','el_catid','el_script_type','el_name'),
 		'uc' => array()
+	),
+	'egw_elogin_link' => array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_usershare_id' => array('type' => 'varchar','precision' => '64'),
+			'el_usershare_mount_id' => array('type' => 'varchar','precision' => '64'),
+			'el_filepath' => array('type' => 'varchar','precision' => '512'),
+			'el_options' => array('type' => 'text')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_usershare_id','el_usershare_mount_id','el_filepath'),
+		'uc' => array()
 	)
 );
