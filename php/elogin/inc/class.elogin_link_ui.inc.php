@@ -38,6 +38,14 @@
 			}
 
 			$link = new elogin_link_bo($uid);
+
+		}
+
+		/**
+		 * edit
+		 * @param array $content
+		 */
+		public function edit($content=array()) {
 			
 		}
 	}
