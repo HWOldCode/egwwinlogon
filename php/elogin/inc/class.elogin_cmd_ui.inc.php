@@ -2,11 +2,10 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -68,18 +67,18 @@
                         }
                     }
 
-                    return egw_json_response::get()->data(array(
+                    return Api\Json\Response::get()->data(array(
                         'status' => 'ok',
                         'cmds' => $list));
                 }
             }
 
-            return egw_json_response::get()->data(array('status' => 'error'));
+            return Api\Json\Response::get()->data(
+				array('status' => 'error'));
         }
 
         /**
          * cmd_edit
-         *
          * @param array $content
          */
         public function cmd_edit($content=null) {
@@ -226,7 +225,7 @@
 				elogin_cmd_bo::SCRIPT_VBS			=> lang('VBS'),
 				);
 
-            $tpl = new etemplate_new('elogin.cmd.dialog');
+            $tpl = new Etemplate('elogin.cmd.dialog');
 			$tpl->exec(
                 'elogin.elogin_cmd_ui.cmd_edit',
                 array_merge($content, $preserv),
@@ -238,7 +237,6 @@
 
         /**
          * get_rows_commands
-         *
          * @param array $query
          * @param array $rows
          * @param array $readonlys
@@ -283,7 +281,8 @@
                         $accountname = 'all';
 
                         if( $tcmd->getAccountId() != '0' ) {
-                            $accountname = accounts::id2name($tcmd->getAccountId());
+                            $accountname = Api\Accounts::id2name(
+								$tcmd->getAccountId());
                         }
 
                         $rows[] = array(
@@ -305,7 +304,6 @@
 
 		/**
 		 * cmd_delete
-		 *
 		 * @param array $content
 		 */
 		public function cmd_delete($content=null) {
@@ -318,7 +316,7 @@
             }
 
 			//egw_framework::refresh_opener('', 'elogin', $uid, 'delete');
-			egw_framework::window_close();
+			Api\Framework::window_close();
 			exit;
 		}
     }

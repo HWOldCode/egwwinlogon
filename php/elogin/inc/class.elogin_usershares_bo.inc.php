@@ -2,14 +2,15 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
+
+	use EGroupware\Api;
 
     /**
      * elogin_usershares_bo
@@ -72,8 +73,7 @@
         }
 
         /**
-         * constructor
-         *
+         * __construct
          * @param string $id
          * @param string $destination
          */
@@ -97,7 +97,6 @@
 
         /**
          * getId
-         *
          * @return string
          */
         public function getId() {
@@ -106,7 +105,6 @@
 
         /**
          * setProviderId
-         *
          * @param string $id
          */
         public function setProviderId($id) {
@@ -115,7 +113,6 @@
 
         /**
          * getProviderId
-         *
          * @return string
          */
         public function getProviderId() {
@@ -124,7 +121,6 @@
 
         /**
          * getProvider
-         *
          * @return elogin_shareprovider_bo|null
          */
         public function getProvider($getRaw=false) {
@@ -154,16 +150,14 @@
 
         /**
          * getUsername
-         *
          * @return string
          */
         public function getUsername() {
-            return accounts::id2name($this->_egwaccountid);
+            return Api\Accounts::id2name($this->_egwaccountid);
         }
 
         /**
          * setUser
-         *
          * @param int $accountid
          */
         public function setUser($accountid=null) {
@@ -176,7 +170,6 @@
 
         /**
          * getSharePassword
-         *
          * @return string
          */
         public function getSharePassword() {
@@ -221,7 +214,6 @@
 
         /**
          * setSharePassword
-         *
          * @param string $password
          */
         public function setSharePassword($password=null) {
@@ -234,7 +226,6 @@
 
         /**
          * getDefaultShares
-         *
          * @return string
          */
         public function getDefaultShares() {
@@ -246,7 +237,8 @@
                 );
 
             // add group folder
-            $groups = elogin_bo::getEgroupwareAccountGroups($this->_egwaccountid);
+            $groups = elogin_bo::getEgroupwareAccountGroups(
+				$this->_egwaccountid);
 
             foreach( $groups as $groupname ) {
                 $shares[] = array(
@@ -259,7 +251,6 @@
 
         /**
          * getShares
-         *
          * @return array
          */
         public function getShares() {
@@ -294,7 +285,6 @@
 
         /**
          * updateUserSharesMounts
-         *
          */
         public function updateUserSharesMounts() {
             $shares = $this->getShares();
@@ -306,7 +296,7 @@
 
             foreach( $shares as $tshare ) {
                 $mounts = elogin_usershares_mount_bo::getUserShareMountsBy(
-                    $tshare['name'], 
+                    $tshare['name'],
 					$this->_id
 					);
 
@@ -342,7 +332,6 @@
 
         /**
          * getUserSharesMounts
-         *
          * @return array of elogin_usershares_mount_bo
          */
         public function getUserSharesMounts() {
@@ -403,7 +392,6 @@
 
         /**
          * read
-         *
          * @param string $id
          * @return boolean|array
          */
@@ -423,7 +411,6 @@
 
         /**
          * _write
-         *
          * @param array $data
          */
         static protected function _write(array $data) {
@@ -460,7 +447,6 @@
 
         /**
          * get_rows
-         *
          * @param type $query
          * @param type $rows
          * @param type $readonlys
@@ -499,7 +485,6 @@
 
         /**
          * existByAccountAndProvider
-         *
          * @param int $accountid
          * @param string $providerid
          * @return boolean
@@ -525,7 +510,6 @@
 
         /**
          * getAllByAccount
-         *
          * @param type $accountid
          * @return array of elogin_usershares_bo
          */
@@ -535,7 +519,7 @@
                     'account_id' => $accountid
                     )
                 );
-			
+
             $rows = array();
             $readonlys = array();
 

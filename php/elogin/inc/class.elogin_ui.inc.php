@@ -2,7 +2,6 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
@@ -10,6 +9,9 @@
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
+
+	use EGroupware\Api;
+	use EGroupware\Api\Etemplate;
 
     /**
      * eline_ui
@@ -60,7 +62,7 @@ exit;*/
             elogin_sharehandler_bo::set_async_job(false);
             elogin_sharehandler_bo::set_async_job(true);
 
-            $tpl = new etemplate_new('elogin.index');
+            $tpl = new Etemplate('elogin.index');
 			$tpl->exec(
                 'elogin.elogin_ui.index',
                 $content,
@@ -77,7 +79,7 @@ exit;*/
 
             elogin_sharehandler_bo::handle();
 
-            $tpl = new etemplate_new('elogin.index');
+            $tpl = new Etemplate('elogin.index');
 			$tpl->exec(
                 'elogin.elogin_ui.index',
                 $content,
@@ -87,7 +89,6 @@ exit;*/
 
         /**
 		 * ajax_cache
-		 *
 		 * @param array $content
 		 * @return mixed
 		 */
@@ -104,7 +105,7 @@ exit;*/
                 'encryption_type' => $type
                 );
 
-            return egw_json_response::get()->data($cacheData);
+            return Api\Json\Response::get()->data($cacheData);
         }
 
 		/**
@@ -139,7 +140,7 @@ exit;*/
 								$data = json_decode($content['data'], true);
 
 								if( $data == null ) {
-									return egw_json_response::get()->data(array(
+									return Api\Json\Response::get()->data(array(
 										'status'	=> 'error',
 										'msg'		=> 'json decode: ' . $content['data']
 										));
@@ -177,7 +178,7 @@ exit;*/
 						if( $process != null ) {
 							// execute
 							// -------------------------------------------------
-							
+
 							$process->execute($data);
 
 							// return
@@ -190,13 +191,13 @@ exit;*/
 									$return_data = $process->getParamList()->getParamsArray();
 								}
 
-								return egw_json_response::get()->data(array(
+								return Api\Json\Response::get()->data(array(
 									'status'	=> 'ok',
 									'data'		=> $return_data,
 									));
 							}
 							else {
-								return egw_json_response::get()->data(array(
+								return Api\Json\Response::get()->data(array(
 									'status'	=> 'stop',
 									'processid'	=> $process->getId(),
 									'msg'		=> 'Process issnt end'
@@ -217,7 +218,7 @@ exit;*/
 				$erro_msg = 'Access denied by app EWorkflow';
 			}
 
-			return egw_json_response::get()->data(array(
+			return Api\Json\Response::get()->data(array(
 				'status'	=> 'error',
 				'msg'		=> $erro_msg
 				));

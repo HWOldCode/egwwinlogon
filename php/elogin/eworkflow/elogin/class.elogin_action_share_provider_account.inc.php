@@ -2,11 +2,10 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -58,7 +57,6 @@
 
         /**
 		 * getEtemplate
-		 *
 		 * @return null|etemplate|string
 		 */
 		public function getEtemplate() {
@@ -68,7 +66,6 @@
         /**
          * acceptLinks
          * accept links
-         *
          * @return array
          */
         public function acceptLinks() {
@@ -80,7 +77,6 @@
 
         /**
          * getLineStyle
-         *
          * @return array
          */
         public function getLineStyle() {
@@ -93,7 +89,6 @@
 
         /**
 		 * getInfo
-		 *
 		 * @return array
 		 */
 		static public function getInfo() {
@@ -109,17 +104,15 @@
 
         /**
          * getProviderAccountId
-         *
          * @return string
          */
         public function getProviderAccountId() {
 			return $this->_params->getVariableByParam(
 				$this->_provider_account, static::PARAM_SHAREPROVIDER_ACCOUNT);
         }
-		
+
 		/**
 		 * setProviderAccountId
-		 * 
 		 * @param string $id
 		 */
 		public function setProviderAccountId($id) {
@@ -129,7 +122,6 @@
 
         /**
          * getProvider
-         *
          * @return elogin_shareprovider_bo
          */
         public function getProvider() {
@@ -148,7 +140,6 @@
 
         /**
 		 * uiEdit
-		 *
 		 * @param array $content
 		 */
 		public function uiEdit(&$content, &$option_sel, &$readonlys) {
@@ -172,7 +163,6 @@
 
         /**
          * execute
-         *
          * @param type $params
          * @return type
          */
@@ -227,7 +217,6 @@
 
         /**
          * getParameterRegister
-         *
          * @return eworkflow_param_register
          */
         public function getParameterRegister() {

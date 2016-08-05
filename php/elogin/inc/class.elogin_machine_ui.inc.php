@@ -2,14 +2,16 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
+
+	use EGroupware\Api;
+	use EGroupware\Api\Etemplate;
 
     /**
      * elogin_machine_ui
@@ -28,8 +30,7 @@
             );
 
         /**
-         * share_provider_list
-         *
+         * machine_list
          * @param array $content
          */
         public function machine_list($content=null) {
@@ -74,11 +75,11 @@
             $readonlys = array();
 
 			$content = array(
-				'nm' => egw_session::appsession('elogin_machine_list', 'elogin'),
+				'nm' => Api\Cache::getSession('elogin_machine_list', 'elogin'),
 				'msg' => $msg,
 				);
 
-			if( !($content['nm'] = egw_session::appsession('elogin_machine_list', 'elogin')) ) {
+			if( !($content['nm'] = Api\Cache::getSession('elogin_machine_list', 'elogin')) ) {
 				$content['nm'] = array(		// I = value set by the app, 0 = value on return / output
 					'get_rows'      =>	'elogin.elogin_machine_ui.get_rows_machine',	// I  method/callback to request the data for the rows eg. 'notes.bo.get_rows'
 					'no_filter'     => true,// I  disable the 1. filter
@@ -92,7 +93,7 @@
 					);
 			}
 
-            $tpl = new etemplate_new('elogin.machine_list');
+            $tpl = new Etemplate('elogin.machine_list');
 			$tpl->exec(
                 'elogin.elogin_machine_ui.machine_list',
                 $content,
@@ -104,7 +105,6 @@
 
 		/**
 		 * _action
-		 *
 		 * @param type $action
 		 * @param type $checked
 		 * @param type $use_all
@@ -132,8 +132,8 @@
 					$ma = new elogin_machine_bo($checked);
 
 					if( $ma->getIsInDb() ) {
-						egw_framework::popup(
-							egw::link('/index.php', 'menuaction=' .
+						Api\Framework::popup(
+							Api\Egw::link('/index.php', 'menuaction=' .
                                 'elogin.elogin_machine_ui.settings&machineid=' .
                                 $ma->getId()));
 
@@ -170,7 +170,6 @@
 
         /**
          * index_get_actions
-         *
          * @param array $query
          * @return array
          */
@@ -218,14 +217,13 @@
 
         /**
          * get_rows_machine
-         *
          * @param array $query
          * @param array $rows
          * @param array $readonlys
          * @return int
          */
         public function get_rows_machine(&$query, &$rows, &$readonlys) {
-            egw_session::appsession('elogin_machine_list', 'elogin', $query);
+            Api\Cache::setSession('elogin_machine_list', 'elogin', $query);
 
             $count = elogin_machine_bo::get_rows($query, $rows, $readonlys);
 
@@ -234,7 +232,7 @@
                 $row['el_machine_name'] = $row['el_name'];
 
 				$lastlog = elogin_machine_logging_bo::getLastLogByMachineId($row['el_unid']);
-				
+
 				if( $lastlog !== null ) {
 					$row['el_loginuser']	= $lastlog->getAccountName();
 					$row['el_logindate']	= $lastlog->getLogDate();
@@ -266,7 +264,7 @@
                 // login logging
             }
 
-            return egw_json_response::get()->data(array('status' => 'ok'));
+            return Api\Json\Response::get()->data(array('status' => 'ok'));
         }
 
         /**
@@ -315,7 +313,7 @@
                 );
             */
 
-            $tpl = new etemplate_new('elogin.machine_setting.dialog');
+            $tpl = new Etemplate('elogin.machine_setting.dialog');
 			$tpl->exec(
                 'elogin.elogin_machine_ui.settings',
                 $content,

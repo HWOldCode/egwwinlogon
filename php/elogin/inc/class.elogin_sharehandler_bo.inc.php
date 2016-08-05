@@ -2,30 +2,34 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
+
+	use EGroupware\Api;
 
     /**
      * elogin_sharehandler_bo
      */
     class elogin_sharehandler_bo {
 
+		/**
+		 * logging
+		 * @var boolean
+		 */
 		static protected $_logging = false;
 
 
 		/**
          * set_async_job
-         *
          * @param boolean $start
          */
         static function set_async_job($start=true) {
-            $async = new asyncservice();
+            $async = new Api\AsyncService();
 
             if( $start === !$async->read('elogin-sharehandler') ) {
                 if( $start ) {
@@ -44,7 +48,6 @@
 
         /**
          * handle
-         *
          * @param string $provider_id
          */
         static public function handle($provider_id=null) {
@@ -289,7 +292,6 @@
 
 		/**
 		 * cronjob_error_log
-		 *
 		 * @param type $message
 		 * @param type $line
 		 */

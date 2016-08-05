@@ -2,14 +2,15 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
+
+	use EGroupware\Api;
 
     /**
      * elogin_cmd_bo
@@ -49,7 +50,6 @@
 
         /**
          * Reference to global db object
-         *
          * @var egw_db
          */
         static protected $_db;
@@ -160,7 +160,7 @@
         }
 
         /**
-         * constructor
+         * __construct
          * @param string $id
          */
         public function __construct($id=null) {
@@ -204,7 +204,6 @@
 
         /**
          * setMachineId
-         *
          * @param string $id
          */
         public function setMachineId($id) {
@@ -213,7 +212,6 @@
 
         /**
          * getMachineId
-         *
          * @return string
          */
         public function getMachineId() {
@@ -230,7 +228,6 @@
 
         /**
          * getAccountId
-         *
          * @return string
          */
         public function getAccountId() {
@@ -239,7 +236,6 @@
 
 		/**
 		 * getName
-		 *
 		 * @return string
 		 */
 		public function getName() {
@@ -248,7 +244,6 @@
 
 		/**
 		 * setName
-		 *
 		 * @param string $name
 		 */
 		public function setName($name) {
@@ -257,7 +252,6 @@
 
 		/**
 		 * getCatId
-		 *
 		 * @return int
 		 */
 		public function getCatId() {
@@ -266,7 +260,6 @@
 
 		/**
 		 * setCatId
-		 *
 		 * @param int $id
 		 */
 		public function setCatId($id) {
@@ -275,7 +268,6 @@
 
         /**
          * setCommand
-         *
          * @param string $command
          */
         public function setCommand($command) {
@@ -284,7 +276,6 @@
 
         /**
          * getCommand
-         *
          * @return string
          */
         public function getCommand() {
@@ -293,7 +284,6 @@
 
         /**
          * setSystem
-         *
          * @param string $system
          */
         public function setSystem($system) {
@@ -302,7 +292,6 @@
 
         /**
          * getSystem
-         *
          * @return string
          */
         public function getSystem() {
@@ -311,7 +300,6 @@
 
 		/**
 		 * setSchedulerTime
-		 *
 		 * @param int $sec
 		 */
 		public function setSchedulerTime($sec=0) {
@@ -320,7 +308,6 @@
 
 		/**
 		 * getSchedulerTime
-		 *
 		 * @return int
 		 */
 		public function getSchedulerTime() {
@@ -329,7 +316,6 @@
 
         /**
          * setOrder
-         *
          * @param int $order
          */
         public function setOrder($order=0) {
@@ -338,7 +324,6 @@
 
         /**
          * getOrder
-         *
          * @return int
          */
         public function getOrder() {
@@ -347,7 +332,6 @@
 
         /**
          * setType
-         *
          * @param string $type
          */
         public function setType($type) {
@@ -356,7 +340,6 @@
 
         /**
          * getType
-         *
          * @return string
          */
         public function getType() {
@@ -365,7 +348,6 @@
 
         /**
          * setEvent
-         *
          * @param string $event
          */
         public function setEvent($event) {
@@ -374,7 +356,6 @@
 
         /**
          * getEvent
-         *
          * @return string
          */
         public function getEvent() {
@@ -401,7 +382,6 @@
 
 		/**
 		 * setOption
-		 *
 		 * @param string $name
 		 * @param string $key
 		 */
@@ -411,7 +391,6 @@
 
 		/**
 		 * getOption
-		 *
 		 * @param string $name
 		 * @return string|null
 		 */
@@ -425,7 +404,6 @@
 
 		/**
 		 * getOptions
-		 *
 		 * @return array
 		 */
 		public function getOptions() {
@@ -434,7 +412,6 @@
 
 		/**
 		 * getScriptType
-		 *
 		 * @return string
 		 */
 		public function getScriptType() {
@@ -443,7 +420,6 @@
 
 		/**
 		 * setScriptType
-		 *
 		 * @param string $type
 		 */
 		public function setScriptType($type) {
@@ -452,7 +428,6 @@
 
 		/**
 		 * setScript
-		 *
 		 * @param string $script
 		 */
 		public function setScript($script) {
@@ -461,7 +436,6 @@
 
 		/**
 		 * getScript
-		 *
 		 * @return string
 		 */
 		public function getScript() {
@@ -536,7 +510,6 @@
 
         /**
          * read
-         *
          * @param string $id
          * @return boolean|array
          */
@@ -556,7 +529,6 @@
 
         /**
          * _write
-         *
          * @param array $data
          */
         static protected function _write(array $data) {
@@ -609,7 +581,6 @@
 
 		/**
          * get_rows
-         *
          * @param type $query
          * @param type $rows
          * @param type $readonlys
@@ -661,7 +632,6 @@
 
         /**
          * getAllByMachineId
-         *
          * @param type $machineid
          * @return array of elogin_cmd_bo
          */
@@ -706,7 +676,7 @@
 				'script_type'		=> $this->_script_type,
 				'script'			=> $this->_script,
 				'catid'				=> $this->_catid,
-				'catname'			=> categories::id2name($this->_catid),
+				'catname'			=> Api\Categories::id2name($this->_catid),
 				'scheduler_time'	=> $this->_scheduler_time,
 				'mount_point_check'	=> $this->_mount_point_check,
                 );
@@ -714,7 +684,6 @@
 
         /**
          * toJson
-         *
          * @return string
          */
         public function toJson() {
@@ -723,7 +692,6 @@
 
 		/**
 		 * link_title
-		 *
 		 * @param type $info
 		 * @return string
 		 */
@@ -739,7 +707,6 @@
 
 		/**
 		 * link_titles
-		 *
 		 * @param array $ids
 		 */
 		static public function link_titles(array $ids) {
@@ -754,14 +721,13 @@
 
 		/**
          * link_query
-         *
          * @param type $pattern
          * @param array $options
          */
         static public function link_query($pattern, Array &$options = array()) {
 			$rows		= array();
 			$readonlys	= array();
-			$result = array();
+			$result		= array();
 
 			if( self::get_rows($options, $rows, $readonlys) > 0 ) {
 				foreach( $rows as &$row ) {

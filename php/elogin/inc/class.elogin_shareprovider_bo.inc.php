@@ -2,11 +2,10 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -86,7 +85,6 @@
         /**
          * i
          * return a instance by db
-         *
          * @param string $id
          * @return elogin_shareprovider_bo
          */
@@ -96,7 +94,8 @@
         }
 
         /**
-         * constructor
+         * __construct
+		 * @param string $id
          */
         public function __construct($id=null) {
             $this->_id = $id;
@@ -121,8 +120,8 @@
         }
 
         /**
+		 * _cast
          * _initcast
-         *
          * @return elogin_shareprovider_bo
          */
         private function _cast() {
@@ -148,7 +147,6 @@
 
         /**
          * getId
-         *
          * @return string
          */
         public function getId() {
@@ -157,7 +155,6 @@
 
         /**
          * setAccount
-         *
          * @param string $server
          * @param int $port
          * @param string $user
@@ -172,7 +169,6 @@
 
         /**
          * setUsername
-         *
          * @param string $username
          */
         public function setUsername($username) {
@@ -181,7 +177,6 @@
 
         /**
          * getProviderName
-         *
          * @return string
          */
         public function getProviderName() {
@@ -190,7 +185,6 @@
 
         /**
          * setProviderName
-         *
          * @param string $name
          */
         public function setProviderName($name) {
@@ -199,7 +193,6 @@
 
         /**
          * getAccountServer
-         *
          * @return string
          */
         public function getAccountServer() {
@@ -208,7 +201,6 @@
 
         /**
          * getAccountPort
-         *
          * @return int
          */
         public function getAccountPort() {
@@ -217,7 +209,6 @@
 
         /**
          * getAccountUser
-         *
          * @return string
          */
         public function getAccountUser() {
@@ -226,7 +217,6 @@
 
         /**
          * getAccountPassword
-         *
          * @return string
          */
         public function getAccountPassword() {
@@ -235,7 +225,6 @@
 
         /**
          * setMountAddress
-         *
          * @param string $address
          */
         public function setMountAddress($address) {
@@ -244,7 +233,6 @@
 
         /**
          * getMountAddress
-         *
          * @return string
          */
         public function getMountAddress() {
@@ -253,7 +241,6 @@
 
         /**
          * getShares
-         *
          * @return array
          */
         public function getShares() {
@@ -262,7 +249,6 @@
 
         /**
          * getSharesByUser
-         *
          * @param string|elogin_usershares_bo $account
          * @return array
          */
@@ -272,7 +258,6 @@
 
         /**
          * isUsernameExist
-         *
          * @param string $username
          * @return boolean
          */
@@ -282,7 +267,6 @@
 
         /**
          * createUserShares
-         *
          * @param int|elogin_usershares_bo $accountid
          */
         public function createUserShares($account) {
@@ -305,7 +289,6 @@
 
         /**
          * disableUserShares
-         *
          * @param string|elogin_usershares_bo $account
          */
         public function disableUserShares($account) {
@@ -314,7 +297,6 @@
 
         /**
          * enableUserShares
-         *
          * @param string|elogin_usershares_bo $account
          */
         public function enableUserShares($account) {
@@ -322,8 +304,7 @@
         }
 
         /**
-         * disableUserShares
-         *
+         * isUserSharesDisabled
          * @param string|elogin_usershares_bo $account
          */
         public function isUserSharesDisabled($account) {
@@ -332,7 +313,6 @@
 
         /**
          * updatePassword
-         *
          * @param elogin_usershares_bo $account
          */
         public function updatePassword($account) {
@@ -341,7 +321,6 @@
 
         /**
          * getAllShares
-         *
          * @param elogin_usershares_bo $account
          * @return array
          */
@@ -351,7 +330,6 @@
 
         /**
          * createShare
-         *
          * @param elogin_usershares_bo $account
          * @param string $sharename
          * @return boolean
@@ -362,7 +340,6 @@
 
         /**
          * setSharePermission
-         *
          * @param elogin_usershares_bo $account
          * @param string $sharename
          * @param string $premission
@@ -373,7 +350,6 @@
 
         /**
          * isLogin
-         *
          * @return boolean
          */
         public function isLogin() {
@@ -382,7 +358,6 @@
 
         /**
          * login
-         *
          * @return boolean
          */
         public function login() {
@@ -391,7 +366,6 @@
 
         /**
          * logout
-         *
          * @return boolean
          */
         public function logout() {
@@ -400,7 +374,6 @@
 
         /**
          * existShareDir
-         *
          * @param string $usersharename
          * @param string $dir
          * @return boolean
@@ -411,7 +384,6 @@
 
         /**
          * createShareDir
-         *
          * @param string $usersharename
          * @param string $dir
          * @return boolean
@@ -422,7 +394,6 @@
 
         /**
          * getShareDirList
-         *
          * @param string $usersharename
          * @param string $dir
          * @return array
@@ -433,7 +404,6 @@
 
         /**
          * removeAllPermissionDir
-         *
          * @param string $usersharename
          * @param string $dir
          * @return boolean
@@ -444,7 +414,6 @@
 
         /**
          * addPermissionDir
-         *
          * @param string $usersharename
          * @param string $dir
          * @param string $username
@@ -458,7 +427,6 @@
 
         /**
          * addPermissionDir
-         *
          * @param string $usersharename
          * @param string $dir
          * @param array $usernames
@@ -499,7 +467,6 @@
 
         /**
          * getShareProviderByName
-         *
          * @param string $name
          * @return elogin_shareprovider_bo
          */
@@ -532,7 +499,6 @@
 
         /**
          * getShareProviderNames
-         *
          * @return array
          */
         static public function getShareProviderNames() {
@@ -544,7 +510,6 @@
 
         /**
          * read
-         *
          * @param string $id
          * @return boolean|array
          */
@@ -564,7 +529,6 @@
 
         /**
          * _write
-         *
          * @param array $data
          */
         static protected function _write(array $data) {
@@ -601,7 +565,6 @@
 
         /**
          * get_rows
-         *
          * @param array $query
          * @param array $rows
          * @param array $readonlys

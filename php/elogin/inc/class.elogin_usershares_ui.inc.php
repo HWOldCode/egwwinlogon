@@ -1,16 +1,17 @@
 <?php
 
-
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
+
+	use EGroupware\Api;
+	use EGroupware\Api\Etemplate;
 
     /**
      * elogin_usershares_ui
@@ -32,7 +33,6 @@
 
         /**
          * share_user_list
-         *
          * @param array $content
          */
         public function share_user_list($content=null) {
@@ -43,7 +43,7 @@
             $readonlys = array();
 
             if( !is_array($content) ) {
-                if( !($content['nm'] = egw_session::appsession('elogin_shareuser_list', 'elogin')) ) {
+                if( !($content['nm'] = Api\Cache::getSession('elogin_shareuser_list', 'elogin')) ) {
 					$content['nm'] = array(		// I = value set by the app, 0 = value on return / output
 						'get_rows'      =>	'elogin.elogin_usershares_ui.get_rows_shareuser',	// I  method/callback to request the data for the rows eg. 'notes.bo.get_rows'
 						'no_filter'     => true,// I  disable the 1. filter
@@ -58,7 +58,7 @@
 				}
 			}
 
-            $tpl = new etemplate_new('elogin.shareuser_list');
+            $tpl = new Etemplate('elogin.shareuser_list');
 			$tpl->exec(
                 'elogin.elogin_usershares_ui.share_user_list',
                 $content,
@@ -70,7 +70,6 @@
 
         /**
          * index_get_actions
-         *
          * @param array $query
          * @return array
          */
@@ -105,14 +104,13 @@
 
         /**
          * get_rows_shareuser
-         *
          * @param type $query
          * @param type $rows
          * @param type $readonlys
          * @return type
          */
         public function get_rows_shareuser(&$query, &$rows, &$readonlys) {
-            egw_session::appsession('elogin_shareuser_list', 'elogin', $query);
+            Api\Cache::setSession('elogin_shareuser_list', 'elogin', $query);
 
             $count = elogin_usershares_bo::get_rows($query, $rows, $readonlys);
 
@@ -138,7 +136,6 @@
 
         /**
          * share_user_edit
-         *
          * @param array $content
          */
         public function share_user_edit($content=null) {
@@ -173,7 +170,7 @@
             $readonlys['user']      = true;
             $readonlys['provider']  = true;
 
-            $etemplate = new etemplate_new('elogin.share_user.dialog');
+            $etemplate = new Etemplate('elogin.share_user.dialog');
             $etemplate->exec(
                 'elogin.elogin_usershares_ui.share_user_edit',
                 array_merge($content, $preserv),
@@ -185,7 +182,6 @@
 
         /**
          * get_rows_shareuser_mount
-         *
          * @param array $query
          * @param array $rows
          * @param type $readonlys
@@ -206,7 +202,6 @@
 
         /**
          * shareuser_mount_edit
-         *
          * @param array $content
          */
         public function shareuser_mount_edit($content=null) {
@@ -226,7 +221,7 @@
 			$uid = ( $uid == null ? (isset($_GET['uid']) ? $_GET['uid'] : null) : $uid);
 
 
-            $etemplate = new etemplate_new('elogin.share_user_mount.dialog');
+            $etemplate = new Etemplate('elogin.share_user_mount.dialog');
             $etemplate->exec(
                 'elogin.elogin_usershares_ui.shareuser_mount_edit',
                 array_merge($content, $preserv),
@@ -238,7 +233,6 @@
 
         /**
          * ajax_usershare_mount
-         *
          * @param array $content
          */
         static public function ajax_usershare_mount($content=array()) {
@@ -259,7 +253,7 @@
 			if( isset($content['uid']) ) {
                 $machine = new elogin_machine_bo($content['uid']);
 
-				 if( $machine->getIsInDb() ) {
+				if( $machine->getIsInDb() ) {
                     $usersahres = $machine->getCurrentUserShares();
 
 					$list = array();
@@ -274,12 +268,13 @@
 						$list[$usershare->getUsername()] = $mounts;
 					}
 
-					return egw_json_response::get()->data(array(
+					return Api\Json\Response::get()->data(array(
                         'status' => 'ok',
                         'ns' => $list));
-				 }
+				}
 			}
 
-			return egw_json_response::get()->data(array('status' => 'error'));
+			return Api\Json\Response::get()->data(
+				array('status' => 'error'));
 		}
     }

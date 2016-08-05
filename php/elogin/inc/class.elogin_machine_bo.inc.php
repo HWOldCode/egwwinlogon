@@ -2,11 +2,10 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -23,7 +22,6 @@
 
         /**
          * Reference to global db object
-         *
          * @var egw_db
          */
         static protected $_db;
@@ -54,7 +52,7 @@
         }
 
         /**
-         * constructor
+         * __construct
          * @param string $id
          */
         public function __construct($id) {
@@ -70,7 +68,6 @@
 
         /**
          * getId
-         *
          * @return string
          */
         public function getId() {
@@ -79,7 +76,6 @@
 
         /**
          * getIsInDb
-         *
          * @return boolean
          */
         public function getIsInDb() {
@@ -88,7 +84,6 @@
 
         /**
          * setName
-         *
          * @param string $name
          */
         public function setName($name) {
@@ -97,7 +92,6 @@
 
         /**
          * getName
-         *
          * @return string
          */
         public function getName() {
@@ -127,7 +121,6 @@
 
         /**
          * createNewLogging
-         *
          * @return elogin_machine_logging_bo
          */
         public function createNewLogging() {
@@ -139,7 +132,6 @@
 
         /**
          * getCurrentUserShares
-         *
          * @return array of elogin_usershares_bo
          */
         public function getCurrentUserShares() {
@@ -172,10 +164,9 @@
 				self::_delete($this->_id);
 			}
 		}
-		
+
         /**
          * read
-         *
          * @param string $id
          * @return boolean|array
          */
@@ -195,7 +186,6 @@
 
         /**
          * get_rows
-		 * 
          * @param type $query
          * @param type $rows
          * @param type $readonlys
@@ -224,7 +214,6 @@
 
         /**
          * _write
-         *
          * @param array $data
          */
         static protected function _write(array $data, $inDb) {
@@ -260,7 +249,7 @@
 
             return $data['el_unid'];
         }
-		
+
 		/**
 		 * _delete
 		 * @param string $id
@@ -276,26 +265,24 @@
 				'elogin'
 				);
 		}
-		
+
 		/**
 		 * link_title
-		 *
 		 * @param type $info
 		 * @return string
 		 */
 		static public function link_title($info) {
 			$cmd = new elogin_machine_bo($info);
-			
+
 			if( $cmd->getIsInDb() ) {
 				return $cmd->getName();
 			}
-			
+
 			return lang('not found');
 		}
-		
+
 		/**
 		 * link_titles
-		 *
 		 * @param array $ids
 		 */
 		static public function link_titles(array $ids) {
@@ -307,10 +294,9 @@
 
             return $titles;
 		}
-		
+
 		/**
          * link_query
-         *
          * @param type $pattern
          * @param array $options
          */
@@ -318,17 +304,17 @@
 			$rows		= array();
 			$readonlys	= array();
 			$result = array();
-			
+
 			if( self::get_rows($options, $rows, $readonlys) > 0 ) {
 				foreach( $rows as &$row ) {
 					$result[$row['el_unid']] = array(
 							'label' => $row['el_name'],
 							);
 				}
-				
+
 				return $result;
 			}
-			
+
 			return array();
 		}
     }

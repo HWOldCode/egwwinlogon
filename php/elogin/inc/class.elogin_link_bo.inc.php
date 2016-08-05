@@ -73,7 +73,7 @@
         }
 
 		/**
-         * constructor
+         * __construct
          * @param string $id
          */
         public function __construct($id=null) {

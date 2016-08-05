@@ -2,18 +2,16 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
 
     /**
      * elogin_machine_logging_bo
-     *
      */
     class elogin_machine_logging_bo {
 
@@ -24,7 +22,6 @@
 
         /**
          * Reference to global db object
-         *
          * @var egw_db
          */
         static protected $_db;
@@ -85,8 +82,7 @@
         }
 
         /**
-         * constructotr
-         *
+         * __construct
          * @param string $id
          */
         public function __construct($id=null) {
@@ -111,7 +107,6 @@
 
         /**
          * getId
-         *
          * @return string
          */
         public function getId() {
@@ -120,7 +115,6 @@
 
         /**
          * getAccountId
-         *
          * @return int
          */
         public function getAccountId() {
@@ -129,7 +123,6 @@
 
         /**
          * getAccountName
-         *
          * @return string
          */
         public function getAccountName() {
@@ -138,7 +131,6 @@
 
         /**
          * setMachineId
-         *
          * @param string $id
          */
         public function setMachineId($id) {
@@ -147,7 +139,6 @@
 
         /**
          * getMachineId
-         *
          * @return string
          */
         public function getMachineId() {
@@ -156,7 +147,6 @@
 
         /**
          * setEvent
-         *
          * @param string $event
          */
         public function setEvent($event) {
@@ -165,7 +155,6 @@
 
         /**
          * getEvent
-         *
          * @return string
          */
         public function getEvent() {
@@ -174,7 +163,6 @@
 
         /**
          * setMessage
-         *
          * @param string $message
          */
         public function setMessage($message) {
@@ -183,7 +171,6 @@
 
         /**
          * getMessage
-         *
          * @return string
          */
         public function getMessage() {
@@ -192,7 +179,6 @@
 
         /**
          * setLogDate
-         *
          * @param int $timestamp
          */
         public function setLogDate($timestamp) {
@@ -201,7 +187,6 @@
 
         /**
          * getLogDate
-         *
          * @return int
          */
         public function getLogDate() {
@@ -210,7 +195,6 @@
 
         /**
          * getIndex
-         *
          * @return string
          */
         public function getIndex() {
@@ -219,7 +203,6 @@
 
         /**
          * setIndex
-         *
          * @param string $index
          */
         public function setIndex($index) {
@@ -252,7 +235,6 @@
 
         /**
          * read
-         *
          * @param string $id
          * @return boolean|array
          */
@@ -272,7 +254,6 @@
 
         /**
          * _write
-         *
          * @param array $data
          */
         static protected function _write(array $data) {
@@ -309,7 +290,6 @@
 
         /**
          * get_rows
-         *
          * @param array $query
          * @param array $rows
          * @param array $readonlys
@@ -374,7 +354,6 @@
 
 		/**
          * expression
-         *
          * @param string $table
          * @param array $filter
          * @return string
@@ -385,7 +364,6 @@
 
 		/**
 		 * getLastLogByMachineId
-		 *
 		 * @param string $id
 		 * @return elogin_machine_logging_bo
 		 */

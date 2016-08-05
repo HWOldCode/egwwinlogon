@@ -10,6 +10,9 @@
 	 * @version $Id$
 	 */
 
+	use EGroupware\Api;
+	use EGroupware\Api\Etemplate;
+
     /**
      * elogin_machine_logging_ui
      */
@@ -27,7 +30,6 @@
 
         /**
          * logging_list
-         *
          * @param array $content
          */
         public function logging_list($content=null) {
@@ -55,7 +57,7 @@
 			if( !isset($sel_options['el_username_filter']) ) {
 				$sel_options['el_username_filter'] = array();
 
-				$taccount = new accounts();
+				$taccount = new Api\Accounts();
 				$accounts = $taccount->search(array('type' => 'accounts'));
 
 				foreach( $accounts as $account ) {
@@ -64,7 +66,7 @@
 			}
 
             if( !is_array($content) ) {
-                if( !($content['nm'] = egw_session::appsession('elogin_machine_logging_list', 'elogin')) ) {
+                if( !($content['nm'] = Api\Cache::getSession('elogin_machine_logging_list', 'elogin')) ) {
 					$content['nm'] = array(		// I = value set by the app, 0 = value on return / output
 						'get_rows'      =>	'elogin.elogin_machine_logging_ui.get_rows_logging',	// I  method/callback to request the data for the rows eg. 'notes.bo.get_rows'
 						'no_filter'     => true,// I  disable the 1. filter
@@ -79,7 +81,7 @@
 				}
 			}
 
-            $tpl = new etemplate_new('elogin.machine_logging_list');
+            $tpl = new Etemplate('elogin.machine_logging_list');
 			$tpl->exec(
                 'elogin.elogin_machine_logging_ui.logging_list',
                 $content,
@@ -89,7 +91,6 @@
 
          /**
          * index_get_actions
-         *
          * @param array $query
          * @return array
          */
@@ -101,14 +102,13 @@
 
 		/**
 		 * get_rows_logging
-		 *
 		 * @param type $query
 		 * @param type $rows
 		 * @param type $readonlys
 		 * @return type
 		 */
         public function get_rows_logging(&$query, &$rows, &$readonlys) {
-            egw_session::appsession('elogin_machine_logging_list', 'elogin', $query);
+            Api\Cache::setSession('elogin_machine_logging_list', 'elogin', $query);
 
 			if( !isset($query['col_filter']) ) {
 				$query['colfilter'] = array();
@@ -208,10 +208,12 @@
 
                     }
 
-                    return egw_json_response::get()->data(array('status' => 'ok'));
+                    return Api\Json\Response::get()->data(
+						array('status' => 'ok'));
                 }
             }
 
-            return egw_json_response::get()->data(array('status' => 'error'));
+            return Api\Json\Response::get()->data(
+				array('status' => 'error'));
         }
     }
