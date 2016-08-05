@@ -10,10 +10,14 @@
 	 * @version $Id$
 	 */
 
+	namespace EGroupware\ELogin\Widget;
+
+	use EGroupware\Api\Etemplate;
+
     /**
-     * elogin_code_editor_etemplate_widget
+     * CodeEditor
      */
-    class elogin_code_editor_etemplate_widget extends etemplate_widget {
+    class CodeEditor extends Etemplate\Widget {
 
         /**
          * validate
@@ -33,7 +37,7 @@
     /**
      * register widget
      */
-    etemplate_widget::registerWidget(
-        'elogin_code_editor_etemplate_widget',
+    Etemplate\Widget::registerWidget(
+        'EGroupware\ELogin\Widget\CodeEditor',
         array('elogin-code-editor')
         );
