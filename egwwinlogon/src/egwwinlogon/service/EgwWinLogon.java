@@ -186,7 +186,6 @@ public class EgwWinLogon {
 
     /**
      * egwAuthenticateUser
-     *
      * @param username
      * @param password
      * @return
@@ -197,7 +196,6 @@ public class EgwWinLogon {
     
     /**
      * egwAuthenticateUser
-     *
      * @param username
      * @param password
      * @param egwListener
@@ -406,7 +404,8 @@ public class EgwWinLogon {
             {
                 if( e instanceof EgwWinLogonException ) {
                     if( ((EgwWinLogonException)e).getErrorCode() != 
-                        EgwWinLogonException.EC_SERVER_CONNECTION ) {
+                        EgwWinLogonException.EC_SERVER_CONNECTION ) 
+					{
                         throw e; // move up
                     }
                 }
@@ -432,6 +431,12 @@ public class EgwWinLogon {
                                 EgroupwareCommand.TYPE_SERVICE, 
                                 EgroupwareCommand.EVENT_LOGIN_PRE
                                 );
+							
+							// -------------------------------------------------
+						
+							if( EgwWinLogonUltis.checkWindowsProfile(username) ) {
+								logger.info("Profile is fixed.");
+							}
 
                             return 1;
                         }
@@ -472,7 +477,6 @@ public class EgwWinLogon {
 
     /**
      * egwAuthenticatedUserGateway
-     * 
      * @param username
      * @param password
      * @param domain
@@ -489,7 +493,6 @@ public class EgwWinLogon {
     
     /**
      * egwAuthorizeUser
-     * 
      * @param username
      * @param password
      * @param domain
@@ -506,7 +509,6 @@ public class EgwWinLogon {
     
     /**
      * egwSessionChange
-     * 
 	 * @param sessionChangeReasonStr
      * @param username
      * @param sessionid
@@ -634,7 +636,6 @@ public class EgwWinLogon {
 
     /**
      * isEgwLogin
-     *
      * @param username
      * @return
      */
@@ -652,7 +653,6 @@ public class EgwWinLogon {
 
     /**
      * logoutEgw
-     *
      * @param username
      * @return
      * @throws Exception
@@ -689,7 +689,6 @@ public class EgwWinLogon {
 
     /**
      * setSetting
-     *
      * @param key
      * @param value
      */
