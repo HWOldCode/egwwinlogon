@@ -5,7 +5,6 @@
  */
 package egwwinlogon.service;
 
-
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.WinReg;
@@ -163,7 +162,6 @@ public class EgwWinLogonUltis {
 	
     /**
      * pingUrl
-     * 
      * @param url
      * @return 
      */
@@ -246,7 +244,6 @@ public class EgwWinLogonUltis {
 	
     /**
      * getStrEncode
-     * 
      * @param content
      * @param k
      * @return
@@ -341,7 +338,6 @@ public class EgwWinLogonUltis {
     
     /**
      * pathUriValid
-     * 
      * @param path
      * @return 
      */
@@ -358,7 +354,6 @@ public class EgwWinLogonUltis {
     
     /**
      * sendEmail
-     * 
      * @param host
      * @param user
      * @param password

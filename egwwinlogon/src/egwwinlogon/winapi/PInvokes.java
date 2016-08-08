@@ -26,6 +26,10 @@ import egwwinlogon.winapi.mpr.NETRESOURCEW;
  */
 public class PInvokes {
 	
+	/**
+	 * isDesktopLocked
+	 * @return 
+	 */
 	static public boolean isDesktopLocked() {
 		WinDef.HWND _hwnd = User32Ex.INSTANCE.OpenDesktop(
 			"Default".toCharArray(), 0, false, 0x0100);
@@ -161,6 +165,12 @@ public class PInvokes {
 		}
 	}
 	
+	/**
+	 * getCredentialsInSession
+	 * @param session
+	 * @param caption
+	 * @param message 
+	 */
 	static public void getCredentialsInSession(int session, String caption, String message) {
 		PointerByReference userToken = new PointerByReference();
 		
