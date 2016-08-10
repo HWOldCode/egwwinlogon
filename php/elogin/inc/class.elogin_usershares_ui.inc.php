@@ -206,7 +206,6 @@
 
         /**
          * shareuser_mount_edit
-         *
          * @param array $content
          */
         public function shareuser_mount_edit($content=null) {
@@ -225,7 +224,6 @@
             $uid = ( isset($content['uid']) ? $content['uid'] : null);
 			$uid = ( $uid == null ? (isset($_GET['uid']) ? $_GET['uid'] : null) : $uid);
 
-
             $etemplate = new etemplate_new('elogin.share_user_mount.dialog');
             $etemplate->exec(
                 'elogin.elogin_usershares_ui.shareuser_mount_edit',
@@ -238,7 +236,6 @@
 
         /**
          * ajax_usershare_mount
-         *
          * @param array $content
          */
         static public function ajax_usershare_mount($content=array()) {

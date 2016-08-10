@@ -14,6 +14,7 @@ import egwwinlogon.winapi.AdvApi32;
 import egwwinlogon.winapi.ProcessList;
 import egwwinlogon.winapi.ProcessList.ProcessInfo;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -158,6 +159,17 @@ public class EgwWinLogonUltis {
             "egwwinlogon.jar\" egwwinlogon.user.EgwWinPromptCredentials ";
         
         return appCmd;
+	}
+	
+	/**
+	 * clearUpdaterFile
+	 */
+	static public void clearUpdaterFile() {
+		File tmpFile = new File(System.getProperty("java.io.tmpdir") + "\\update.file"); 
+			
+		if( tmpFile.exists() ) {
+			tmpFile.delete();
+		}
 	}
 	
     /**

@@ -28,7 +28,6 @@
 
         /**
          * share_provider_list
-         *
          * @param array $content
          */
         public function share_provider_list($content=null) {

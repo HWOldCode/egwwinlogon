@@ -2,11 +2,10 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-15 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -79,7 +78,6 @@
 
         /**
          * cmd_edit
-         *
          * @param array $content
          */
         public function cmd_edit($content=null) {
@@ -238,7 +236,6 @@
 
         /**
          * get_rows_commands
-         *
          * @param array $query
          * @param array $rows
          * @param array $readonlys
@@ -305,7 +302,6 @@
 
 		/**
 		 * cmd_delete
-		 *
 		 * @param array $content
 		 */
 		public function cmd_delete($content=null) {

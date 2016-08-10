@@ -27,7 +27,6 @@
 
         /**
          * logging_list
-         *
          * @param array $content
          */
         public function logging_list($content=null) {
@@ -87,9 +86,8 @@
                 $readonlys);
         }
 
-         /**
+        /**
          * index_get_actions
-         *
          * @param array $query
          * @return array
          */
