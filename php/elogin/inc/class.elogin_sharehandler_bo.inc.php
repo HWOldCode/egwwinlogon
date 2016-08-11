@@ -10,6 +10,7 @@
 	 * @version $Id$
 	 */
 
+	use EGroupware;
 	use EGroupware\Api;
 
     /**
@@ -23,13 +24,13 @@
 		 */
 		static protected $_logging = false;
 
-
 		/**
          * set_async_job
          * @param boolean $start
          */
         static function set_async_job($start=true) {
-            $async = new Api\AsyncService();
+			// TODO $async = new Api\AsyncService(); ???
+            $async = $GLOBALS['egw']->asyncservice;
 
             if( $start === !$async->read('elogin-sharehandler') ) {
                 if( $start ) {
