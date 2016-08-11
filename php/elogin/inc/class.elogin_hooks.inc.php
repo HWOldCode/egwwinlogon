@@ -59,6 +59,7 @@
                     $file['Machine-logging List']	= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_machine_logging_ui.logging_list&ajax=true');
                     $file['Share Provider']			= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_shareprovider_ui.share_provider_list&ajax=true');
                     $file['Cronjob by Hand']		= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_ui.cronjob_hand&ajax=true');
+					$file['Link List']				= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_link_ui.link_list&ajax=true');
                 }
 
                 $file['Share User'] = Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_usershares_ui.share_user_list&ajax=true');

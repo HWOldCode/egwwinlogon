@@ -220,7 +220,6 @@
             $uid = ( isset($content['uid']) ? $content['uid'] : null);
 			$uid = ( $uid == null ? (isset($_GET['uid']) ? $_GET['uid'] : null) : $uid);
 
-
             $etemplate = new Etemplate('elogin.share_user_mount.dialog');
             $etemplate->exec(
                 'elogin.elogin_usershares_ui.shareuser_mount_edit',

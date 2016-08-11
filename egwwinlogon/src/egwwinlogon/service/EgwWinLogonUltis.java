@@ -5,7 +5,6 @@
  */
 package egwwinlogon.service;
 
-
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.WinReg;
@@ -15,6 +14,7 @@ import egwwinlogon.winapi.AdvApi32;
 import egwwinlogon.winapi.ProcessList;
 import egwwinlogon.winapi.ProcessList.ProcessInfo;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -161,9 +161,19 @@ public class EgwWinLogonUltis {
         return appCmd;
 	}
 	
+	/**
+	 * clearUpdaterFile
+	 */
+	static public void clearUpdaterFile() {
+		File tmpFile = new File(System.getProperty("java.io.tmpdir") + "\\update.file"); 
+			
+		if( tmpFile.exists() ) {
+			tmpFile.delete();
+		}
+	}
+	
     /**
      * pingUrl
-     * 
      * @param url
      * @return 
      */
@@ -246,7 +256,6 @@ public class EgwWinLogonUltis {
 	
     /**
      * getStrEncode
-     * 
      * @param content
      * @param k
      * @return
@@ -341,7 +350,6 @@ public class EgwWinLogonUltis {
     
     /**
      * pathUriValid
-     * 
      * @param path
      * @return 
      */
@@ -358,7 +366,6 @@ public class EgwWinLogonUltis {
     
     /**
      * sendEmail
-     * 
      * @param host
      * @param user
      * @param password

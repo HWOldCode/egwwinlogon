@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+	<template id="elogin.link.dialog" template="" lang="" group="0" version="">
+        <grid width="100%">
+			<columns>
+				<column/>
+			</columns>
+			<rows>
+                <row>
+                    <grid width="100%">
+                        <columns>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row class="dialogHeader">
+                                <appicon src="elogin"/>
+                                <description value="Link" span="all"/>
+                            </row>
+                        </rows>
+					</grid>
+                </row>
+				<row>
+                    <grid width="100%">
+                        <columns>
+                            <column/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row>
+                                <description value="User-Share"/>
+                                <menulist>
+                                    <menupopup id="usershare" onchange="1"/>
+                                </menulist>
+                            </row>
+							<row>
+                                <description value="Mount-Share"/>
+                                <menulist>
+                                    <menupopup id="mountshare"/>
+                                </menulist>
+                            </row>
+							<row>
+								<description value="File-Path"/>
+								<textbox id="filepath" />
+							</row>
+                        </rows>
+                    </grid>
+                </row>
+                <row class="dialogFooterToolbar">
+                    <hbox span="all">
+						<button statustext="Saves the changes made" label="Save" id="button[save]" image="save" background_image="1"/>
+                        <button statustext="Apply the changes" label="Apply" id="button[apply]" image="apply" background_image="1"/>
+                        <button statustext="closes the window without saving the changes" label="Cancel" id="button[cancel]" onclick="window.close();" image="cancel" background_image="1"/>
+                        <button align="right" statustext="Delete this entry" label="Delete" id="button[delete]" onclick="return confirm('Delete this entry?');"/>
+					</hbox>
+                </row>
+            </rows>
+        </grid>
+	</template>
+</overlay>

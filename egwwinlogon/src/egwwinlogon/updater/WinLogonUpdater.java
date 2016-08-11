@@ -23,6 +23,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.swing.JOptionPane;
@@ -38,12 +40,12 @@ public class WinLogonUpdater extends Thread {
     /**
      * request url
      */
-    private final static String _versionURL     = "https://www.hw-softwareentwicklung.de/egwwinlogon_updater/version.html";
+    private final static String _versionURL = "https://www.hw-softwareentwicklung.de/egwwinlogon_updater/version.html";
     
     /**
      * dir for updater
      */
-    private String _root                  = "update/";
+    private String _root = "update/";
     
     /**
      * version old
@@ -104,52 +106,65 @@ public class WinLogonUpdater extends Thread {
      * run
      */
     @Override
-    public void run() {
+    public void run() {		
         try {
-            String decodedPath = EgwWinLogonUltis.getCurrentJarPath();
-            
-            this._root = decodedPath + this._root;
-            
-            String lastVersion  = WinLogonUpdater.getLatestVersion();
-            EgwWinLogon wl      = new EgwWinLogon();
-            
-            //JOptionPane.showMessageDialog(null, "ELogin Version: " + wl.egwGetVersion() + ", yes we scan!");
-            
-            if( !wl.egwGetVersion().equals(lastVersion) ) {
-                this._newVersion = lastVersion;
-                this._oldVersion = wl.egwGetVersion();
-                
-                //JOptionPane.showMessageDialog(null, "ELogin Download is start! ");
-                this._dlg.showDialog();
-                
-                this._downloadFile(this._getDownloadLinkFromHost());
-                this._unzip();
-                this._copyFiles(
-                    new File(this._root), 
-                    decodedPath//new File("").getAbsolutePath()
-                    );
-                
-                JOptionPane.showMessageDialog(null, "ELogin Update finish! Please Reboot your System.");
-            }
-            else {
-                this._oldVersion = wl.egwGetVersion();
-                this._newVersion = this._oldVersion;
-            }
-            
-            if( this._dlg != null ) {
-                Thread.sleep(250);
-                this._dlg.close();
-                System.exit(0);
-            }
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
+			File tmpFile = new File(System.getProperty("java.io.tmpdir") + "\\update.file"); 
+			
+			if( tmpFile.exists() ) {
+				return;
+			}
+			else {
+				tmpFile.createNewFile();
+			}
+			
+			try {
+				String decodedPath = EgwWinLogonUltis.getCurrentJarPath();
+				
+				this._root = decodedPath + this._root;
+				
+				String lastVersion  = WinLogonUpdater.getLatestVersion();
+				EgwWinLogon wl      = new EgwWinLogon();
+				
+				if( !wl.egwGetVersion().equals(lastVersion) ) {
+					this._newVersion = lastVersion;
+					this._oldVersion = wl.egwGetVersion();
+					
+					this._dlg.showDialog();
+					
+					this._downloadFile(this._getDownloadLinkFromHost());
+					this._unzip();
+					this._copyFiles(
+							new File(this._root),
+							decodedPath//new File("").getAbsolutePath()
+						);
+					
+					JOptionPane.showMessageDialog(null,
+							"ELogin Update finish! Please Reboot your System.");
+				}
+				else {
+					this._oldVersion = wl.egwGetVersion();
+					this._newVersion = this._oldVersion;
+				}
+				
+				if( this._dlg != null ) {
+					Thread.sleep(250);
+					this._dlg.close();
+					System.exit(0);
+				}
+			}
+			catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			
+			tmpFile.delete();
+		}
+        catch (IOException ex) {
+            Logger.getLogger(WinLogonUpdater.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     /**
      * getLatestVersion
-     * 
      * @return
      * @throws Exception 
      */
@@ -160,7 +175,6 @@ public class WinLogonUpdater extends Thread {
     
     /**
      * getWhatsNew
-     * 
      * @return
      * @throws Exception 
      */
@@ -171,7 +185,6 @@ public class WinLogonUpdater extends Thread {
     
     /**
      * getData
-     * 
      * @param address
      * @return
      * @throws Exception 
@@ -212,7 +225,6 @@ public class WinLogonUpdater extends Thread {
     
     /**
      * _downloadFile
-     * 
      * @param link
      * @throws MalformedURLException
      * @throws IOException 
@@ -228,7 +240,6 @@ public class WinLogonUpdater extends Thread {
             return;
         }
         
-        //outText.setText(outText.getText()+"\n"+"Downloding file...\nUpdate Size(compressed): "+max+" Bytes");
         BufferedOutputStream fOut = new BufferedOutputStream(
             new FileOutputStream(new File("update.zip")));
         
@@ -254,7 +265,6 @@ public class WinLogonUpdater extends Thread {
     
     /**
      * _unzip
-     * 
      * @throws IOException 
      */
     protected void _unzip() throws IOException {
@@ -301,8 +311,7 @@ public class WinLogonUpdater extends Thread {
     }
 
     /**
-     * _copyFiles
-     * 
+     * _copyFiles 
      * @param f
      * @param dir
      * @throws IOException 
@@ -323,7 +332,6 @@ public class WinLogonUpdater extends Thread {
     
     /**
      * _copy
-     * 
      * @param srFile
      * @param dtFile
      * @throws FileNotFoundException
@@ -351,7 +359,6 @@ public class WinLogonUpdater extends Thread {
      * _cleanup
      */
     private void _cleanup() {
-        //outText.setText(outText.getText()+"\nPreforming clean up...");
         File f = new File("update.zip");
         
         f.delete();
@@ -390,26 +397,20 @@ public class WinLogonUpdater extends Thread {
         // get an url
         try {
             url = aclass.getProtectionDomain().getCodeSource().getLocation();
-              // url is in one of two forms
-              //        ./build/classes/   NetBeans test
-              //        jardir/JarName.jar  froma jar
-        } 
+        }
         catch (SecurityException ex) {
             url = aclass.getResource(aclass.getSimpleName() + ".class");
-            // url is in one of two forms, both ending "/com/physpics/tools/ui/PropNode.class"
-            //          file:/U:/Fred/java/Tools/UI/build/classes
-            //          jar:file:/U:/Fred/java/Tools/UI/dist/UI.jar!
         }
 
         // convert to external form
         extURL = url.toExternalForm();
         
         // prune for various cases
-        if( extURL.endsWith(".jar") ) {   // from getCodeSource
+        if( extURL.endsWith(".jar") ) {
             extURL = extURL.substring(0, extURL.lastIndexOf("/"));
         }
         else {  // from getResource
-            String suffix = "/"+(aclass.getName()).replace(".", "/")+".class";
+            String suffix = "/" + (aclass.getName()).replace(".", "/") + ".class";
             extURL = extURL.replace(suffix, "");
             
             if( extURL.startsWith("jar:") && extURL.endsWith(".jar!") ) {

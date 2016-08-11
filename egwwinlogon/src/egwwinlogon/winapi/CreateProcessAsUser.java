@@ -12,8 +12,7 @@ import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
 
 /**
- * CreateProcessAsUser
- * 
+ * CreateProcessAsUser 
  * @author Stefan Werfling
  */
 public class CreateProcessAsUser {

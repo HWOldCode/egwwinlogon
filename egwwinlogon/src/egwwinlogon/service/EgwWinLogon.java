@@ -84,6 +84,9 @@ public class EgwWinLogon {
 		// init update ssl certs
 		WinLogonUpdater.initSslCerts();
 		
+		// clear updater file
+		EgwWinLogonUltis.clearUpdaterFile();
+		
         // ---------------------------------------------------------------------
         
         if( EgroupwarePGina.isJavaLoggingFile() ) {

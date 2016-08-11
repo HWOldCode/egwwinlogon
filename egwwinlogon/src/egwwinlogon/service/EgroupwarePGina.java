@@ -41,7 +41,6 @@ public class EgroupwarePGina {
     /**
      * isRunAsService
      * is run as service
-     * 
      * @return 
      */
     static public boolean isRunAsService() {
@@ -67,7 +66,6 @@ public class EgroupwarePGina {
     /**
      * getAppDir
      * get pGina App dir
-     * 
      * @return 
      */
     static public String getAppDir() {
@@ -82,7 +80,6 @@ public class EgroupwarePGina {
     
 	/**
 	 * getAppDirCache
-	 * 
 	 * @return 
 	 */
 	static public String getAppDirCache() {
@@ -104,7 +101,6 @@ public class EgroupwarePGina {
     /**
      * startProcessInSession
      * start a process in a session
-     * 
      * @param sessionId
      * @param cmdLine
      * @return 
@@ -132,7 +128,6 @@ public class EgroupwarePGina {
     /**
      * startUserProcessInSession
      * start a user process in a session
-     * 
      * @param sessionId
      * @param cmdLine
      * @return 
@@ -209,7 +204,6 @@ public class EgroupwarePGina {
     
     /**
      * getDLLHash
-     * 
      * @return 
      */
     static public String getDLLHash() {
@@ -222,7 +216,6 @@ public class EgroupwarePGina {
     
     /**
      * getSysFingerprint
-     * 
      * @return 
      */
     static public String getSysFingerprint() {
@@ -235,7 +228,6 @@ public class EgroupwarePGina {
     
     /**
      * getSystemStr
-     * 
      * @return 
      */
     static public String getSystemStr() {
@@ -248,7 +240,6 @@ public class EgroupwarePGina {
     
     /**
      * getMachineName
-     * 
      * @return 
      */
     static public String getMachineName() {
@@ -262,7 +253,6 @@ public class EgroupwarePGina {
     /**
      * logInfo
      * log a message as info
-     * 
      * @param msg 
      */
     static public void logInfo(String msg) {
@@ -277,7 +267,6 @@ public class EgroupwarePGina {
     /**
      * logError
      * log a message as error
-     * 
      * @param msg 
      */
     static public void logError(String msg) {
@@ -291,7 +280,6 @@ public class EgroupwarePGina {
     
     /**
      * getUsername
-     * 
      * @param sessionId
      * @return 
      */
@@ -305,7 +293,6 @@ public class EgroupwarePGina {
     
     /**
      * logoffSession
-     * 
      * @param sessionId
      * @return 
      */
@@ -319,7 +306,6 @@ public class EgroupwarePGina {
     
     /**
      * getCredentials
-     * 
      * @param title
      * @param message
      * @return 

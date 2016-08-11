@@ -22,7 +22,6 @@ import java.util.logging.Logger;
 
 /**
  * EgwWinLogonHttpHandlerFirstInstall
- * 
  * @author Stefan Werfling
  */
 public class EgwWinLogonHttpHandlerFirstInstall extends LogonHttpServerHandler {
@@ -60,6 +59,11 @@ public class EgwWinLogonHttpHandlerFirstInstall extends LogonHttpServerHandler {
         }
     }
     
+	/**
+	 * handle
+	 * @param t
+	 * @throws IOException 
+	 */
     @Override
     public void handle(HttpExchange t) throws IOException {
         EgroupwareELoginCache _eLoginCache = null;
@@ -193,9 +197,8 @@ public class EgwWinLogonHttpHandlerFirstInstall extends LogonHttpServerHandler {
 
         /**
          * checkCredentials
-         * 
          * @param string
-         * @param string1
+         * @param string
          * @return 
          */
         @Override

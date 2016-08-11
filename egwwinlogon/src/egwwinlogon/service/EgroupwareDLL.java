@@ -8,7 +8,6 @@ package egwwinlogon.service;
 /**
  * EgroupwareDLL
  * jni4net nativ register methods by my pgina plugin dll
- * 
  * @author Stefan Werfling
  */
 public class EgroupwareDLL {
@@ -16,7 +15,6 @@ public class EgroupwareDLL {
     /**
      * isRunAsService
      * is egroupware.dll run as service
-     * 
      * @return 
      */
     static public native boolean isRunAsService();
@@ -30,7 +28,6 @@ public class EgroupwareDLL {
     /**
      * getAppDir
      * get pGina App dir of Egroupware.dll
-     * 
      * @return 
      */
     static public native String getAppDir();
@@ -38,7 +35,6 @@ public class EgroupwareDLL {
     /**
      * startProcessInSession
      * start a process in a session
-     * 
      * @param sessionId
      * @param cmdLine
      * @return 
@@ -48,7 +44,6 @@ public class EgroupwareDLL {
     /**
      * startUserProcessInSession
      * start a user process in a session
-     * 
      * @param sessionId
      * @param cmdLine
      * @return 
@@ -72,7 +67,6 @@ public class EgroupwareDLL {
     /**
      * logInfo
      * log a message as info
-     * 
      * @param msg 
      */
     static public native void logInfo(String msg);
@@ -80,14 +74,12 @@ public class EgroupwareDLL {
     /**
      * logError
      * log a message as error
-     * 
      * @param msg 
      */
     static public native void logError(String msg);
     
     /**
      * validateCredentials
-     * 
      * @param username
      * @param domain
      * @param password
@@ -97,7 +89,6 @@ public class EgroupwareDLL {
     
     /**
      * getCredentials
-     * 
      * @param title
      * @param message
      * @return 
@@ -107,7 +98,6 @@ public class EgroupwareDLL {
     /**
      * setSetting
      * set setting in egroupware.dll
-     * 
      * @param name
      * @param value 
      */
@@ -115,7 +105,6 @@ public class EgroupwareDLL {
     
     /**
      * logoffSession
-     * 
      * @param sessionId
      * @return 
      */
@@ -123,7 +112,6 @@ public class EgroupwareDLL {
     
     /**
      * getUsername
-     * 
      * @param sessionId
      * @return 
      */
@@ -131,35 +119,30 @@ public class EgroupwareDLL {
     
     /**
      * getDLLHash
-     * 
      * @return 
      */
     static public native String getDLLHash();
     
     /**
      * getSysFingerprint
-     * 
      * @return 
      */
     static public native String getSysFingerprint();
     
     /**
      * getSystemStr
-     * 
      * @return 
      */
     static public native String getSystemStr();
     
     /**
      * getMachineName
-     * 
      * @return 
      */
     static public native String getMachineName();
     
     /**
      * setDeviceEnabled
-     * 
      * @param deviceGuid
      * @param instancePath
      * @param enable 

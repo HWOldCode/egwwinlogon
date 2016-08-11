@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 /**
  * EgroupwareDLLEmulator
  * for Debuging 
- * 
  * @author Stefan Werfling
  */
 public class EgroupwareDLLEmulator {
@@ -73,7 +72,6 @@ public class EgroupwareDLLEmulator {
     /**
      * getAppDir
      * get pGina App dir of Egroupware.dll
-     * 
      * @return 
      */
     static public String getAppDir() {
@@ -93,7 +91,6 @@ public class EgroupwareDLLEmulator {
     
     /**
      * getDLLHash
-     * 
      * @return 
      */
     static public String getDLLHash() {
@@ -102,7 +99,6 @@ public class EgroupwareDLLEmulator {
     
     /**
      * getSysFingerprint
-     * 
      * @return 
      */
     static public String getSysFingerprint() {
@@ -111,7 +107,6 @@ public class EgroupwareDLLEmulator {
    
     /**
      * getSystemStr
-     * 
      * @return 
      */
     static public String getSystemStr() {
@@ -120,7 +115,6 @@ public class EgroupwareDLLEmulator {
     
     /**
      * getMachineName
-     * 
      * @return 
      */
     static public String getMachineName() {
@@ -130,7 +124,6 @@ public class EgroupwareDLLEmulator {
     /**
      * logInfo
      * log a message as info
-     * 
      * @param msg 
      */
     static public void logInfo(String msg) {
@@ -141,7 +134,6 @@ public class EgroupwareDLLEmulator {
     /**
      * logError
      * log a message as error
-     * 
      * @param msg 
      */
     static public void logError(String msg) {
@@ -151,7 +143,6 @@ public class EgroupwareDLLEmulator {
     
     /**
      * getUsername
-     * 
      * @param sessionId
      * @return 
      */
@@ -161,7 +152,6 @@ public class EgroupwareDLLEmulator {
     
     /**
      * logoffSession
-     * 
      * @param sessionId
      * @return 
      */
