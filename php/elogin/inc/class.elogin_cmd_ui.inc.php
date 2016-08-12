@@ -10,6 +10,9 @@
 	 * @version $Id$
 	 */
 
+	use EGroupware\Api;
+	use EGroupware\Api\Etemplate;
+
     /**
      * elogin_cmd_ui
      */
