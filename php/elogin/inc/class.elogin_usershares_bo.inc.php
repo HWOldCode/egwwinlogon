@@ -288,9 +288,7 @@
          */
         public function updateUserSharesMounts() {
             $shares = $this->getShares();
-        //var_dump($shares);
-        //exit;
-             $_randdrivename = array(
+			$_randdrivename = array(
                 'A', 'B', 'C', 'D', 'E', 'F'
                 );
 
@@ -301,9 +299,8 @@
 					);
 
                 if( count($mounts) == 0 ) {
-                    $mountname = '';
-
-                    $tmc = 0;
+                    $mountname	= '';
+                    $tmc		= 0;
 
                     while( $trand = $this->_getRandomChar() ) {
                         $tmc++;
@@ -316,8 +313,8 @@
                             continue;
                         }
 
-                        $_randdrivename[] = $trand;
-                        $mountname = $trand;
+                        $_randdrivename[]	= $trand;
+                        $mountname			= $trand;
                         break;
                     }
 

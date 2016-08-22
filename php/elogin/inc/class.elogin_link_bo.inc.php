@@ -66,6 +66,7 @@
 		protected $_options = array();
 
 		/**
+		 * init_static
          * Init our static properties
          */
         static public function init_static() {
@@ -186,12 +187,28 @@
 		 * @return string
 		 */
 		public function buildUri() {
+			if( ($this->_usershare_id == null) || ($this->_usershare_mount_id == null) ) {
+				return null;
+			}
+
 			$usershare		= new elogin_usershares_bo($this->_usershare_id);
 			$usersharemount = new elogin_usershares_mount_bo($this->_usershare_mount_id);
 
 			if( $usersharemount->getUsershareId() == $usershare->getId() ) {
-				$uri = $usersharemount->getMountname() . '://' . $this->_filepath;
+				$uri = $usersharemount->getMountname() . ':' . $this->_filepath;
+
+				return $uri;
 			}
+
+			return null;
+		}
+
+		/**
+		 * getTitle
+		 * @return string
+		 */
+		public function getTitle() {
+			return $this->_filepath;
 		}
 
 		/**
@@ -338,6 +355,58 @@
 
             return count($rows);
         }
+
+		/**
+		 * link_title
+		 * @param string $info
+		 * @return string
+		 */
+		static public function link_title($info) {
+			$link = new elogin_link_bo($info);
+
+			if( $link->getUserShareMountId() != null ) {
+				return $link->getTitle();
+			}
+
+			return lang('not found');
+		}
+
+		/**
+		 * link_titles
+		 * @param array $ids
+		 */
+		static public function link_titles(array $ids) {
+            $titles = array();
+
+            foreach( $ids as $id ) {
+                $titles[$id] = self::link_title($id);
+            }
+
+            return $titles;
+		}
+
+		/**
+         * link_query
+         * @param type $pattern
+         * @param array $options
+         */
+        static public function link_query($pattern, Array &$options=array()) {
+			$rows		= array();
+			$readonlys	= array();
+			$result = array();
+
+			if( self::get_rows($options, $rows, $readonlys) > 0 ) {
+				foreach( $rows as &$row ) {
+					$result[$row['el_unid']] = array(
+							'label' => $row['el_filepath'],
+							);
+				}
+
+				return $result;
+			}
+
+			return array();
+		}
 	}
 
 	/**

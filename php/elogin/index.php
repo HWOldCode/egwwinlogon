@@ -1,13 +1,11 @@
 <?php
 
-
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -21,8 +19,8 @@
 			'enable_contacts_class'   => false,
 			'enable_nextmatchs_class' => false,
 			'include_xajax'		  	  => true,
-		)
-	);
+			)
+		);
 
 	// Header Inc
 	include('../header.inc.php');

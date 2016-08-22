@@ -26,7 +26,21 @@ var et2_elogin_link_open = (function(){ "use strict"; return et2_inputWidget.ext
 	 * attributes
 	 */
     attributes: {
-
+		"uri": {
+			"name": "Uri",
+			"type": "any",
+			"description": ""
+		},
+		"options": {
+			"name": "Options",
+			"type": "any",
+			"description": ""
+		},
+		"value": {
+			"name": "Value",
+			"type": "any",
+			"description": ""
+		}
 	},
 
 	/**
@@ -35,7 +49,9 @@ var et2_elogin_link_open = (function(){ "use strict"; return et2_inputWidget.ext
 	 * @param _attrs
 	 */
 	init: function(_parent, _attrs) {
-		
+		//<a href="egwwinlogon://<dialog>Hallo Welt!">Test 1</a>
+		//<a href="egwwinlogon://<explorer>C:\windows\system32">Test 2</a>
+		//<a href="egwwinlogon://<explorer-select>C:\windows\system32\cmd.exe">Test 3</a>
 	}
 });}).call(this);
 
