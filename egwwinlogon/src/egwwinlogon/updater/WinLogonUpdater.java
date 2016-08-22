@@ -22,9 +22,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.swing.JOptionPane;
@@ -76,8 +80,6 @@ public class WinLogonUpdater extends Thread {
 				"thawte_dv_ssl_ca_g2", 
 				ClassLoader.getSystemClassLoader().getResourceAsStream(
 					"egwwinlogon/updater/thawte_dv_ssl_ca_g2.cer"));
-			
-			
 		}
 		catch( Exception ex ) {
 			ex.printStackTrace();
@@ -125,7 +127,7 @@ public class WinLogonUpdater extends Thread {
 				String lastVersion  = WinLogonUpdater.getLatestVersion();
 				EgwWinLogon wl      = new EgwWinLogon();
 				
-				if( !wl.egwGetVersion().equals(lastVersion) ) {
+				if( this.checkVersion(wl.egwGetVersion(), lastVersion) ) {
 					this._newVersion = lastVersion;
 					this._oldVersion = wl.egwGetVersion();
 					
@@ -390,7 +392,7 @@ public class WinLogonUpdater extends Thread {
      * @param aclass
      * @return 
      */
-    public static File getJarDir(Class aclass) {
+    static public File getJarDir(Class aclass) {
         URL url;
         String extURL;      //  url.toExternalForm();
 
@@ -433,4 +435,43 @@ public class WinLogonUpdater extends Thread {
             return new File(url.getPath());
         }
     }
+	
+	/**
+	 * checkVersion
+	 * @param appversion
+	 * @param updateversion
+	 * @return 
+	 */
+	public Boolean checkVersion(String appversion, String updateversion) {
+		List<String> applist = new ArrayList<String>(Arrays.asList(appversion.split(Pattern.quote("."))));
+		List<String> updlist = new ArrayList<String>(Arrays.asList(updateversion.split(Pattern.quote("."))));
+		
+		if( (applist.size() >= 1) && (updlist.size() >= 1) ) {
+			int iappv = Integer.parseInt(applist.get(0));
+			int iupdv = Integer.parseInt(updlist.get(0));
+			
+			if( iupdv > iappv ) {
+				return true;
+			}
+			else if( iupdv == iappv ) {
+				applist.remove(0);
+				updlist.remove(0);
+				
+				if( applist.size() == 0 ) {
+					applist.add("0");
+				}
+				
+				if( updlist.size() == 0 ) {
+					updlist.add("0");
+				}
+				
+				appversion		= String.join(".", applist.toArray(new String[0]));
+				updateversion	= String.join(".", updlist.toArray(new String[0]));
+				
+				return this.checkVersion(appversion, updateversion);
+			}
+		}
+		
+		return false;
+	}
 }

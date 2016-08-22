@@ -70,7 +70,20 @@
         static public function index_get_actions($query=array()) {
             $group = 1;
 
-            return array();
+			$actions = array(
+				'edit' => array(
+                    'caption'	=> 'Edit',
+                    'group'		=> $group,
+                    'default'	=> false,
+                    'icon'		=> 'edit',
+                    'hint'		=> 'Edit Usershares',
+                    'enabled'	=> true,
+                    'url'       => 'menuaction=elogin.elogin_link_ui.edit&uid=$id',
+                    'popup'     => '600x425',//egw_link::get_registry('elogin', 'add_popup'),
+                    ),
+				);
+
+            return $actions;
         }
 
 		/**
@@ -97,15 +110,15 @@
 		 * @param array $content
 		 */
 		public function open($content=array()) {
-			$uid = ( isset($content['uid']) ? $content['uid'] : null);
-			$uid = ( $uid == null ? (isset($_GET['uid']) ? $_GET['uid'] : null) : $uid);
+			$uid = ( isset($content['unid']) ? $content['unid'] : null);
+			$uid = ( $uid == null ? (isset($_GET['unid']) ? $_GET['unid'] : null) : $uid);
 
 			if( $uid == null ) {
 				// error
 			}
 
 			$link = new elogin_link_bo($uid);
-
+			var_dump($link->buildUri());
 		}
 
 		/**

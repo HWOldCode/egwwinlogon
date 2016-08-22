@@ -172,7 +172,7 @@
 				self::_delete($this->_id);
 			}
 		}
-		
+
         /**
          * read
          *
@@ -195,7 +195,7 @@
 
         /**
          * get_rows
-		 * 
+		 *
          * @param type $query
          * @param type $rows
          * @param type $readonlys
@@ -260,7 +260,7 @@
 
             return $data['el_unid'];
         }
-		
+
 		/**
 		 * _delete
 		 * @param string $id
@@ -276,26 +276,24 @@
 				'elogin'
 				);
 		}
-		
+
 		/**
 		 * link_title
-		 *
 		 * @param type $info
 		 * @return string
 		 */
 		static public function link_title($info) {
 			$cmd = new elogin_machine_bo($info);
-			
+
 			if( $cmd->getIsInDb() ) {
 				return $cmd->getName();
 			}
-			
+
 			return lang('not found');
 		}
-		
+
 		/**
 		 * link_titles
-		 *
 		 * @param array $ids
 		 */
 		static public function link_titles(array $ids) {
@@ -307,10 +305,9 @@
 
             return $titles;
 		}
-		
+
 		/**
          * link_query
-         *
          * @param type $pattern
          * @param array $options
          */
@@ -318,17 +315,17 @@
 			$rows		= array();
 			$readonlys	= array();
 			$result = array();
-			
+
 			if( self::get_rows($options, $rows, $readonlys) > 0 ) {
 				foreach( $rows as &$row ) {
 					$result[$row['el_unid']] = array(
 							'label' => $row['el_name'],
 							);
 				}
-				
+
 				return $result;
 			}
-			
+
 			return array();
 		}
     }
