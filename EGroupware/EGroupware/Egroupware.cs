@@ -29,14 +29,12 @@ using System.Net;
 /**
  * http://jni4net.googlecode.com/svn/tags/0.3.0.0/jni4net.n/src/Bridge.JVM.convertor.cs
  **/
-namespace pGina.Plugin.EGroupware
-{
+namespace pGina.Plugin.EGroupware {
+
     /**
      * Class EGWWinLogin
      */
-    public class EGWWinLogin : IPluginAuthentication, IPluginAuthorization, IPluginAuthenticationGateway, IPluginConfiguration, IPluginEventNotifications
-    {
-
+    public class EGWWinLogin : IPluginAuthentication, IPluginAuthorization, IPluginAuthenticationGateway, IPluginConfiguration, IPluginEventNotifications {
         public static readonly Guid PluginUuid = new Guid("b094fee0-68c8-11e4-9803-0800200c9a66");
 
         private static EGWWinLogin _self;
@@ -56,7 +54,7 @@ namespace pGina.Plugin.EGroupware
         public EGWWinLogin() {
             // set vars
             EGWWinLogin._self   = this;
-            EGWWinLogin._logger = LogManager.GetLogger("pGina.Plugin.EGrroupware");
+            EGWWinLogin._logger = LogManager.GetLogger("pGina.Plugin.EGroupware");
 
             this._plist = new Dictionary<string, Process>();
 
@@ -275,11 +273,13 @@ namespace pGina.Plugin.EGroupware
                 string tcmdLine = Convertor.StrongJ2CString(env, cmdLine);
                 int tsessionid = sessionId;
 
-                Process proc = pInvokes.StartUserProcessInSession(tsessionid, tcmdLine);
+                bool preturn = pInvokes.StartUserProcessInSession(tsessionid, tcmdLine);
 
-                if (proc != null) {
-                    return (int)proc.Id;
+                if( preturn ) {
+                    return 1;
                 }
+
+                return 0;
             }
             catch (global::System.Exception __ex) {
                 EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
@@ -974,7 +974,6 @@ namespace pGina.Plugin.EGroupware
 
         /**
          * Description
-         * 
          * @return string 
          */
         public string Description {
@@ -1107,8 +1106,7 @@ namespace pGina.Plugin.EGroupware
         }
 
         /**
-         * AuthorizeUser
-         * 
+         * AuthorizeUser 
          */
         public BooleanResult AuthorizeUser(SessionProperties properties) {
             UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
@@ -1136,19 +1134,18 @@ namespace pGina.Plugin.EGroupware
         /**
          * SessionChange
          */
-        public void SessionChange(System.ServiceProcess.SessionChangeDescription changeDescription, SessionProperties properties) {
+        public void SessionChange(int SessionId, System.ServiceProcess.SessionChangeReason Reason, SessionProperties properties) {
             if( properties != null ) {
-
-                int sessionid = changeDescription.SessionId;
+                int sessionid = SessionId;
 
                 UserInformation userInfo = properties.GetTrackedSingle<UserInformation>();
                 
                 string startApp = Settings.Store.startapp;
                 string username = userInfo.Username;
 
-                EGWWinLogin._logger.InfoFormat("SessionChange: {0}, {1}", changeDescription.Reason, username);
+                EGWWinLogin._logger.InfoFormat("SessionChange: {0}, {1}", Reason, username);
 
-                switch( changeDescription.Reason ) {
+                switch( Reason ) {
                     case System.ServiceProcess.SessionChangeReason.SessionLogon:
                         this._egwSessionChange(5, username, sessionid);
                         break;
@@ -1173,39 +1170,6 @@ namespace pGina.Plugin.EGroupware
         }
 
         /**
-         * workThreadFunction 
-         */
-        /*public void workThreadFunction() {
-            while( !this._shouldStop ) {
-                Thread.Sleep(100);
-
-                List<string> list = new List<string>(this._plist.Keys);
-
-                foreach( string k in list ) {
-                    Process tp = this._plist[k];
-
-                    if( tp != null ) {
-                        string startApp = Settings.Store.startapp;
-
-                        if( startApp == "1" ) {
-                            // is app activ
-                            if( tp.HasExited ) {
-                                //this.startUserApp(k);
-                                EGWWinLogin._logger.InfoFormat("App is closed: {0}", k);
-                            }
-                        }
-                    }
-
-                    // is logged in
-                    if( !this._egwIsLogin(k) ) {
-                        // logout user
-                        WTS.closeLocalUserSession(k);
-                    }
-                }
-            }
-        }*/
-
-        /**
          * Configure
          */
         public void Configure() {
@@ -1225,11 +1189,11 @@ namespace pGina.Plugin.EGroupware
             /*while( true ) {
                 Thread.Sleep(1000);
             }*/
-            /*EGWWinLogin egw = new EGWWinLogin();
+            EGWWinLogin egw = new EGWWinLogin();
 
             while( true ) {
                 Thread.Sleep(1000);
-            }*/
+            }
         }
     }
 }
