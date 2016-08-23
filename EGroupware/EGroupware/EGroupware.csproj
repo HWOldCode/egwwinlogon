@@ -61,15 +61,17 @@
     <Reference Include="log4net">
       <HintPath>..\..\..\..\..\..\..\Program Files\pGina\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="pGina.Core">
-      <HintPath>C:\Program Files\pGina\pGina.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="pGina.Service.Impl">
-      <HintPath>C:\Program Files\pGina\pGina.Service.Impl.dll</HintPath>
-    </Reference>
-    <Reference Include="pGina.Shared, Version=3.1.8.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="pGina.Core, Version=3.2.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Program Files\pGina\pGina.Shared.dll</HintPath>
+      <HintPath>C:\Program Files\pGina.fork\pGina.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="pGina.Service.Impl, Version=3.2.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\pGina.fork\pGina.Service.Impl.dll</HintPath>
+    </Reference>
+    <Reference Include="pGina.Shared, Version=3.2.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\pGina.fork\pGina.Shared.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
