@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 
+using log4net;
+
+using pGina.CredentialProvider.Registration;
 using pGina.Shared.Interfaces;
 using pGina.Shared.Types;
-using log4net;
+using pGina.Shared.Settings;
 
 using net.sf.jni4net;
 using net.sf.jni4net.adaptors;
@@ -18,7 +21,6 @@ using net.sf.jni4net.jni;
 using net.sf.jni4net.utils;
 using Object = java.lang.Object;
 using EGroupware;
-using pGina.CredentialProvider.Registration;
 using Abstractions.WindowsApi;
 using System.IO;
 using System.Diagnostics;
@@ -26,9 +28,6 @@ using System.Threading;
 using java.io;
 using System.Net;
 
-/**
- * http://jni4net.googlecode.com/svn/tags/0.3.0.0/jni4net.n/src/Bridge.JVM.convertor.cs
- **/
 namespace pGina.Plugin.EGroupware {
 
     /**
@@ -43,20 +42,15 @@ namespace pGina.Plugin.EGroupware {
         protected Object _jEgwWinLogonUpdater;
         protected Object _jEgwWinLogon;
 
-        protected Dictionary<string, Process> _plist;
-        protected bool _shouldStop = false;
-
         protected bool _isService = false;
 
         /**
-         * constructor
+         * EGWWinLogin
          */
         public EGWWinLogin() {
             // set vars
             EGWWinLogin._self   = this;
             EGWWinLogin._logger = LogManager.GetLogger("pGina.Plugin.EGroupware");
-
-            this._plist = new Dictionary<string, Process>();
 
             // -------------------------------
             // check who is run this plugin
@@ -68,16 +62,6 @@ namespace pGina.Plugin.EGroupware {
             else {
                 this._isService = true;
             }
-
-            // -------------------------------
-            // init java updater app
-
-            /*try {
-                this.initUpdaterJava();
-            }
-            catch( System.Exception e ) {
-                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", e.Message, e.StackTrace);
-            }*/
 
             // -------------------------------
             // init egwwinlogon java app
@@ -157,6 +141,7 @@ namespace pGina.Plugin.EGroupware {
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "validateCredentials", "_validateCredentials", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getCredentials", "_getCredentials", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "setSetting", "_setSetting", "(Ljava/lang/String;Ljava/lang/String;)V"));
+                    methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getSetting", "_getSetting", "(Ljava/lang/String;)Ljava/lang/String;"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "logoffSession", "_logoffSession", "(I)Z"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getUsername", "_getUsername", "(I)Ljava/lang/String;"));
                     methods.Add(JNINativeMethod.Create(typeof(EGWWinLogin), "getDLLHash", "_getDLLHash", "()Ljava/lang/String;"));
@@ -254,7 +239,7 @@ namespace pGina.Plugin.EGroupware {
                     }
                 }
             }
-            catch (global::System.Exception __ex) {
+            catch( global::System.Exception __ex ) {
                 EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
                 env.ThrowExisting(__ex);
             }
@@ -449,6 +434,28 @@ namespace pGina.Plugin.EGroupware {
         }
 
         /**
+         * _getSetting
+         * method to java
+         */
+        private static JniLocalHandle _getSetting(IntPtr @__envp, JniLocalHandle @__obj, JniLocalHandle name) {
+            JNIEnv env = JNIEnv.Wrap(@__envp);
+
+            try {
+                string tname = Convertor.StrongJ2CString(env, name);
+                string tvalue = Settings.Store.GetSetting(tname);
+
+                return Convertor.StrongC2JString(env, tvalue);
+            }
+            catch (global::System.Exception __ex)
+            {
+                EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
+                env.ThrowExisting(__ex);
+            }
+
+            return default(JniLocalHandle);
+        }
+
+        /**
          * _logoffSession
          * method to java
          */
@@ -586,41 +593,16 @@ namespace pGina.Plugin.EGroupware {
         // ------------------------------------------------------------------------------------
 
         /**
-         * initUpdaterJava
-         */
-        private void initUpdaterJava() {
-            string jvmdb = Settings.Store.jvmdb;
-
-            var setup = new BridgeSetup();
-
-            if( jvmdb == "1" ) {
-                setup.AddJVMOption("-Xrunjdwp:transport=dt_socket,server=y,address=8888,suspend=n");
-            }
-            
-            setup.AddAllJarsClassPath(this.getAppDir() + ".");
-            setup.Verbose = true;
-
-            JNIEnv env = Bridge.CreateJVM(setup);
-
-            // register natives methods
-            Class tmpClass = env.FindClass("egwwinlogon/updater/WinLogonUpdater");
-
-            if( tmpClass != null ) {
-                this._registerJavaMethods(env);
-                this._jEgwWinLogonUpdater = tmpClass.newInstance();
-            }
-        }
-
-        /**
          * initEgwWinLogonJava
          */
         private void initEgwWinLogonJava() {
-            string jvmdb = Settings.Store.jvmdb;
+            string jvmdb        = Settings.Store.jvmdb;
+            string jvmdbport    = Settings.Store.jvmdbport;
 
             var setup = new BridgeSetup();
 
             if( jvmdb == "1" ) {
-                setup.AddJVMOption("-Xrunjdwp:transport=dt_socket,server=y,address=8889,suspend=n");
+                setup.AddJVMOption("-Xrunjdwp:transport=dt_socket,server=y,address=" + jvmdbport + ",suspend=n");
             }
 
             setup.AddAllJarsClassPath(this.getAppDir() + ".");
@@ -649,27 +631,8 @@ namespace pGina.Plugin.EGroupware {
          * _initEgroupware
          */
         private void _initEgroupware() {
-            try{
+            try {
                 if( this._jEgwWinLogon != null ) {
-
-                    // set base settings
-                    string url          = Settings.Store.url;
-                    string domain       = Settings.Store.domain;
-                    string mname        = System.Environment.MachineName;
-                    string fingerprint  = SysFingerPrint.Value();
-                    string startApp     = Settings.Store.startapp;
-
-                    this._egwSetSetting("url", url);
-                    this._egwSetSetting("domain", domain);
-                    this._egwSetSetting("machinename", mname);
-                    this._egwSetSetting("sysfingerprint", fingerprint);
-                    this._egwSetSetting("startapp", startApp);
-
-                    if( !this._isService ) {
-                        // no conflict set other port for 
-                        this._egwSetSetting("httpserverport", "8107");
-                    }
-   
                     this._jEgwWinLogon.Invoke(
                         "initEgroupware",
                         "()V");
@@ -704,7 +667,6 @@ namespace pGina.Plugin.EGroupware {
 
         /**
          * _egwAuthenticateUser
-         * 
          */
         private bool _egwAuthenticateUser(string username, string password, string domain, int sessionid) {
             EGWWinLogin._logger.InfoFormat("_egwAuthenticateUser {0}", username);
@@ -738,7 +700,6 @@ namespace pGina.Plugin.EGroupware {
 
         /**
          * _egwAuthenticatedUserGateway
-         * 
          */
         private bool _egwAuthenticatedUserGateway(string username, string password, string domain) {
             EGWWinLogin._logger.InfoFormat("_egwAuthenticatedUserGateway {0}", username);
@@ -770,8 +731,7 @@ namespace pGina.Plugin.EGroupware {
         }
 
         /**
-         * _egwAuthorizeUser
-         * 
+         * _egwAuthorizeUser 
          */
         private bool _egwAuthorizeUser(string username, string password, string domain) {
             EGWWinLogin._logger.InfoFormat("_egwAuthorizeUser {0}", username);
@@ -806,18 +766,14 @@ namespace pGina.Plugin.EGroupware {
          * _egwIsLogin
          */
         private bool _egwIsLogin(string username) {
-            //this._logger.InfoFormat("_egwIsLogin {0}", username);
-
-            if (this._jEgwWinLogon != null) {
+            if( this._jEgwWinLogon != null ) {
                 int ret = this._jEgwWinLogon.Invoke<int>(
                     "isEgwLogin",
                     "(Ljava/lang/String;)I",
                     username
                     );
 
-                //this._logger.InfoFormat("return: {0}", ret);
-
-                if (ret == 1) {
+                if( ret == 1 ) {
                     return true;
                 }
             }
@@ -1001,12 +957,6 @@ namespace pGina.Plugin.EGroupware {
          * Starting
          */
         public void Starting() {
-            /*this._shouldStop = false;
-
-            Thread thread = new Thread(new ThreadStart(this.workThreadFunction));
-            thread.Start();
-            */
-
             try{
                 if( this._jEgwWinLogon != null ) {
                     this._jEgwWinLogon.Invoke(
@@ -1023,9 +973,7 @@ namespace pGina.Plugin.EGroupware {
          * Stopping
          */
         public void Stopping() {
-            //this._shouldStop = true;
-
-            try{
+            try {
                 if( this._jEgwWinLogon != null ) {
                     this._jEgwWinLogon.Invoke(
                         "egwStopping",
@@ -1076,9 +1024,6 @@ namespace pGina.Plugin.EGroupware {
                 msg = e.Message;
             }
 
-            //msg = msg + " cd:" + System.IO.Directory.GetCurrentDirectory();
-
-            //this._logger.ErrorFormat("Authentication failed for {0}", userInfo.Username);
             return new BooleanResult() { 
                 Success = false, 
                 Message = msg
@@ -1175,25 +1120,6 @@ namespace pGina.Plugin.EGroupware {
         public void Configure() {
             Configuration dialog = new Configuration();
             dialog.ShowDialog();
-        }
-
-        /**
-         * Main Example and Debug used
-         **/
-        public static void Main() {
-            //NetworkCredential tmp = pInvokes.GetCredentials("Test", "gib deine Daten ein");
-            //Console.WriteLine(tmp.Password);
-            //WTS.ListUsers("localhost");
-            //usbControl u = new usbControl();
-
-            /*while( true ) {
-                Thread.Sleep(1000);
-            }*/
-            EGWWinLogin egw = new EGWWinLogin();
-
-            while( true ) {
-                Thread.Sleep(1000);
-            }
         }
     }
 }

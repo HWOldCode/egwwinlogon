@@ -11,7 +11,7 @@ namespace pGina.Plugin.EGroupware
         private static dynamic m_settings = new pGina.Shared.Settings.pGinaDynamicSettings(EGWWinLogin.PluginUuid);
 
         /**
-         * 
+         * Store
          */
         public static dynamic Store {
             get { return m_settings; }
@@ -25,7 +25,9 @@ namespace pGina.Plugin.EGroupware
             m_settings.SetDefault("domain", "default");
             m_settings.SetDefault("startapp", "1");
             m_settings.SetDefault("jvmdb", "0");
+            m_settings.SetDefault("jvmdbport", "8889");
             m_settings.SetDefault("jlogfile", "0");
+            m_settings.SetDefault("serverport", "8107");
         }
     }
 }

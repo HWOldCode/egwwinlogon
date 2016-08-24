@@ -82,8 +82,8 @@ public class EgwWinLogonHttpHandlerFirstInstall extends LogonHttpServerHandler {
                 if( _eLoginCache == null ) {
                     // Egroupware Config
                     EgroupwareConfig config = new EgroupwareConfig();
-                    config.setUrl(EgwWinLogon.getSetting("url"));
-                    config.setDomain(EgwWinLogon.getSetting("domain"));
+                    config.setUrl(EgroupwarePGina.getSetting("url"));
+                    config.setDomain(EgroupwarePGina.getSetting("domain"));
                     config.setUser(this._auth.getUsername());
                     config.setPassword(this._auth.getPassword());
                     
@@ -97,9 +97,9 @@ public class EgwWinLogonHttpHandlerFirstInstall extends LogonHttpServerHandler {
                             
                             // machine info send
                             EgroupwareMachineInfo mi = new EgroupwareMachineInfo(
-                                EgwWinLogon.getSetting("sysfingerprint"));
+                                EgroupwarePGina.getSetting("sysfingerprint"));
 
-                            mi.setMachineName(EgwWinLogon.getSetting("machinename"));
+                            mi.setMachineName(EgroupwarePGina.getSetting("machinename"));
                             _egw.request(mi);
                             
                             // -------------------------------------------------
@@ -142,8 +142,8 @@ public class EgwWinLogonHttpHandlerFirstInstall extends LogonHttpServerHandler {
                     }
                     catch( Exception te ) {
                         response += "\r\nEGroupware Error: " + te.getMessage();
-                        response += "\r\nBy Config: URL: " + EgwWinLogon.getSetting("url") + 
-                            " Doamin: " + EgwWinLogon.getSetting("domain");
+                        response += "\r\nBy Config: URL: " + EgroupwarePGina.getSetting("url") + 
+                            " Doamin: " + EgroupwarePGina.getSetting("domain");
                     }
                 }
                 else {

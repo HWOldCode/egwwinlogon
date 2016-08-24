@@ -31,17 +31,18 @@ namespace EGroupware
             string domain = Settings.Store.domain;
             string jvmdb = Settings.Store.jvmdb;
             string jlogfile = Settings.Store.jlogfile;
+            string vjvmdbport = Settings.Store.jvmdbport;
+            decimal jvmdbport = Decimal.Parse(vjvmdbport);
 
-            this.textEgroupwareUrl.Text = url;
-            this.textEgroupwareDomain.Text = domain;
+            this.textEgroupwareUrl.Text         = url;
+            this.textEgroupwareDomain.Text      = domain;
+            this.numericUpDownJVMPort.Value     = jvmdbport;
 
-            if (jvmdb == "1")
-            {
+            if( jvmdb == "1" ) {
                 this.checkBoxJVMDB.Checked = true;
             }
 
-            if (jlogfile == "1")
-            {
+            if( jlogfile == "1" ) {
                 this.checkBoxJavaLogFile.Checked = true;
             }
         }
@@ -49,26 +50,24 @@ namespace EGroupware
         /**
          * UiToSettings
          */
-        public void UiToSettings()
-        {
-            Settings.Store.url = this.textEgroupwareUrl.Text;
-            Settings.Store.domain = this.textEgroupwareDomain.Text;
+        public void UiToSettings() {
 
-            if (this.checkBoxJVMDB.Checked)
-            {
+            Settings.Store.url          = this.textEgroupwareUrl.Text;
+            Settings.Store.domain       = this.textEgroupwareDomain.Text;
+            Settings.Store.jvmdbport    = this.numericUpDownJVMPort.Value.ToString("G");
+            Settings.Store.serverport   = "8107";
+
+            if (this.checkBoxJVMDB.Checked) {
                 Settings.Store.jvmdb = "1";
             }
-            else
-            {
+            else {
                 Settings.Store.jvmdb = "0";
             }
 
-            if (this.checkBoxJavaLogFile.Checked)
-            {
+            if (this.checkBoxJavaLogFile.Checked) {
                 Settings.Store.jlogfile = "1";
             }
-            else
-            {
+            else {
                 Settings.Store.jlogfile = "0";
             }
         }

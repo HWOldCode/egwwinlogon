@@ -170,9 +170,9 @@ public class EgwWinLogonHttpHandlerConfig extends LogonHttpServerHandler {
 		try {
 			// machine info send
 			EgroupwareMachineInfo mi = new EgroupwareMachineInfo(
-				EgwWinLogon.getSetting("sysfingerprint"));
+				EgroupwarePGina.getSetting("sysfingerprint"));
 
-			mi.setMachineName(EgwWinLogon.getSetting("machinename"));
+			mi.setMachineName(EgroupwarePGina.getSetting("machinename"));
 			_egw.request(mi);
 			
 			// -----------------------------------------------------------------
