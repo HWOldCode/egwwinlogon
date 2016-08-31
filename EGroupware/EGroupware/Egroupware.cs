@@ -78,7 +78,7 @@ namespace pGina.Plugin.EGroupware {
          */
         private string getAppDir() {
             string curPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            curPath = curPath.Replace("Plugins\\Core", "");
+            curPath = curPath.Replace("Plugins", "");
 
             return curPath;
         }
@@ -87,7 +87,7 @@ namespace pGina.Plugin.EGroupware {
          * getDLLHash
          */
         private string getDLLHash() {
-            FileStream fc = System.IO.File.OpenRead(this.getAppDir() + "Plugins\\Core\\" + 
+            FileStream fc = System.IO.File.OpenRead(this.getAppDir() + "Plugins\\" + 
                 Assembly.GetExecutingAssembly().GetName().Name + ".dll");
 
             System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
