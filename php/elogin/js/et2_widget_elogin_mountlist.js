@@ -1,11 +1,9 @@
-
 /**
  * ELogin - Egroupware
- *
  * @link http://www.hw-softwareentwicklung.de
  * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
  * @package elogin
- * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+ * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
  * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
  * @version $Id:$
  */
@@ -54,10 +52,10 @@ var elogin_mountlist = et2_valueWidget.extend([et2_IDataProvider], {
 	init: function() {
         this._super.apply(this, arguments);
 
-        this.div = $j(document.createElement("div"))
+        this.div = jQuery(document.createElement("div"))
 			.addClass("et2_elogin_mountlist");
 
-		this.innerDiv = $j(document.createElement("div"))
+		this.innerDiv = jQuery(document.createElement("div"))
 			.appendTo(this.div);
 
         // Set up context menu
@@ -96,7 +94,7 @@ var elogin_mountlist = et2_valueWidget.extend([et2_IDataProvider], {
 				function(button, _value) {
                     if(button != et2_dialog.OK_BUTTON) return;
 
-                    _value = $j.extend({}, content, _value);
+                    _value = jQuery.extend({}, content, _value);
 
                     egw.jsonq("elogin.elogin_usershares_ui.ajax_usershare_mount",
 						[_value],
@@ -127,7 +125,7 @@ var elogin_mountlist = et2_valueWidget.extend([et2_IDataProvider], {
 	destroy: function() {
 		// Unbind, if bound
 		if( this.options.value && !this.options.value.unid ) {
-			$j(window).off('.' + 'elogin' + this.options.value.unid);
+			jQuery(window).off('.' + 'elogin' + this.options.value.unid);
 		}
 
 		// Free the widgets
@@ -255,13 +253,13 @@ var elogin_mountlist = et2_valueWidget.extend([et2_IDataProvider], {
 
 		// Write something inside the column headers
 		for (var i = 0; i < this.columns.length; i++) {
-			$j(this.dataview.getHeaderContainerNode(i)).text(this.columns[i].caption);
+			jQuery(this.dataview.getHeaderContainerNode(i)).text(this.columns[i].caption);
 		}
 
 		// Register a resize callback
 		var self = this;
 
-		$j(window).on('resize.' + 'elogin' + this.options.value.unid, function() {
+		jQuery(window).on('resize.' + 'elogin' + this.options.value.unid, function() {
 			self.dynheight.update(function(_w, _h) {
 				self.dataview.resize(_w, _h);
 			});
@@ -361,24 +359,24 @@ var elogin_mountlist = et2_valueWidget.extend([et2_IDataProvider], {
 		var row = this.dataview.rowProvider.getPrototype("default");
 		var self = this;
 
-        $j("div", row).each(function (i) {
+        jQuery("div", row).each(function (i) {
             var nodes = [];
 
             nodes = '<span>'+_data[self.columns[i].id] + '</span>';
 
-            $j(this).append(nodes);
+            jQuery(this).append(nodes);
         });
 
 
-        $j(tr).append(row.children());
+        jQuery(tr).append(row.children());
 
-        $j(tr).bind("contextmenu", function(e) {
+        jQuery(tr).bind("contextmenu", function(e) {
 
-                $j($j(tr).parent()).find('.selected').each(function () {
-                    $j(this).removeClass("selected focused");
+                jQuery(jQuery(tr).parent()).find('.selected').each(function () {
+                    jQuery(this).removeClass("selected focused");
                 });
 
-                $j(tr).addClass("selected focused");
+                jQuery(tr).addClass("selected focused");
 
                 self.context.data = _data;
                 self.context.showAt(e.pageX, e.pageY, true);
