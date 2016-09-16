@@ -122,7 +122,6 @@
 
 		/**
 		 * with options
-		 *
 		 * @var array
 		 */
 		protected $_options = array();
@@ -153,6 +152,7 @@
 		protected $_mount_point_check = '';
 
         /**
+		 * init_static
          * Init our static properties
          */
         static public function init_static() {

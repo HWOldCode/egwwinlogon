@@ -59,7 +59,6 @@
 
         /**
          * getEgroupwareAccountGroups
-         *
          * @param int $accountid
          * @return array
          */
@@ -71,7 +70,6 @@
         /**
 		 * getPHPUuid
 		 * return a unid
-		 *
 		 * @return string UUID aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee
 		 */
 		static public function getPHPUuid() {
