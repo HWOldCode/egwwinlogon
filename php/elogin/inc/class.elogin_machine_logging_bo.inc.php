@@ -394,10 +394,13 @@
 				'el_machine_id' => $id
 				);
 
-            $cols = array(self::TABLE . '.el_unid');
+            $cols = array(
+				'MAX(' . self::TABLE . '.el_logdate)',
+				self::TABLE . '.el_unid'
+				);
 
 			if( !($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                0, ' ORDER BY ' . self::TABLE . '.el_logdate DESC', false, 1, '')) )
+                0, /*' ORDER BY ' . self::TABLE . '.el_logdate DESC'*/null, false, 1, '')) )
             {
                 return null;
             }
