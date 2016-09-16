@@ -44,11 +44,6 @@ public class EgwWinLogon {
      * logger
      */
     private static final Logger logger = Logger.getLogger(EgwWinLogon.class);
-
-    /**
-     * _settings
-     */
-    static protected LinkedHashMap _settings = new LinkedHashMap();
     
     /**
      * Global Error
@@ -141,7 +136,11 @@ public class EgwWinLogon {
         // ---------------------------------------------------------------------
         
         if( this._server == null ) {
-            String tport = (String) EgwWinLogon._settings.get("httpserverport");
+			String tport = null;
+			
+			if( !EgroupwarePGina.isRunAsService() ) {
+				tport = EgroupwarePGina.getSetting("serverport");
+			}
             
             if( tport == null ) {
                 this._server = new LogonHttpServer();
@@ -158,8 +157,10 @@ public class EgwWinLogon {
                     EgwWinLogon.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            EgwWinLogonHttpHandlerConfig config = new EgwWinLogonHttpHandlerConfig(
-                (String) EgwWinLogon._settings.get("sysfingerprint"));
+            EgwWinLogonHttpHandlerConfig config = 
+				new EgwWinLogonHttpHandlerConfig(
+					EgroupwarePGina.getSysFingerprint());
+			
             config.register(this._server);
 
             EgwWinLogonHttpHandlerLogger httplogger = new EgwWinLogonHttpHandlerLogger();
@@ -225,8 +226,8 @@ public class EgwWinLogon {
             config = new EgroupwareConfig();
         }
 
-        config.setUrl((String) EgwWinLogon._settings.get("url"));
-        config.setDomain((String) EgwWinLogon._settings.get("domain"));
+        config.setUrl(EgroupwarePGina.getSetting("url"));
+        config.setDomain(EgroupwarePGina.getSetting("domain"));
         config.setUser(username);
         config.setPassword(password);
         config.setSocketTimeout(3000);
@@ -300,9 +301,9 @@ public class EgwWinLogon {
 
                             // machine info send
                             EgroupwareMachineInfo mi = new EgroupwareMachineInfo(
-                                (String) EgwWinLogon._settings.get("sysfingerprint"));
+                                EgroupwarePGina.getSysFingerprint());
 
-                            mi.setMachineName((String) EgwWinLogon._settings.get("machinename"));
+                            mi.setMachineName(EgroupwarePGina.getMachineName());
                             _egw.request(mi);
                             // -------------------------------------------------
 
@@ -346,7 +347,8 @@ public class EgwWinLogon {
 
                             EgroupwareELoginCache.saveToFile(
                                 EgroupwareELoginCache.instance, 
-                                EgroupwarePGina.getAppDirCache() + EgwWinLogonConst.CACHE_FILE_ACCOUNTS);
+                                EgroupwarePGina.getAppDirCache() + 
+									EgwWinLogonConst.CACHE_FILE_ACCOUNTS);
                         }
 
                         // request command cache list
@@ -357,7 +359,8 @@ public class EgwWinLogon {
 
                             EgroupwareCommand.saveToFile(
                                 EgroupwareCommand.instance, 
-                                EgroupwarePGina.getAppDirCache() + EgwWinLogonConst.CACHE_FILE_COMMANDS);
+                                EgroupwarePGina.getAppDirCache() + 
+									EgwWinLogonConst.CACHE_FILE_COMMANDS);
                         }
                     }
 
@@ -688,31 +691,5 @@ public class EgwWinLogon {
         }
 
         return lreturn;
-    }
-
-    /**
-     * setSetting
-     * @param key
-     * @param value
-     */
-    public void setSetting(String key, String value) {
-        if( EgwWinLogon._settings.containsKey(key) ) {
-            EgwWinLogon._settings.remove(key);
-        }
-
-        EgwWinLogon._settings.put(key, value);
-    }
-    
-    /**
-     * getSetting
-     * @param key
-     * @return 
-     */
-    static public String getSetting(String key) {
-        if( EgwWinLogon._settings.containsKey(key) ) {
-            return (String) EgwWinLogon._settings.get(key);
-        }
-        
-        return "";
     }
 }

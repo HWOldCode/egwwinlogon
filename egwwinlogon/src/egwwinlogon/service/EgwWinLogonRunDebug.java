@@ -15,7 +15,6 @@ import egwwinlogon.user.EgwWinTrayer;
 
 /**
  * EgwWinLogonRunDebug
- * 
  * @author Stefan Werfling
  */
 public class EgwWinLogonRunDebug implements EgroupwareEventListener {
@@ -65,12 +64,12 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
         
         EgwWinLogon egw = new EgwWinLogon();
         
-        egw.setSetting("httpserverport", "8109");
+        EgroupwareDLLEmulator.setSetting("httpserverport", "8109");
         
-        egw.setSetting("url", url);
-        egw.setSetting("domain", domain);
-        egw.setSetting("sysfingerprint", fingerprint);
-        egw.setSetting("machinename", machinename);
+        EgroupwareDLLEmulator.setSetting("url", url);
+        EgroupwareDLLEmulator.setSetting("domain", domain);
+        EgroupwareDLLEmulator.setSetting("sysfingerprint", fingerprint);
+        EgroupwareDLLEmulator.setSetting("machinename", machinename);
         
         egw.initEgroupware();
         egw.egwStarting();
@@ -93,26 +92,46 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
         }
     }
 
+	/**
+	 * authentificationSucceeded
+	 * @param e 
+	 */
     @Override
     public void authentificationSucceeded(EgroupwareAuthentifiactionEvent e) {
         System.out.println("Login Succeeded: " + e.getEgroupware().getConfig().getUser());
     }
 
+	/**
+	 * authentificationFailed
+	 * @param e 
+	 */
     @Override
     public void authentificationFailed(EgroupwareAuthentifiactionEvent e) {
         System.out.println("Login Failed: " + e.getException().getMessage());
     }
 
+	/**
+	 * logoutSucceeded
+	 * @param e 
+	 */
     @Override
     public void logoutSucceeded(EgroupwareLogoutEvent e) {
         System.out.println("Logout Succeeded");
     }
 
+	/**
+	 * logoutFailed
+	 * @param e 
+	 */
     @Override
     public void logoutFailed(EgroupwareLogoutEvent e) {
         System.out.println("Logout Failed");
     }
 
+	/**
+	 * requestSucceeded
+	 * @param e 
+	 */
     @Override
     public void requestSucceeded(EgroupwareEventRequest e) {
         System.out.println("Request by url succeeded: " + e.getRequest().getRequestUrl());
@@ -122,11 +141,19 @@ public class EgwWinLogonRunDebug implements EgroupwareEventListener {
         }
     }
 
+	/**
+	 * requestFailed
+	 * @param e 
+	 */
     @Override
     public void requestFailed(EgroupwareEventRequest e) {
         
     }
 
+	/**
+	 * threadAction
+	 * @param e 
+	 */
     @Override
     public void threadAction(EgroupwareEvent e) {
         

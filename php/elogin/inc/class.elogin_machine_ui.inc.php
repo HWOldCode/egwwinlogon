@@ -61,8 +61,7 @@
 					{
 						$msg .= lang('%1 machine(s) %2', $success, $action_msg);
 					}
-					elseif( empty($msg) )
-					{
+					elseif( empty($msg) ) {
 						$msg .= lang(
 							'%1 machine(s) %2, %3 failed because of insufficent rights !!!',
 							$success,
@@ -231,12 +230,12 @@
                 $row['icon']            = 'machine.png';
                 $row['el_machine_name'] = $row['el_name'];
 
-				$lastlog = elogin_machine_logging_bo::getLastLogByMachineId($row['el_unid']);
+				/*$lastlog = elogin_machine_logging_bo::getLastLogByMachineId($row['el_unid']);
 
 				if( $lastlog !== null ) {
 					$row['el_loginuser']	= $lastlog->getAccountName();
 					$row['el_logindate']	= $lastlog->getLogDate();
-				}
+				}*/
             }
 
             return $count;

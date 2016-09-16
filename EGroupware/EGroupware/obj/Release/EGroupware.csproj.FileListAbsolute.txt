@@ -19,11 +19,9 @@ C:\Users\swe\Documents\EGroupware\EGroupware\bin\Release\EGroupware.dll
 C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.dll
 C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.Configuration.resources
 C:\Users\swe\Documents\EGroupware\EGroupware\obj\Release\EGroupware.csproj.GenerateResource.Cache
-X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.pdb
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\jni4net.n-0.8.8.0.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\log4net.xml
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.Configuration.resources
-X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.pdb
 F:\veracrypt1\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.dll
 F:\veracrypt1\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.pdb
 F:\veracrypt1\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\jni4net.n-0.8.8.0.dll
@@ -39,5 +37,9 @@ X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\Abstractions.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Core.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Service.Impl.dll
 X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Shared.dll
-X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\EGroupware.dll
-X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\EGroupware.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Plugin.EGroupware.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\pGina.Plugin.EGroupware.pdb
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\log4net.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Release\Abstractions.xml
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\pGina.Plugin.EGroupware.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Release\pGina.Plugin.EGroupware.pdb

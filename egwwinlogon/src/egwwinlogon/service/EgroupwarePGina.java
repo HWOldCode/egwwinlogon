@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author Stefan Werfling
  */
 public class EgroupwarePGina {
-    
+	
     /**
      * use Emulator DLL for Debuging
      */
@@ -317,4 +317,30 @@ public class EgroupwarePGina {
         
         return EgroupwareDLL.getCredentials(title, message);
     }
+	
+	/**
+	 * setSetting
+	 * @param name
+	 * @param value 
+	 */
+	static public void setSetting(String name, String value) {
+		if( EgroupwarePGina._useEmulator ) {
+			EgroupwareDLLEmulator.setSetting(name, value);
+		}
+		
+		EgroupwareDLL.setSetting(name, value);
+	}
+	
+	/**
+	 * getSetting
+	 * @param name
+	 * @return 
+	 */
+	static public String getSetting(String name) {
+		if( EgroupwarePGina._useEmulator ) {
+            return EgroupwareDLLEmulator.getSetting(name);
+        }
+		
+		return EgroupwareDLL.getSetting(name);
+	}
 }

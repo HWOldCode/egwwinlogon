@@ -103,6 +103,13 @@ public class EgroupwareDLL {
      */
     static public native void setSetting(String name, String value);
     
+	/**
+	 * getSetting
+	 * @param name
+	 * @return 
+	 */
+	static public native String getSetting(String name);
+	
     /**
      * logoffSession
      * @param sessionId

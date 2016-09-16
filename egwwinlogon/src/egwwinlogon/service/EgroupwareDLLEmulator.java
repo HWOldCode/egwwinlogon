@@ -6,6 +6,7 @@
 package egwwinlogon.service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,6 +52,11 @@ public class EgroupwareDLLEmulator {
      */
     static protected String _username = "stefan.werfling";
     
+	/** 
+     * _settings 
+     */ 
+    static protected LinkedHashMap _settings = new LinkedHashMap();
+	
     /**
      * isRunAsService
      * is egroupware.dll run as service
@@ -158,4 +164,30 @@ public class EgroupwareDLLEmulator {
     static public boolean logoffSession(int sessionId) {
         return true;
     }
+	
+	/**
+	 * getSetting
+	 * @param name
+	 * @return 
+	 */
+	static public String getSetting(String name) {
+		if( EgroupwareDLLEmulator._settings.containsKey(name) ) { 
+            return (String) EgroupwareDLLEmulator._settings.get(name); 
+        }
+		
+		return "";
+	}
+	
+	/**
+	 * setSetting
+	 * @param name
+	 * @param value 
+	 */
+	static public void setSetting(String name, String value) {
+		if( EgroupwareDLLEmulator._settings.containsKey(name) ) { 
+            EgroupwareDLLEmulator._settings.remove(name); 
+        } 
+ 
+        EgroupwareDLLEmulator._settings.put(name, value);
+	}
 }
