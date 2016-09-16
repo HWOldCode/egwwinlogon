@@ -70,7 +70,7 @@
          * Init our static properties
          */
         static public function init_static() {
-            self::$_db = $GLOBALS['egw']->db;
+            static::$_db = $GLOBALS['egw']->db;
         }
 
 		/**
@@ -79,7 +79,7 @@
          */
         public function __construct($id=null) {
             if( $id != null ) {
-                $data = self::read($id);
+                $data = static::read($id);
 
                 if( $data ) {
 					$this->_usershare_id		= $data['el_usershare_id'];
@@ -229,7 +229,7 @@
 				$data['el_options'] = json_encode($this->_options);
 			}
 
-			$return = self::_write($data);
+			$return = static::_write($data);
 
             if( $return ) {
                 if( !($this->_id) ) {
@@ -243,7 +243,7 @@
 		 */
 		public function delete() {
 			if( $this->_id != null ) {
-				self::_delete($this->_id);
+				static::_delete($this->_id);
 			}
 		}
 
@@ -257,7 +257,7 @@
             $cols = array(self::TABLE . '.*');
             $join = '';
 
-            if (!($data = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+            if (!($data = static::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
                 false, '', false, -1, $join)->fetch()))
             {
                 return false;
@@ -275,7 +275,7 @@
                 $unid = $data['el_unid'];
                 unset($data['el_unid']);
 
-                self::$_db->update(
+                static::$_db->update(
                     self::TABLE,
                     $data,
                     array(
@@ -289,7 +289,7 @@
             else {
                 $data['el_unid'] = elogin_bo::getPHPUuid();
 
-                self::$_db->insert(
+                static::$_db->insert(
                     self::TABLE,
                     $data,
                     false,
@@ -307,7 +307,7 @@
 		 * @param string $id
 		 */
 		static protected function _delete($id) {
-			self::$_db->delete(
+			static::$_db->delete(
 				self::TABLE,
 				array(
 					'el_unid' => $id,
@@ -340,7 +340,7 @@
                 }*/
             }
 
-            if( !($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+            if( !($rs = static::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
                 false, '', false, -1, $join)) )
             {
                 return array();
@@ -379,7 +379,7 @@
             $titles = array();
 
             foreach( $ids as $id ) {
-                $titles[$id] = self::link_title($id);
+                $titles[$id] = static::link_title($id);
             }
 
             return $titles;
@@ -395,7 +395,7 @@
 			$readonlys	= array();
 			$result = array();
 
-			if( self::get_rows($options, $rows, $readonlys) > 0 ) {
+			if( static::get_rows($options, $rows, $readonlys) > 0 ) {
 				foreach( $rows as &$row ) {
 					$result[$row['el_unid']] = array(
 							'label' => $row['el_filepath'],

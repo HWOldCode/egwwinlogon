@@ -10,6 +10,8 @@
 	 * @version $Id$
 	 */
 
+	use EGroupware\Api;
+
     /**
      * elogin_machine_logging_bo
      */
@@ -78,7 +80,7 @@
          * Init our static properties
          */
         static public function init_static() {
-            self::$_db = $GLOBALS['egw']->db;
+            static::$_db = $GLOBALS['egw']->db;
         }
 
         /**
@@ -87,7 +89,7 @@
          */
         public function __construct($id=null) {
             if( $id ) {
-                $data = self::read($id);
+                $data = static::read($id);
 
                 if( $data ) {
                     $this->_machine_id  = $data['el_machine_id'];
@@ -126,7 +128,7 @@
          * @return string
          */
         public function getAccountName() {
-            return accounts::id2name($this->_account_id);
+            return Api\Accounts::id2name($this->_account_id);
         }
 
         /**
@@ -223,7 +225,7 @@
                     'el_index'      => $this->_index
                     );
 
-                $return = self::_write($data);
+                $return = static::_write($data);
 
                 if( $return ) {
                     if( !($this->_id) ) {
@@ -243,7 +245,7 @@
             $cols = array(self::TABLE . '.*');
             $join = '';
 
-            if (!($data = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+            if (!($data = static::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
                 false, '', false, -1, $join)->fetch()))
             {
                 return false;
@@ -261,7 +263,7 @@
                 $unid = $data['el_unid'];
                 unset($data['el_unid']);
 
-                self::$_db->update(
+                static::$_db->update(
                     self::TABLE,
                     $data,
                     array(
@@ -275,7 +277,7 @@
             else {
                 $data['el_unid'] = elogin_bo::getPHPUuid();
 
-                self::$_db->insert(
+                static::$_db->insert(
                     self::TABLE,
                     $data,
                     false,
@@ -332,10 +334,10 @@
 				$sort = "DESC";
 			}
 
-			$total = self::$_db->select(self::TABLE, 'COUNT(*)',
+			$total = static::$_db->select(self::TABLE, 'COUNT(*)',
 				$where, __LINE__, __FILE__, false, '', false, 0, $join)->fetchColumn();
 
-            if( !($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+            if( !($rs = static::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
                 $start, ' ORDER BY ' . self::TABLE . '.' . $order . ' ' .
 				$sort . ', ' . self::TABLE . '.el_index ' . $sort, false, $num_rows, $join)) )
             {
@@ -359,7 +361,7 @@
          * @return string
          */
         static public function expression($table, $filter) {
-            return self::$_db->expression($table, $filter);
+            return static::$_db->expression($table, $filter);
         }
 
 		/**
@@ -374,8 +376,8 @@
 
             $cols = array(self::TABLE . '.el_unid');
 
-			if( !($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
-                0, ' ORDER BY ' . self::TABLE . '.el_logdate DESC', false, 1, '')) )
+			if( !($rs = static::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+                0, /*' ORDER BY ' . self::TABLE . '.el_logdate DESC'*/null, false, 1, '')) )
             {
                 return null;
             }
