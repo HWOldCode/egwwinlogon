@@ -32,7 +32,7 @@
 		 * init
 		 */
 		static public function init() {
-            self::$_config = Api\Config::read(self::APP);
+            static::$_config = Api\Config::read(self::APP);
         }
 
         /**

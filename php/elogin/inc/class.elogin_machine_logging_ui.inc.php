@@ -74,7 +74,7 @@
 						'no_cat'        => false,// I  disable the cat-selectbox
 						'never_hide'    => true,// I  never hide the nextmatch-line if less then maxmatch entrie
 						'row_id'        => 'el_unid',
-						'actions'       => self::index_get_actions(),
+						'actions'       => static::index_get_actions(),
                         'header_row'    => 'elogin.machine_logging_list.header_right',
                         'favorites'     => false
 						);

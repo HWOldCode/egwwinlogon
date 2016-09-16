@@ -45,10 +45,11 @@
         protected $_name = '';
 
         /**
+		 * init_static
          * Init our static properties
          */
         static public function init_static() {
-            self::$_db = $GLOBALS['egw']->db;
+            static::$_db = $GLOBALS['egw']->db;
         }
 
         /**
@@ -58,7 +59,7 @@
         public function __construct($id) {
             $this->_id = $id;
 
-            $data = $this->read($this->_id);
+            $data = static::read($this->_id);
 
             if( $data ) {
                 $this->_inDb = true;
@@ -110,7 +111,7 @@
 
             $data['el_name'] = $this->_name;
 
-            $return = self::_write($data, $this->_inDb);
+            $return = static::_write($data, $this->_inDb);
 
             if( $return ) {
                 if( !($this->_id) ) {
@@ -146,8 +147,8 @@
          * @return array of elogin_cmd_bo
          */
         public function getCmds() {
-            $list = elogin_cmd_bo::getAllByMachineId($this->_id);
-            $list_all = elogin_cmd_bo::getAllByMachineId('all');
+            $list		= elogin_cmd_bo::getAllByMachineId($this->_id);
+            $list_all	= elogin_cmd_bo::getAllByMachineId('all');
 
             foreach( $list_all as $entry ) {
                 $list[] = $entry;
@@ -161,7 +162,7 @@
 		 */
 		public function delete() {
 			if( $this->_id != null ) {
-				self::_delete($this->_id);
+				static::_delete($this->_id);
 			}
 		}
 
@@ -175,7 +176,7 @@
             $cols = array(self::TABLE . '.*');
             $join = '';
 
-            if (!($data = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+            if (!($data = static::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
                 false, '', false, -1, $join)->fetch()))
             {
                 return false;
@@ -196,7 +197,7 @@
             $cols = array(self::TABLE . '.*');
             $join = '';
 
-            if (!($rs = self::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
+            if (!($rs = static::$_db->select(self::TABLE, $cols, $where, __LINE__, __FILE__,
                 false, '', false, -1, $join)))
             {
                 return array();
@@ -221,7 +222,7 @@
                 $unid = $data['el_unid'];
                 unset($data['el_unid']);
 
-                self::$_db->update(
+                static::$_db->update(
                     self::TABLE,
                     $data,
                     array(
@@ -237,7 +238,7 @@
                     $data['el_unid'] = elogin_bo::getPHPUuid();
                 }
 
-                self::$_db->insert(
+                static::$_db->insert(
                     self::TABLE,
                     $data,
                     false,
@@ -255,7 +256,7 @@
 		 * @param string $id
 		 */
 		static protected function _delete($id) {
-			self::$_db->delete(
+			static::$_db->delete(
 				self::TABLE,
 				array(
 					'el_unid' => $id,
@@ -289,7 +290,7 @@
             $titles = array();
 
             foreach( $ids as $id ) {
-                $titles[$id] = self::link_title($id);
+                $titles[$id] = static::link_title($id);
             }
 
             return $titles;
@@ -305,7 +306,7 @@
 			$readonlys	= array();
 			$result = array();
 
-			if( self::get_rows($options, $rows, $readonlys) > 0 ) {
+			if( static::get_rows($options, $rows, $readonlys) > 0 ) {
 				foreach( $rows as &$row ) {
 					$result[$row['el_unid']] = array(
 							'label' => $row['el_name'],
