@@ -23,6 +23,7 @@
 					<nextmatch-sortheader label="Share-Provider" id="el_provider_name_sort"/>
 					<nextmatch-sortheader label="Server" id="el_account_server_sort"/>
 					<nextmatch-sortheader label="User" id="el_account_user_sort"/>
+					<nextmatch-sortheader label="Activ" id="el_activ_sort"/>
 				</row>
 				<row class="$row_cont[cat_id] $row_cont[class]" valign="top">
                     <vbox align="center">
@@ -38,6 +39,9 @@
                     <vbox>
                         <description id="${row}[el_account_user]" options="b"/>
                     </vbox>
+					<vbox>
+						<description id="${row}[el_activ]"/>
+					</vbox>
 				</row>
 			</rows>
 		</grid>

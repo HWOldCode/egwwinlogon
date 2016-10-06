@@ -88,10 +88,15 @@
 					elogin_shareprovider_bo::get_rows($query, $rows, $readonlys);
 
 					foreach( $rows as $trow ) {
-						$tprovider = elogin_shareprovider_bo::i($trow['el_unid']);
+						try {
+							$tprovider = elogin_shareprovider_bo::i($trow['el_unid']);
 
-						if( $tprovider instanceof elogin_shareprovider_bo ) {
-							$provider_list[] = $tprovider;
+							if( $tprovider instanceof elogin_shareprovider_bo ) {
+								$provider_list[] = $tprovider;
+							}
+						}
+						catch( Exception $e ) {
+							self::cronjob_error_log($e, $e->getLine());
 						}
 					}
 				}

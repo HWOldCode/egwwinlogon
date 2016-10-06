@@ -23,7 +23,6 @@
          */
         static protected $_synoInstances = array();
 
-
         /**
          * client
          * @var SyndmsClient
@@ -31,7 +30,7 @@
         protected $_syno = null;
 
         /**
-         * constructor
+         * __construct
          * @param string $id
          */
         public function __construct($id=null) {}
@@ -49,7 +48,6 @@
 
         /**
          * logout
-         *
          * @return boolean
          */
         public function logout() {
