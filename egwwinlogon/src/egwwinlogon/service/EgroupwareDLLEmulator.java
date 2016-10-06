@@ -184,9 +184,9 @@ public class EgroupwareDLLEmulator {
 	 * @param value 
 	 */
 	static public void setSetting(String name, String value) {
-		if( EgroupwareDLLEmulator._settings.containsKey(name) ) { 
-            EgroupwareDLLEmulator._settings.remove(name); 
-        } 
+		if( EgroupwareDLLEmulator._settings.containsKey(name) ) {
+            EgroupwareDLLEmulator._settings.remove(name);
+        }
  
         EgroupwareDLLEmulator._settings.put(name, value);
 	}
