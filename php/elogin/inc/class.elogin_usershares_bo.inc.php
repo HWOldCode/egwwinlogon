@@ -2,11 +2,10 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -65,6 +64,7 @@
         protected $_shareinfos = array();
 
         /**
+		 * init_static
          * Init our static properties
          */
         static public function init_static() {
@@ -72,8 +72,7 @@
         }
 
         /**
-         * constructor
-         *
+         * __construct
          * @param string $id
          * @param string $destination
          */
@@ -97,7 +96,6 @@
 
         /**
          * getId
-         *
          * @return string
          */
         public function getId() {
@@ -106,7 +104,6 @@
 
         /**
          * setProviderId
-         *
          * @param string $id
          */
         public function setProviderId($id) {
@@ -115,7 +112,6 @@
 
         /**
          * getProviderId
-         *
          * @return string
          */
         public function getProviderId() {
@@ -124,7 +120,6 @@
 
         /**
          * getProvider
-         *
          * @return elogin_shareprovider_bo|null
          */
         public function getProvider($getRaw=false) {
@@ -154,7 +149,6 @@
 
         /**
          * getUsername
-         *
          * @return string
          */
         public function getUsername() {
@@ -163,7 +157,6 @@
 
         /**
          * setUser
-         *
          * @param int $accountid
          */
         public function setUser($accountid=null) {
@@ -176,7 +169,6 @@
 
         /**
          * getSharePassword
-         *
          * @return string
          */
         public function getSharePassword() {
@@ -221,7 +213,6 @@
 
         /**
          * setSharePassword
-         *
          * @param string $password
          */
         public function setSharePassword($password=null) {
@@ -234,7 +225,6 @@
 
         /**
          * getDefaultShares
-         *
          * @return string
          */
         public function getDefaultShares() {
@@ -416,7 +406,6 @@
 
         /**
          * _write
-         *
          * @param array $data
          */
         static protected function _write(array $data) {
@@ -453,11 +442,10 @@
 
         /**
          * get_rows
-         *
-         * @param type $query
-         * @param type $rows
-         * @param type $readonlys
-         * @return type
+         * @param array $query
+         * @param array $rows
+         * @param array $readonlys
+         * @return int
          */
         static public function get_rows(&$query, &$rows, &$readonlys) {
             $where = array();
@@ -492,7 +480,6 @@
 
         /**
          * existByAccountAndProvider
-         *
          * @param int $accountid
          * @param string $providerid
          * @return boolean
@@ -518,8 +505,7 @@
 
         /**
          * getAllByAccount
-         *
-         * @param type $accountid
+         * @param int|string $accountid
          * @return array of elogin_usershares_bo
          */
         static public function getAllByAccount($accountid) {

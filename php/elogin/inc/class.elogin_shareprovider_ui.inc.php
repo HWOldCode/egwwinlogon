@@ -1,12 +1,11 @@
 <?php
 
-     /**
+    /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -65,18 +64,17 @@
 
         /**
          * index_get_actions
-         *
          * @param array $query
          * @return array
          */
         static public function index_get_actions($query=array()) {
-            $group = 1;
+            $group = 0;
 
             $actions = array(
                 'edit' => array(
                     'caption'	=> 'Edit',
                     'group'		=> $group,
-                    'default'	=> false,
+                    'default'	=> true,
                     'icon'		=> 'edit',
                     'hint'		=> 'Edit ShareProvider',
                     'enabled'	=> true,
@@ -90,11 +88,10 @@
 
         /**
          * get_rows_shareprovider
-         *
-         * @param type $query
-         * @param type $rows
-         * @param type $readonlys
-         * @return type
+         * @param array $query
+         * @param array $rows
+         * @param array $readonlys
+         * @return int
          */
         public function get_rows_shareprovider(&$query, &$rows, &$readonlys) {
             egw_session::appsession('elogin_shareprovider_list', 'elogin', $query);
@@ -103,6 +100,17 @@
 
             foreach( $rows as &$row ) {
                 $row['icon'] = 'provider.png';
+
+				if( !isset($row['el_activ']) ) {
+					$row['el_activ'] = lang('Disable');
+				}
+
+				if( $row['el_activ'] == '1' ) {
+					$row['el_activ'] = lang('Enable');
+				}
+				else {
+					$row['el_activ'] = lang('Disable');
+				}
             }
 
             return $count;
@@ -110,7 +118,6 @@
 
         /**
          * share_provider_edit
-         *
          * @param array $content
          */
         public function share_provider_edit($content=null) {
@@ -156,6 +163,14 @@
                     );
 
                 $provider->setMountAddress($content['mount_address']);
+
+				$isActiv = false;
+
+				if( isset($content['activ']) && ($content['activ'] == '1') ) {
+					$isActiv = true;
+				}
+
+				$provider->setIsActiv($isActiv);
                 $provider->save();
 
 
@@ -182,10 +197,20 @@
                 $content['account_user']        = $provider->getAccountUser();
                 $content['account_password']    = $provider->getAccountPassword();
                 $content['mount_address']       = $provider->getMountAddress();
-
+				$content['activ']				= ($provider->isActiv() ? '1' : '0');
             }
 
-            $option_sel['provider'] = elogin_shareprovider_bo::getShareProviderNames();
+			// -----------------------------------------------------------------
+
+            $option_sel['provider'] =
+				elogin_shareprovider_bo::getShareProviderNames();
+
+			$option_sel['activ'] = array(
+				'1' => 'Enable',
+				'0' => 'Disable'
+				);
+
+			// -----------------------------------------------------------------
 
             $etemplate = new etemplate_new('elogin.share_provider.dialog');
             $etemplate->exec(

@@ -2,7 +2,6 @@
 
 	/**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
@@ -31,7 +30,6 @@
 
         /**
          * param register
-         *
          * @var eworkflow_param_register
          */
         static protected $_param_register = null;
@@ -64,7 +62,6 @@
 
         /**
 		 * getEtemplate
-		 *
 		 * @return null|etemplate|string
 		 */
 		public function getEtemplate() {
@@ -74,7 +71,6 @@
 		/**
          * acceptLinks
          * accept links
-         *
          * @return array
          */
         public function acceptLinks() {
@@ -85,7 +81,6 @@
 
 		/**
          * hasLinkInput
-         *
          * @return boolean
          */
         public function hasLinkInput() {
@@ -94,7 +89,6 @@
 
 		/**
 		 * getInfo
-		 *
 		 * @return array
 		 */
 		static public function getInfo() {
@@ -146,7 +140,6 @@
 
 		/**
 		 * uiEdit
-		 *
 		 * @param array $content
 		 */
 		public function uiEdit(&$content, &$option_sel, &$readonlys) {
@@ -183,7 +176,6 @@
 
 		/**
          * execute
-         *
          * @param type $params
          * @return type
          */
@@ -211,7 +203,6 @@
 
 		/**
          * getParameterRegister
-         *
          * @return eworkflow_param_register
          */
         public function getParameterRegister() {

@@ -39,6 +39,12 @@
                                     <menupopup id="provider"/>
                                 </menulist>
                             </row>
+							<row>
+								<description value="Activ"/>
+								<menulist>
+                                    <menupopup id="activ"/>
+                                </menulist>
+							</row>
                             <row>
                                 <description value="Port"/>
                                 <textbox id="account_port" />
