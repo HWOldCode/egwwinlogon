@@ -123,10 +123,10 @@
 			return $this->_params->getVariableByParam(
 				$this->_shareprovider_entryid, static::PARAM_SHARES_PROVIDER_ENTRY);
         }
-		
+
 		/**
 		 * setShareProviderEntryId
-		 * 
+		 *
 		 * @param string $id
 		 */
 		public function setShareProviderEntryId($id) {
@@ -143,10 +143,10 @@
 			return $this->_params->getVariableByParam(
 				$this->_sharename, static::PARAM_SHARES_SHARENAME);
         }
-		
+
 		/**
 		 * setShareName
-		 * 
+		 *
 		 * @param string $name
 		 */
 		public function setShareName($name) {
@@ -223,15 +223,23 @@
                 if( $entry instanceof elogin_action_share_provider_account ) {
                     $provider = $entry->getProvider();
 
-                    if( $provider ) {
-                        $shares = $provider->getShares();
+                    if( $provider instanceof elogin_shareprovider_bo ) {
+						if( $provider->isLogin() ) {
+							$shares = $provider->getShares();
 
-                        foreach( $shares as $share ) {
-                            $option_sel['provider_shares'][$share['name']] = $share['name'];
-                        }
+							foreach( $shares as $share ) {
+								$option_sel['provider_shares'][$share['name']] = $share['name'];
+							}
+						}
+						else {
+							egw_framework::message(
+								lang('Login faild by: ' . $provider->getProviderName()), 'warning');
+						}
                     }
                 }
             }
+
+			// -----------------------------------------------------------------
 
             parent::uiEdit($content, $option_sel, $readonlys);
         }

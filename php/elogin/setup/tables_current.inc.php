@@ -21,7 +21,10 @@ $phpgw_baseline = array(
 			'el_account_user' => array('type' => 'varchar','precision' => '128'),
 			'el_account_password' => array('type' => 'varchar','precision' => '128'),
 			'el_mount_address' => array('type' => 'varchar','precision' => '128'),
-			'el_activ' => array('type' => 'bool')
+			'el_activ' => array('type' => 'bool'),
+			'el_protocol' => array('type' => 'varchar','precision' => '25'),
+			'el_api_version' => array('type' => 'varchar','precision' => '25'),
+			'el_description' => array('type' => 'varchar','precision' => '256')
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),
