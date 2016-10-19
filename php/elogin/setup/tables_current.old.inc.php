@@ -50,7 +50,7 @@ $phpgw_baseline = array(
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),
-		'ix' => array('el_unid','el_name','el_last_user_login_id','el_last_user_login_time'),
+		'ix' => array('el_unid','el_last_user_login_id','el_last_user_login_time'),
 		'uc' => array()
 	),
 	'egw_elogin_machine_logging' => array(

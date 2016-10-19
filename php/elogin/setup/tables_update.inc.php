@@ -352,3 +352,22 @@ function elogin_upgrade1_9_083()
 	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.084';
 }
 
+
+function elogin_upgrade1_9_084()
+{
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_shareproviders','el_protocol',array(
+		'type' => 'varchar',
+		'precision' => '25'
+	));
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_shareproviders','el_api_version',array(
+		'type' => 'varchar',
+		'precision' => '25'
+	));
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_shareproviders','el_description',array(
+		'type' => 'varchar',
+		'precision' => '256'
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.085';
+}
+
