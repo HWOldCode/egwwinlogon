@@ -2,7 +2,6 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
@@ -177,7 +176,7 @@ exit;*/
 						if( $process != null ) {
 							// execute
 							// -------------------------------------------------
-							
+
 							$process->execute($data);
 
 							// return

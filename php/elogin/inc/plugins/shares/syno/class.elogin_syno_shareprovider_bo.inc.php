@@ -133,8 +133,8 @@
 		 */
 		public function getApiVersions() {
 			return array(
-				SyndmsClient::VERSION_DSM_5_1 => 'DSM 5.1 =< ',
-				SyndmsClient::VERSION_DSM_6_0 => 'DSM 6.0 =< '
+				SyndmsClient::VERSION_DSM_5 => 'DSM 5.* =< ',
+				SyndmsClient::VERSION_DSM_6 => 'DSM 6.* =< '
 				);
 		}
 

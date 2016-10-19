@@ -7,7 +7,7 @@
      */
     class SyndmsRequest {
 
-		const DEBUG = false;
+		const DEBUG = true;
 
         /**
          * curlRequest
@@ -126,7 +126,7 @@
 			$amessage .= '--------------------------------------------------\r\n';
 			$amessage .= 'Line: ' . $line . ' Message: ' . $message . "\r\n";
 
-			$file = sys_get_temp_dir() . '/elogin_syndms.request.log';
+			$file = /*sys_get_temp_dir()*/ __DIR__ . '/elogin_syndms.request.log';
 
 			error_log($amessage, 3, $file);
 		}
