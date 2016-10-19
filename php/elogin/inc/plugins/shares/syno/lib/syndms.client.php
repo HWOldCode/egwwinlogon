@@ -21,13 +21,16 @@
      */
     class SyndmsClient {
 
-		/**
-		 * consts
-		 */
-		const DEBUG				= false;
+		// consts
+		const DEBUG	= false;
 
-        const URL_INDEX				= 'webman/index.cgi';
-        const URL_LOGOUT			= 'webman/logout.cgi';
+		const VERSION_DSM_5_1		= '510';
+		const VERSION_DSM_6_0		= '600';
+
+		const URL_PART_5_1			= 'webman/';
+
+        const URL_INDEX				= '%sindex.cgi';
+        const URL_LOGOUT			= '%slogout.cgi';
         const URL_QUERY				= 'webapi/query.cgi';
         const URL_AUTH				= 'webapi/auth.cgi';
         const URL_FILESHARE			= 'webapi/FileStation/file_share.cgi';
@@ -35,7 +38,7 @@
 		const URL_POLLING			= 'webman/modules/PollingTask/polling.cgi';
 		const URL_BACKGROUND_TASK	= 'webapi/FileStation/background_task.cgi';
 
-        const SYNO_SDS_SESSISON = 'SYNO.SDS.Session';
+        const SYNO_SDS_SESSISON		= 'SYNO.SDS.Session';
 
         /**
          * error List
@@ -57,17 +60,29 @@
             '404' => 'Permission denied'
             );
 
-        /**
-         * IP
+		/**
+		 * dsm version
+		 * @var string
+		 */
+		protected $_dsm_version = SyndmsClient::VERSION_DSM_5_1;
+
+		/**
+         * ip
          * @var string
          */
         protected $_ip = '';
 
         /**
-         * Port
+         * port
          * @var int
          */
         protected $_port = 5000;
+
+		/**
+		 * protocol
+		 * @var string
+		 */
+		protected $_protocol = 'http';
 
         /**
          * SDS Session
@@ -97,10 +112,20 @@
          * __construct
          * @param string $ip
          * @param int $port
+		 * @param string $protocol
+		 * @param string $apiversion
          */
-        public function __construct($ip, $port=5000) {
+        public function __construct($ip, $port=5000, $protocol=null, $apiversion=null) {
             $this->_ip      = $ip;
             $this->_port    = $port;
+
+			if( $protocol !== null ) {
+				$this->_protocol = $protocol;
+			}
+
+			if( $apiversion !== null ) {
+				$this->_dsm_version = $apiversion;
+			}
         }
 
         /**
@@ -118,7 +143,17 @@
          * @return string
          */
         protected function _createUrl($url) {
-            return 'http://' . $this->_ip . ':' . $this->_port . '/' . $url;
+			switch( true ) {
+				case ( ($this->_dsm_version >= self::VERSION_DSM_5_1) && ($this->_dsm_version < self::VERSION_DSM_6_0) ):
+					$url = sprintf($url, self::URL_PART_5_1);
+					break;
+
+				case ( $this->_dsm_version >= self::VERSION_DSM_6_0 ):
+					$url = sprintf($url, '');
+					break;
+			}
+
+            return $this->_protocol . '://' . $this->_ip . ':' . $this->_port . '/' . $url;
         }
 
         /**
@@ -161,6 +196,18 @@
 				if( is_array($httpstatus) && isset($httpstatus['code']) ) {
 					if( intval($httpstatus['code']) == 400 ) {
 						throw new Exception($httpstatus['text'], $httpstatus['code']);
+					}
+				}
+
+				// -------------------------------------------------------------
+
+				if( ($httpstatus['code'] == 302) || ($httpstatus['code'] == 301) ) {
+					$redirects = array();
+
+					preg_match('/Location: (?P<location>\s{0,}.*)$/im', $response['header'], $redirects);
+
+					if( is_array($redirects) && isset($redirects['location']) ) {
+
 					}
 				}
 

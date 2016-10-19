@@ -17,6 +17,9 @@
      */
     class elogin_syno_shareprovider_bo extends elogin_shareprovider_bo {
 
+		// consts
+		const PROVIDER_NAME = 'Synology DSM';
+
         /**
          * instances
          * @var array
@@ -68,12 +71,14 @@
          */
         public function login() {
             if( !$this->_syno->isLogin() ) {
-                if( $this->_syno->login($this->_account_user, $this->_account_password) ) {
-                    return true;
-                }
-                else {
-                   //echo "fehler login client<br>";
-                }
+				if( $this->isActiv() ) {
+					if( $this->_syno->login($this->_account_user, $this->_account_password) ) {
+						return true;
+					}
+					else {
+					   //echo "fehler login client<br>";
+					}
+				}
             }
 
             return false;
@@ -90,7 +95,9 @@
                 else {
                     $this->_syno = new SyndmsClient(
                         $this->_account_server,
-                        $this->_account_port
+                        $this->_account_port,
+						$this->_protocol,
+						$this->_api_version
                         );
 
                     elogin_syno_shareprovider_bo::$_synoInstances[$this->_id] = $this->_syno;
@@ -100,6 +107,36 @@
                 $this->login();
             }
         }
+
+		/**
+		 * getInstanceProviderName
+		 * @return string
+		 */
+		public function getInstanceProviderName() {
+			return self::PROVIDER_NAME;
+		}
+
+		/**
+		 * getProtocolNames
+		 * @return array|null
+		 */
+		public function getProtocolNames() {
+			return array(
+				'http' => 'Http',
+				'https' => 'Https'
+			);
+		}
+
+		/**
+		 * getApiVersions
+		 * @return array|null
+		 */
+		public function getApiVersions() {
+			return array(
+				SyndmsClient::VERSION_DSM_5_1 => 'DSM 5.1 =< ',
+				SyndmsClient::VERSION_DSM_6_0 => 'DSM 6.0 =< '
+				);
+		}
 
         /**
          * getShares
@@ -548,7 +585,7 @@
         }
 
 		/**
-         * addPermissionDir
+         * addPermissionDirMulti
          * @param string $usersharename
          * @param string $dir
          * @param array $usernames
@@ -594,33 +631,33 @@
                     }
 
                     $rules[] = array(
-                        'owner_type'        => 'user',
-                        'owner_name'        => $tusername,
-                        'permission_type'   => 'allow',
-                        'permission'        => $permission,
-                        'inherit'           => array(
-                            'child_files'   => true,
-                            'child_folders' => true,
-                            'this_folder'   => true,
-                            'all_descendants' => true
+                        'owner_type'			=> 'user',
+                        'owner_name'			=> $tusername,
+                        'permission_type'		=> 'allow',
+                        'permission'			=> $permission,
+                        'inherit'				=> array(
+                            'child_files'		=> true,
+                            'child_folders'		=> true,
+                            'this_folder'		=> true,
+                            'all_descendants'	=> true
                         )
                     );
                 }
 
 				$permission = array(
-                    'read_data' => ($read ? true : false),
-                    'write_data' => ($write ? true : false),
-                    'exe_file' => ($read ? true : false),
-                    'append_data' => ($write ? true : false),
-                    'delete' => ($write ? true : false),
-                    'delete_sub' => ($write ? true : false),
-                    'read_attr' => ($read ? true : false),
-                    'write_attr' => ($write ? true : false),
-                    'read_ext_attr' => ($read ? true : false),
-                    'write_ext_attr' => ($write ? true : false),
-                    'read_perm' => ($read ? true : false),
-                    'change_perm' => false,
-                    'take_ownership' => false
+                    'read_data'			=> ($read ? true : false),
+                    'write_data'		=> ($write ? true : false),
+                    'exe_file'			=> ($read ? true : false),
+                    'append_data'		=> ($write ? true : false),
+                    'delete'			=> ($write ? true : false),
+                    'delete_sub'		=> ($write ? true : false),
+                    'read_attr'			=> ($read ? true : false),
+                    'write_attr'		=> ($write ? true : false),
+                    'read_ext_attr'		=> ($read ? true : false),
+                    'write_ext_attr'	=> ($write ? true : false),
+                    'read_perm'			=> ($read ? true : false),
+                    'change_perm'		=> false,
+                    'take_ownership'	=> false
                     );
 
 				foreach( $userlist as $username ) {
