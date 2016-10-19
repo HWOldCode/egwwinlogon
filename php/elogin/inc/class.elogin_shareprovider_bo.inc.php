@@ -33,6 +33,12 @@
          */
         protected $_id = null;
 
+		/**
+		 * description
+		 * @var string
+		 */
+		protected $_description = '';
+
         /**
          * provider name
          * @var string
@@ -81,6 +87,18 @@
          */
         protected $_mount_address = '';
 
+		/**
+		 * protocol
+		 * @var string
+		 */
+		protected $_protocol = '';
+
+		/**
+		 * api version
+		 * @var string
+		 */
+		protected $_api_version = '';
+
         /**
 		 * init_static
          * Init our static properties
@@ -116,6 +134,9 @@
                 $this->_account_password    = $data['el_account_password'];
                 $this->_mount_address       = $data['el_mount_address'];
 				$this->_activ				= ($data['el_activ'] == '1' ? true : false);
+				$this->_protocol			= $data['el_protocol'];
+				$this->_api_version			= $data['el_api_version'];
+				$this->_description			= $data['el_description'];
             }
         }
 
@@ -145,6 +166,9 @@
                 $provider->_username            = $this->_username;
                 $provider->_mount_address       = $this->_mount_address;
 				$provider->_activ				= $this->_activ;
+				$provider->_protocol			= $this->_protocol;
+				$provider->_api_version			= $this->_api_version;
+				$provider->_description			= $this->_description;
 
                 $provider->_construct2();
 
@@ -154,6 +178,14 @@
             return null;
         }
 
+		/**
+		 * getInstanceProviderName
+		 * @return string
+		 */
+		public function getInstanceProviderName() {
+			return null;
+		}
+
         /**
          * getId
          * @return string
@@ -161,6 +193,22 @@
         public function getId() {
             return $this->_id;
         }
+
+		/**
+		 * getDescription
+		 * @return string
+		 */
+		public function getDescription() {
+			return $this->_description;
+		}
+
+		/**
+		 * setDescription
+		 * @param string $description
+		 */
+		public function setDescription($description) {
+			$this->_description = $description;
+		}
 
         /**
          * setAccount
@@ -263,6 +311,38 @@
         public function getMountAddress() {
             return $this->_mount_address;
         }
+
+		/**
+		 * getProtocol
+		 * @return string
+		 */
+		public function getProtocol() {
+			return $this->_protocol;
+		}
+
+		/**
+		 * setProtocol
+		 * @param string $protocol
+		 */
+		public function setProtocol($protocol) {
+			$this->_protocol = $protocol;
+		}
+
+		/**
+		 * getApiVersion
+		 * @return string
+		 */
+		public function getApiVersion() {
+			return $this->_api_version;
+		}
+
+		/**
+		 * setApiVersion
+		 * @param string $version
+		 */
+		public function setApiVersion($version) {
+			$this->_api_version = $version;
+		}
 
         /**
          * getShares
@@ -465,6 +545,22 @@
             return false;
         }
 
+		/**
+		 * getProtocolNames
+		 * @return array|null
+		 */
+		public function getProtocolNames() {
+			return null;
+		}
+
+		/**
+		 * getApiVersions
+		 * @return array|null
+		 */
+		public function getApiVersions() {
+			return null;
+		}
+
         /**
          * save
          */
@@ -482,6 +578,9 @@
             $data['el_account_password']    = $this->_account_password;
             $data['el_mount_address']       = $this->_mount_address;
 			$data['el_activ']				= ($this->_activ == true ? '1' : '0');
+			$data['el_description']			= $this->_description;
+			$data['el_protocol']			= $this->_protocol;
+			$data['el_api_version']			= $this->_api_version;
 
             $return = self::_write($data);
 
@@ -529,10 +628,43 @@
          * @return array
          */
         static public function getShareProviderNames() {
-            // TODO
-            return array(
-                'syno' => 'Synology DSM 5.1'
-            );
+			$bdir = __DIR__ . '/plugins/shares/';
+
+            if( !($dirs=@dir($bdir)) ) {
+				return array();
+			}
+
+			$names = array();
+
+			while( ($entry=($dirs->read())) ) {
+				if( ($entry == '.') || ($entry == '..') ) {
+                	continue;
+            	}
+
+				if( (is_dir($bdir . $entry)) ) {
+					$file = $bdir . $entry .
+						'/class.elogin_' . $entry . '_shareprovider_bo.inc.php';
+
+					if( file_exists($file) ) {
+						require_once($file);
+
+						$class = 'elogin_' . $entry . '_shareprovider_bo';
+
+						if( class_exists($class, false) ) {
+							$instance = new $class();
+
+							if( $instance instanceof elogin_shareprovider_bo ) {
+								$names[$entry] = $instance->getInstanceProviderName();
+							}
+						}
+					}
+				}
+				else {
+					continue;
+				}
+			}
+
+			return $names;
         }
 
         /**

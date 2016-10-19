@@ -333,3 +333,22 @@ function elogin_upgrade1_9_082()
 	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.083';
 }
 
+
+function elogin_upgrade1_9_083()
+{
+	$GLOBALS['egw_setup']->oProc->RefreshTable('egw_elogin_machine',array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_name' => array('type' => 'varchar','precision' => '256'),
+			'el_last_user_login_id' => array('type' => 'int','precision' => '4'),
+			'el_last_user_login_time' => array('type' => 'timestamp')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_last_user_login_id','el_last_user_login_time'),
+		'uc' => array()
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.084';
+}
+

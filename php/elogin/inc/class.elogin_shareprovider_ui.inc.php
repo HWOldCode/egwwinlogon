@@ -136,13 +136,16 @@
             $option_sel = array();
             $readonlys  = array();
 
-            $provider = null;
+            $provider		= null;
+			$cast_provider	= null;
 
             if( $uid ) {
                 $provider = new elogin_shareprovider_bo($uid);
 
                 $preserv['uid'] = $uid;
             }
+
+			// -----------------------------------------------------------------
 
             if( isset($content['button']) && isset($content['button']['apply']) ) {
                 $content['button']['save'] = "pressed";
@@ -154,6 +157,7 @@
                     $provider = new elogin_shareprovider_bo();
                 }
 
+				$provider->setDescription($content['description']);
                 $provider->setProviderName($content['provider']);
                 $provider->setAccount(
                     $content['account_server'],
@@ -171,26 +175,38 @@
 				}
 
 				$provider->setIsActiv($isActiv);
+
+				if( isset($content['protocol']) && ($content['protocol'] !== '') ) {
+					$provider->setProtocol($content['protocol']);
+				}
+
+				if( isset($content['apiversion']) && ($content['apiversion'] !== '') ) {
+					$provider->setApiVersion($content['apiversion']);
+				}
+
                 $provider->save();
 
+				$cast_provider = elogin_shareprovider_bo::i($provider->getId());
 
-                /*egw_framework::refresh_opener(
-                    'ShareProvider Save',
-                    'elogin',
-                    $provider->getId(),
-                    'save'
-                    );*/
-
-                egw::redirect_link(egw::link('/index.php', array(
-                    'menuaction' => 'elogin.elogin_shareprovider_ui.share_provider_edit',
-                    'uid' => $provider->getId()
-                    )));
+				if( $cast_provider instanceof elogin_shareprovider_bo ) {
+					if( !$cast_provider->login() ) {
+						egw_framework::message(
+							lang('Login faild by: ' . $provider->getProviderName()), 'warning');
+					}
+					else {
+						egw_framework::message(
+							lang('Login success by: ' . $provider->getProviderName()), 'info');
+					}
+				}
             }
             elseif( isset($content['button']) && isset($content['button']['delete']) ) {
 
             }
 
+			// -----------------------------------------------------------------
+
             if( $provider ) {
+				$content['description']			= $provider->getDescription();
                 $content['provider']            = $provider->getProviderName();
                 $content['account_server']      = $provider->getAccountServer();
                 $content['account_port']        = $provider->getAccountPort();
@@ -198,6 +214,29 @@
                 $content['account_password']    = $provider->getAccountPassword();
                 $content['mount_address']       = $provider->getMountAddress();
 				$content['activ']				= ($provider->isActiv() ? '1' : '0');
+
+				$cast_provider = elogin_shareprovider_bo::i($provider->getId());
+
+				if( $cast_provider instanceof elogin_shareprovider_bo ) {
+					$content['protocol']		= '';
+					$content['apiversion']		= '';
+
+					$option_sel['protocol']	= $cast_provider->getProtocolNames();
+
+					if( $option_sel['protocol'] !== null ) {
+						$content['protocol'] = $cast_provider->getProtocol();
+					}
+
+					$option_sel['apiversion'] = $cast_provider->getApiVersions();
+
+					if( $option_sel['apiversion'] !== null ) {
+						$content['apiversion'] = $cast_provider->getApiVersion();
+					}
+				}
+				else {
+					$readonlys['protocol']		= true;
+					$readonlys['apiversion']	= true;
+				}
             }
 
 			// -----------------------------------------------------------------
