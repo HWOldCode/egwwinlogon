@@ -2,7 +2,6 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
@@ -87,7 +86,6 @@ exit;*/
 
         /**
 		 * ajax_cache
-		 *
 		 * @param array $content
 		 * @return mixed
 		 */
@@ -100,8 +98,8 @@ exit;*/
 
             // return data for cache
             $cacheData = array(
-                'egw_accounts' => $accountlist,
-                'encryption_type' => $type
+                'egw_accounts'		=> $accountlist,
+                'encryption_type'	=> $type
                 );
 
             return egw_json_response::get()->data($cacheData);
@@ -177,7 +175,7 @@ exit;*/
 						if( $process != null ) {
 							// execute
 							// -------------------------------------------------
-							
+
 							$process->execute($data);
 
 							// return
