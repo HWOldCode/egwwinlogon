@@ -1,13 +1,25 @@
 <?php
 
+	/**
+	 * Syndms
+	 * @link http://www.hw-softwareentwicklung.de
+	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @package syno
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
+	 * @version $Id$
+	 */
+
     /**
      * SyndmsRequest
-     *
      * @author Stefan Werfling
      */
     class SyndmsRequest {
 
-		const DEBUG = true;
+		/**
+		 * consts
+		 */
+		const DEBUG = false;
 
         /**
          * curlRequest
@@ -126,7 +138,19 @@
 			$amessage .= '--------------------------------------------------\r\n';
 			$amessage .= 'Line: ' . $line . ' Message: ' . $message . "\r\n";
 
-			$file = /*sys_get_temp_dir()*/ __DIR__ . '/elogin_syndms.request.log';
+			$file = sys_get_temp_dir() . '/elogin_syndms.request.log';
+
+			// -----------------------------------------------------------------
+
+			if( file_exists($file) ) {
+				$ftime = filectime($file);
+
+				if( ($ftime !== false) && ($ftime <= strtotime("-2 day")) ) {
+					unlink($file);
+				}
+			}
+
+			// -----------------------------------------------------------------
 
 			error_log($amessage, 3, $file);
 		}

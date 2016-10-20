@@ -75,11 +75,11 @@
 					if( $this->_syno->login($this->_account_user, $this->_account_password) ) {
 						return true;
 					}
-					else {
-					   //echo "fehler login client<br>";
-					}
 				}
             }
+			else {
+				return true;
+			}
 
             return false;
         }

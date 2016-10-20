@@ -22,7 +22,7 @@
     class SyndmsClientBase {
 
 		// consts
-		const DEBUG	= true;
+		const DEBUG	= false;
 
         const URL_INDEX				= '%sindex.cgi';
         const URL_LOGOUT			= '%slogout.cgi';
@@ -331,6 +331,15 @@
 
 			if( function_exists('sys_get_temp_dir') ) {
 				$servicesfile = sys_get_temp_dir() . '/' . __CLASS__ . '.json';
+
+				// renew file for updates --------------------------------------
+				if( file_exists($servicesfile) ) {
+					$ftime = filectime($servicesfile);
+
+					if( ($ftime !== false) && ($ftime <= strtotime("-2 day")) ) {
+						unlink($servicesfile);
+					}
+				}
 
 				if( file_exists($servicesfile) ) {
 					$servicesfilecontent = file_get_contents($servicesfile);
@@ -1287,7 +1296,19 @@
 			$amessage .= '--------------------------------------------------\r\n';
 			$amessage .= 'Line: ' . $line . ' Message: ' . $message . "\r\n";
 
-			$file = /*sys_get_temp_dir()*/ __DIR__ . '/elogin_syndms.client.log';
+			$file = sys_get_temp_dir() . '/elogin_syndms.client.log';
+
+			// -----------------------------------------------------------------
+
+			if( file_exists($file) ) {
+				$ftime = filectime($file);
+
+				if( ($ftime !== false) && ($ftime <= strtotime("-2 day")) ) {
+					unlink($file);
+				}
+			}
+
+			// -----------------------------------------------------------------
 
 			error_log($amessage, 3, $file);
 		}

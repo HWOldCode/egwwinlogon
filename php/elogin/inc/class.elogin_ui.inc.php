@@ -86,7 +86,6 @@ exit;*/
 
         /**
 		 * ajax_cache
-		 *
 		 * @param array $content
 		 * @return mixed
 		 */
@@ -99,8 +98,8 @@ exit;*/
 
             // return data for cache
             $cacheData = array(
-                'egw_accounts' => $accountlist,
-                'encryption_type' => $type
+                'egw_accounts'		=> $accountlist,
+                'encryption_type'	=> $type
                 );
 
             return egw_json_response::get()->data($cacheData);

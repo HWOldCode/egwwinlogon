@@ -79,6 +79,4 @@
 			$this->_initConnection = false;
             return false;
         }
-
-
 	}
