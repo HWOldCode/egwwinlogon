@@ -66,9 +66,9 @@ public class EgwWinLogonUltis {
                 javaCV,
                 "JavaHome");
 
-            logger.info("JavaHome: " + javaHome);
+            //logger.info("JavaHome: " + javaHome);
         }
-        catch( Exception e) {
+        catch( Exception e ) {
             //logger.log(Priority.ERROR, null, e);
             logger.error("Error getJavaInstallationPath: " + e.getMessage());
         }
