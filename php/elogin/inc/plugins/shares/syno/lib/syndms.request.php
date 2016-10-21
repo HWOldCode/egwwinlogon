@@ -23,7 +23,6 @@
 
         /**
          * curlRequest
-         *
          * @param string $query_string
          * @param array $postdata
          * @param string $content_type
@@ -121,7 +120,6 @@
 
 		/**
 		 * request_error_log
-		 *
 		 * @param type $message
 		 * @param type $line
 		 */
