@@ -26,6 +26,7 @@ namespace pGina.Plugin.EGroupware
             m_settings.SetDefault("startapp", "1");
             m_settings.SetDefault("jvmdb", "0");
             m_settings.SetDefault("jlogfile", "0");
+            m_settings.SetDefault("jvmparam", "");
         }
     }
 }

@@ -36,7 +36,6 @@ namespace pGina.Plugin.EGroupware
      */
     public class EGWWinLogin : IPluginAuthentication, IPluginAuthorization, IPluginAuthenticationGateway, IPluginConfiguration, IPluginEventNotifications
     {
-
         public static readonly Guid PluginUuid = new Guid("b094fee0-68c8-11e4-9803-0800200c9a66");
 
         private static EGWWinLogin _self;
@@ -615,12 +614,17 @@ namespace pGina.Plugin.EGroupware
          * initEgwWinLogonJava
          */
         private void initEgwWinLogonJava() {
-            string jvmdb = Settings.Store.jvmdb;
+            string jvmdb    = Settings.Store.jvmdb;
+            string jmvparam = Settings.Store.jvmparam;
 
             var setup = new BridgeSetup();
 
             if( jvmdb == "1" ) {
                 setup.AddJVMOption("-Xrunjdwp:transport=dt_socket,server=y,address=8889,suspend=n");
+            }
+
+            if( jmvparam != "" ) {
+                setup.AddJVMOption(jmvparam);
             }
 
             setup.AddAllJarsClassPath(this.getAppDir() + ".");

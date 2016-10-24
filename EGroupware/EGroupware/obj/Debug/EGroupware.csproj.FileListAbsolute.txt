@@ -6,3 +6,12 @@ C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\De
 C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\bin\Debug\log4net.xml
 C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\obj\Debug\EGroupware.dll
 C:\Users\test\Documents\Visual Studio 2010\Projects\EGroupware\EGroupware\obj\Debug\EGroupware.pdb
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Debug\EGroupware.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Debug\EGroupware.pdb
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Debug\jni4net.n-0.8.8.0.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\bin\Debug\log4net.xml
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Debug\EGroupware.csprojResolveAssemblyReference.cache
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Debug\EGroupware.Configuration.resources
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Debug\EGroupware.csproj.GenerateResource.Cache
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Debug\EGroupware.dll
+X:\hw.git\egwwinlogon\EGroupware\EGroupware\obj\Debug\EGroupware.pdb

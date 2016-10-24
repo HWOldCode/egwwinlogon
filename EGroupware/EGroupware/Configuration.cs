@@ -31,46 +31,44 @@ namespace EGroupware
             string domain = Settings.Store.domain;
             string jvmdb = Settings.Store.jvmdb;
             string jlogfile = Settings.Store.jlogfile;
+            string jvmparam = Settings.Store.jvmparam;
 
             this.textEgroupwareUrl.Text = url;
             this.textEgroupwareDomain.Text = domain;
 
-            if (jvmdb == "1")
-            {
+            if( jvmdb == "1" ) {
                 this.checkBoxJVMDB.Checked = true;
             }
 
-            if (jlogfile == "1")
-            {
+            if( jlogfile == "1" ) {
                 this.checkBoxJavaLogFile.Checked = true;
             }
+
+            this.textJVMParameter.Text = jvmparam;
         }
 
         /**
          * UiToSettings
          */
-        public void UiToSettings()
-        {
+        public void UiToSettings() {
             Settings.Store.url = this.textEgroupwareUrl.Text;
             Settings.Store.domain = this.textEgroupwareDomain.Text;
 
-            if (this.checkBoxJVMDB.Checked)
-            {
+            if( this.checkBoxJVMDB.Checked ) {
                 Settings.Store.jvmdb = "1";
             }
-            else
-            {
+            else {
                 Settings.Store.jvmdb = "0";
             }
 
-            if (this.checkBoxJavaLogFile.Checked)
-            {
+            if( this.checkBoxJavaLogFile.Checked ) {
                 Settings.Store.jlogfile = "1";
             }
-            else
-            {
+            else {
                 Settings.Store.jlogfile = "0";
             }
+
+            Settings.Store.jvmparam = this.textJVMParameter.Text;
         }
 
         /**
