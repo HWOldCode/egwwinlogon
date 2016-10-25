@@ -125,8 +125,11 @@ namespace pGina.Plugin.EGroupware
 
             using( Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey) ) {
                 string currentVersion = rk.GetValue("CurrentVersion").ToString();
-                
+
+                EGWWinLogin._logger.InfoFormat("current jvm version: '{0}'", currentVersion);
+
                 using( Microsoft.Win32.RegistryKey key = rk.OpenSubKey(currentVersion) ) {
+                    EGWWinLogin._logger.InfoFormat("JavaHome: '{0}'", key.GetValue("JavaHome").ToString());
                     return key.GetValue("JavaHome").ToString();
                 }
             }
@@ -624,7 +627,18 @@ namespace pGina.Plugin.EGroupware
             }
 
             if( jmvparam != "" ) {
-                setup.AddJVMOption(jmvparam);
+                List<string> paramlist = jmvparam.Split('-').ToList();
+
+                foreach( string param in paramlist ) {
+                    string tparam = param.Trim();
+
+                    if( tparam != "" ) {
+                        tparam = "-" + tparam;
+
+                        EGWWinLogin._logger.InfoFormat("jvmparam: '{0}'", tparam);
+                        setup.AddJVMOption(tparam);
+                    }
+                }
             }
 
             setup.AddAllJarsClassPath(this.getAppDir() + ".");
