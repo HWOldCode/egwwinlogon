@@ -685,4 +685,22 @@
 
             return false;
         }
+
+		/**
+		 * setUseCacheLogging
+		 * @param boolean $logging
+		 */
+		public function setUseCacheLogging($logging=false) {
+			SyndmsRequest::setCacheLogging($logging);
+		}
+
+		/**
+		 * getCacheLogs
+		 * @return array
+		 */
+		public function getCacheLogs() {
+			return array(
+				'requests' => SyndmsRequest::getCacheLogs(),
+				);
+		}
     }

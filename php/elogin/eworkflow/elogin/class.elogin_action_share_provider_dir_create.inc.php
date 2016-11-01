@@ -1,9 +1,7 @@
 <?php
 
-
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
@@ -66,7 +64,6 @@
 
         /**
 		 * getEtemplate
-		 *
 		 * @return null|etemplate|string
 		 */
 		public function getEtemplate() {
@@ -76,7 +73,6 @@
         /**
          * acceptLinks
          * accept links
-         *
          * @return array
          */
         public function acceptLinks() {
@@ -88,7 +84,6 @@
 
         /**
 		 * getInfo
-		 *
 		 * @return array
 		 */
 		static public function getInfo() {
@@ -104,7 +99,6 @@
 
         /**
          * getUserShareEntryid
-         *
          * @return string
          */
         public function getUserShareEntryid() {
@@ -114,7 +108,6 @@
 
 		/**
 		 * setUserShareEntryid
-		 *
 		 * @param string $id
 		 */
 		public function setUserShareEntryid($id) {
@@ -124,7 +117,6 @@
 
         /**
          * getDirname
-         *
          * @return string
          */
         public function getDirname() {
@@ -134,7 +126,6 @@
 
 		/**
 		 * setDirname
-		 *
 		 * @param string $dir
 		 */
 		public function setDirname($dir) {
@@ -144,7 +135,6 @@
 
         /**
 		 * uiEdit
-		 *
 		 * @param array $content
 		 */
 		public function uiEdit(&$content, &$option_sel, &$readonlys) {
@@ -197,8 +187,7 @@
 
         /**
          * execute
-         *
-         * @param type $params
+         * @param array $params
          * @return type
          */
         public function execute($params) {
@@ -259,7 +248,6 @@
 
         /**
          * getParameterRegister
-         *
          * @return eworkflow_param_register
          */
         public function getParameterRegister() {

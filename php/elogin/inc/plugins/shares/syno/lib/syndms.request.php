@@ -16,12 +16,22 @@
      */
     class SyndmsRequest {
 
-		/**
-		 * consts
-		 */
-		const DEBUG = false;
+		// consts
+		const DEBUG	= false;
 
-        /**
+		/**
+		 * debug cache
+		 * @var boolean
+		 */
+		static private $_debug_cache = false;
+
+		/**
+		 * cache logs
+		 * @var array
+		 */
+		static private $_cache_logs = array();
+
+		/**
          * curlRequest
          * @param string $query_string
          * @param array $postdata
@@ -29,7 +39,7 @@
          * @param array $custom_headers
          * @return array
          */
-        public static function curlRequest($query_string, $postdata=null, $content_type=null, $custom_headers=null) {
+        static public function curlRequest($query_string, $postdata=null, $content_type=null, $custom_headers=null) {
             $headers = (is_null($custom_headers)) ? array() : $custom_headers;
             $curl = curl_init();
 
@@ -76,19 +86,18 @@
                 }
 
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $postdata);
-
             }
 
 			// -----------------------------------------------------------------
 
             $response = curl_exec($curl);
 
-			if( self::DEBUG ) {
+			if( self::DEBUG || self::$_debug_cache ) {
 				$info = curl_getinfo($curl);
 
-				self::request_error_log('CURL-SENDE' . var_export($postdata, true), __LINE__);
-				self::request_error_log('CURL-INFO' . var_export($info, true), __LINE__);
-				self::request_error_log('CURL-RESPONSE' . var_export($response, true), __LINE__);
+				self::request_log('CURL-SENDE' . var_export($postdata, true), __LINE__);
+				self::request_log('CURL-INFO' . var_export($info, true), __LINE__);
+				self::request_log('CURL-RESPONSE' . var_export($response, true), __LINE__);
 			}
 
 			if( !curl_errno($curl) ) {
@@ -119,11 +128,15 @@
         }
 
 		/**
-		 * request_error_log
+		 * request_log
 		 * @param type $message
 		 * @param type $line
 		 */
-		static public function request_error_log($message, $line) {
+		static public function request_log($message, $line) {
+			if( self::$_debug_cache ) {
+				self::cache_log($message, $line);
+			}
+
 			if( !self::DEBUG ) {
 				return;
 			}
@@ -151,5 +164,50 @@
 			// -----------------------------------------------------------------
 
 			error_log($amessage, 3, $file);
+		}
+
+		/**
+		 * cache_log
+		 * @param string $message
+		 * @param int $line
+		 */
+		static public function cache_log($message, $line) {
+			if( !self::$_debug_cache ) {
+				return;
+			}
+
+			if( is_array($message) ) {
+				$message = var_export($message, true);
+			}
+
+			self::$_cache_logs[] = array($message, $line);
+		}
+
+		/**
+		 * getCacheLogs
+		 * @param boolean $clear
+		 * @return array
+		 */
+		static public function getCacheLogs($clear=true) {
+			$cache = self::$_cache_logs;
+
+			if( $clear ) {
+				self::$_cache_logs = array();
+			}
+
+			return $cache;
+		}
+
+		/**
+		 * setCacheLogging
+		 * @param boolean $logging
+		 */
+		static public function setCacheLogging($logging=false) {
+			self::$_debug_cache = $logging;
+
+			if( $logging ) {
+				// is enable then set empty array
+				self::$_cache_logs = array();
+			}
 		}
     }

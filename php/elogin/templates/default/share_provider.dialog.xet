@@ -71,7 +71,7 @@
                             </row>
                             <row>
                                 <description value="Password"/>
-                                <textbox id="account_password" />
+                                <passwd id="account_password" />
                             </row>
                             <row>
                                 <description value="Mount Address"/>

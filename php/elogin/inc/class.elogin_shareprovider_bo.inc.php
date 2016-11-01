@@ -591,6 +591,20 @@
             }
         }
 
+		/**
+		 * setUseCacheLogging
+		 * @param boolean $logging
+		 */
+		public function setUseCacheLogging($logging=false) {}
+
+		/**
+		 * getCacheLogs
+		 * @return array
+		 */
+		public function getCacheLogs() {
+			return array();
+		}
+
         /**
          * getShareProviderByName
          * @param string $name
