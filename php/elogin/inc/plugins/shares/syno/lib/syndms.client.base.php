@@ -52,7 +52,10 @@
             '401' => 'Guest account disabled',
             '402' => 'Account disabled',
             '403' => 'Wrong password',
-            '404' => 'Permission denied'
+            '404' => 'Permission denied',
+			'405' => 'Invalid user and group does this file operation',
+			'406' => 'Can’t get user/group information from the account server',
+			'407' => 'Operation not permitted',
             );
 
 		/**
