@@ -960,7 +960,7 @@
                     'action'            => 'list',
                     'sort_direction'    => 'ASC',
                     'sort_by'           => 'name',
-                    'sort_by'           => 0,
+                    'offset'			=> 0,
                     'limit'             => $limit,
                     ), true);
 
