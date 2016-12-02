@@ -2,7 +2,6 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
@@ -289,12 +288,11 @@
 				}
 			}
 
-			unlink($conjobfile);
+			@unlink($conjobfile);
         }
 
 		/**
 		 * cronjob_error_log
-		 *
 		 * @param type $message
 		 * @param type $line
 		 */
