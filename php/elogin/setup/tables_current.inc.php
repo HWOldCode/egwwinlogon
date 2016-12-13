@@ -20,11 +20,15 @@ $phpgw_baseline = array(
 			'el_account_port' => array('type' => 'int','precision' => '4'),
 			'el_account_user' => array('type' => 'varchar','precision' => '128'),
 			'el_account_password' => array('type' => 'varchar','precision' => '128'),
-			'el_mount_address' => array('type' => 'varchar','precision' => '128')
+			'el_mount_address' => array('type' => 'varchar','precision' => '128'),
+			'el_activ' => array('type' => 'bool'),
+			'el_protocol' => array('type' => 'varchar','precision' => '25'),
+			'el_api_version' => array('type' => 'varchar','precision' => '25'),
+			'el_description' => array('type' => 'varchar','precision' => '256')
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),
-		'ix' => array('el_unid','el_provider_name','el_account_server','el_account_user'),
+		'ix' => array('el_unid','el_account_server','el_account_user','el_activ'),
 		'uc' => array()
 	),
 	'egw_elogin_usershares' => array(
@@ -43,11 +47,13 @@ $phpgw_baseline = array(
 	'egw_elogin_machine' => array(
 		'fd' => array(
 			'el_unid' => array('type' => 'varchar','precision' => '64'),
-			'el_name' => array('type' => 'varchar','precision' => '256')
+			'el_name' => array('type' => 'varchar','precision' => '256'),
+			'el_last_user_login_id' => array('type' => 'int','precision' => '4'),
+			'el_last_user_login_time' => array('type' => 'timestamp')
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),
-		'ix' => array('el_unid','el_name'),
+		'ix' => array('el_unid','el_last_user_login_id','el_last_user_login_time'),
 		'uc' => array()
 	),
 	'egw_elogin_machine_logging' => array(

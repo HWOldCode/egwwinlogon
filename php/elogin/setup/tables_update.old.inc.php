@@ -235,3 +235,120 @@ function elogin_upgrade1_9_078()
 	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.079';
 }
 
+
+function elogin_upgrade1_9_079()
+{
+	$GLOBALS['egw_setup']->oProc->CreateTable('egw_elogin_link',array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_usershare_id' => array('type' => 'varchar','precision' => '64'),
+			'el_usershare_mount_id' => array('type' => 'varchar','precision' => '64'),
+			'el_filepath' => array('type' => 'varchar','precision' => '512'),
+			'el_options' => array('type' => 'text')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_usershare_id','el_usershare_mount_id','el_filepath'),
+		'uc' => array()
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.080';
+}
+
+
+function elogin_upgrade1_9_080()
+{
+	/* done by RefreshTable() anyway
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_shareproviders','el_activ',array(
+		'type' => 'bool'
+	));*/
+	$GLOBALS['egw_setup']->oProc->RefreshTable('egw_elogin_shareproviders',array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_provider_name' => array('type' => 'varchar','precision' => '256'),
+			'el_account_server' => array('type' => 'varchar','precision' => '128'),
+			'el_account_port' => array('type' => 'int','precision' => '4'),
+			'el_account_user' => array('type' => 'varchar','precision' => '128'),
+			'el_account_password' => array('type' => 'varchar','precision' => '128'),
+			'el_mount_address' => array('type' => 'varchar','precision' => '128'),
+			'el_activ' => array('type' => 'bool')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_provider_name','el_account_server','el_account_user','el_activ'),
+		'uc' => array()
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.081';
+}
+
+
+function elogin_upgrade1_9_081()
+{
+	/* done by RefreshTable() anyway
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_machine','el_last_user_login_id',array(
+		'type' => 'int',
+		'precision' => '4'
+	));*/
+	/* done by RefreshTable() anyway
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_machine','el_last_user_login_time',array(
+		'type' => 'timestamp'
+	));*/
+	$GLOBALS['egw_setup']->oProc->RefreshTable('egw_elogin_machine',array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_name' => array('type' => 'varchar','precision' => '256'),
+			'el_last_user_login_id' => array('type' => 'int','precision' => '4'),
+			'el_last_user_login_time' => array('type' => 'timestamp')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_name','el_last_user_login_id','el_last_user_login_time'),
+		'uc' => array()
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.082';
+}
+
+
+function elogin_upgrade1_9_082()
+{
+	$GLOBALS['egw_setup']->oProc->RefreshTable('egw_elogin_shareproviders',array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_provider_name' => array('type' => 'varchar','precision' => '256'),
+			'el_account_server' => array('type' => 'varchar','precision' => '128'),
+			'el_account_port' => array('type' => 'int','precision' => '4'),
+			'el_account_user' => array('type' => 'varchar','precision' => '128'),
+			'el_account_password' => array('type' => 'varchar','precision' => '128'),
+			'el_mount_address' => array('type' => 'varchar','precision' => '128'),
+			'el_activ' => array('type' => 'bool')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_account_server','el_account_user','el_activ'),
+		'uc' => array()
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.083';
+}
+
+
+function elogin_upgrade1_9_083()
+{
+	$GLOBALS['egw_setup']->oProc->RefreshTable('egw_elogin_machine',array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_name' => array('type' => 'varchar','precision' => '256'),
+			'el_last_user_login_id' => array('type' => 'int','precision' => '4'),
+			'el_last_user_login_time' => array('type' => 'timestamp')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_last_user_login_id','el_last_user_login_time'),
+		'uc' => array()
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.084';
+}
+

@@ -20,8 +20,8 @@
                         <rows>
                             <row class="dialogHeader">
                                 <appicon src="elogin"/>
-                                <description value="Server"/>
-                                <textbox id="account_server" span="4" class="et2_fullWidth et2_required"/>
+                                <description value="Description"/>
+                                <textbox id="description" span="4" class="et2_fullWidth et2_required"/>
                             </row>
                         </rows>
 					</grid>
@@ -39,6 +39,28 @@
                                     <menupopup id="provider"/>
                                 </menulist>
                             </row>
+							<row>
+								<description value="Protocol"/>
+                                <menulist>
+                                    <menupopup id="protocol"/>
+                                </menulist>
+							</row>
+							<row>
+								<description value="API Version"/>
+								<menulist>
+                                    <menupopup id="apiversion"/>
+                                </menulist>
+							</row>
+							<row>
+								<description value="Activ"/>
+								<menulist>
+                                    <menupopup id="activ"/>
+                                </menulist>
+							</row>
+							<row>
+                                <description value="Server"/>
+                                <textbox id="account_server" />
+                            </row>
                             <row>
                                 <description value="Port"/>
                                 <textbox id="account_port" />
@@ -49,7 +71,7 @@
                             </row>
                             <row>
                                 <description value="Password"/>
-                                <textbox id="account_password" />
+                                <passwd id="account_password" />
                             </row>
                             <row>
                                 <description value="Mount Address"/>

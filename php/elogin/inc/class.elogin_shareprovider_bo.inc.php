@@ -21,8 +21,8 @@
         const TABLE = 'egw_elogin_shareproviders';
 
         /**
+		 * db
          * Reference to global db object
-         *
          * @var egw_db
          */
         static protected $_db;
@@ -33,11 +33,23 @@
          */
         protected $_id = null;
 
+		/**
+		 * description
+		 * @var string
+		 */
+		protected $_description = '';
+
         /**
          * provider name
          * @var string
          */
         protected $_provider_name = '';
+
+		/**
+		 * activ
+		 * @var boolean
+		 */
+		protected $_activ = false;
 
         /**
          * username
@@ -75,7 +87,20 @@
          */
         protected $_mount_address = '';
 
+		/**
+		 * protocol
+		 * @var string
+		 */
+		protected $_protocol = '';
+
+		/**
+		 * api version
+		 * @var string
+		 */
+		protected $_api_version = '';
+
         /**
+		 * init_static
          * Init our static properties
          */
         static public function init_static() {
@@ -109,6 +134,10 @@
                 $this->_account_user        = $data['el_account_user'];
                 $this->_account_password    = $data['el_account_password'];
                 $this->_mount_address       = $data['el_mount_address'];
+				$this->_activ				= ($data['el_activ'] == '1' ? true : false);
+				$this->_protocol			= $data['el_protocol'];
+				$this->_api_version			= $data['el_api_version'];
+				$this->_description			= $data['el_description'];
             }
         }
 
@@ -120,12 +149,13 @@
         }
 
         /**
-		 * _cast
-         * _initcast
+         * _cast
          * @return elogin_shareprovider_bo
          */
         private function _cast() {
-            $provider = elogin_shareprovider_bo::getShareProviderByName($this->_provider_name);
+            $provider = elogin_shareprovider_bo::getShareProviderByName(
+				$this->_provider_name
+				);
 
             if( $provider instanceof elogin_shareprovider_bo ) {
                 $provider->_id                  = $this->_id;
@@ -136,6 +166,10 @@
                 $provider->_account_password    = $this->_account_password;
                 $provider->_username            = $this->_username;
                 $provider->_mount_address       = $this->_mount_address;
+				$provider->_activ				= $this->_activ;
+				$provider->_protocol			= $this->_protocol;
+				$provider->_api_version			= $this->_api_version;
+				$provider->_description			= $this->_description;
 
                 $provider->_construct2();
 
@@ -145,6 +179,14 @@
             return null;
         }
 
+		/**
+		 * getInstanceProviderName
+		 * @return string
+		 */
+		public function getInstanceProviderName() {
+			return null;
+		}
+
         /**
          * getId
          * @return string
@@ -152,6 +194,22 @@
         public function getId() {
             return $this->_id;
         }
+
+		/**
+		 * getDescription
+		 * @return string
+		 */
+		public function getDescription() {
+			return $this->_description;
+		}
+
+		/**
+		 * setDescription
+		 * @param string $description
+		 */
+		public function setDescription($description) {
+			$this->_description = $description;
+		}
 
         /**
          * setAccount
@@ -161,11 +219,27 @@
          * @param string $password
          */
         public function setAccount($server, $port, $user, $password) {
-            $this->_account_server = $server;
-            $this->_account_port = $port;
-            $this->_account_user = $user;
-            $this->_account_password = $password;
+            $this->_account_server		= $server;
+            $this->_account_port		= $port;
+            $this->_account_user		= $user;
+            $this->_account_password	= $password;
         }
+
+		/**
+		 * setIsActiv
+		 * @param boolean $activ
+		 */
+		public function setIsActiv($activ) {
+			$this->_activ = $activ;
+		}
+
+		/**
+		 * isActiv
+		 * @return boolean
+		 */
+		public function isActiv() {
+			return $this->_activ;
+		}
 
         /**
          * setUsername
@@ -239,6 +313,38 @@
             return $this->_mount_address;
         }
 
+		/**
+		 * getProtocol
+		 * @return string
+		 */
+		public function getProtocol() {
+			return $this->_protocol;
+		}
+
+		/**
+		 * setProtocol
+		 * @param string $protocol
+		 */
+		public function setProtocol($protocol) {
+			$this->_protocol = $protocol;
+		}
+
+		/**
+		 * getApiVersion
+		 * @return string
+		 */
+		public function getApiVersion() {
+			return $this->_api_version;
+		}
+
+		/**
+		 * setApiVersion
+		 * @param string $version
+		 */
+		public function setApiVersion($version) {
+			$this->_api_version = $version;
+		}
+
         /**
          * getShares
          * @return array
@@ -268,6 +374,7 @@
         /**
          * createUserShares
          * @param int|elogin_usershares_bo $accountid
+		 * @return null|elogin_usershares_bo
          */
         public function createUserShares($account) {
             if( is_int($account) ) {
@@ -439,6 +546,22 @@
             return false;
         }
 
+		/**
+		 * getProtocolNames
+		 * @return array|null
+		 */
+		public function getProtocolNames() {
+			return null;
+		}
+
+		/**
+		 * getApiVersions
+		 * @return array|null
+		 */
+		public function getApiVersions() {
+			return null;
+		}
+
         /**
          * save
          */
@@ -455,6 +578,10 @@
             $data['el_account_user']        = $this->_account_user;
             $data['el_account_password']    = $this->_account_password;
             $data['el_mount_address']       = $this->_mount_address;
+			$data['el_activ']				= ($this->_activ == true ? '1' : '0');
+			$data['el_description']			= $this->_description;
+			$data['el_protocol']			= $this->_protocol;
+			$data['el_api_version']			= $this->_api_version;
 
             $return = self::_write($data);
 
@@ -464,6 +591,20 @@
                 }
             }
         }
+
+		/**
+		 * setUseCacheLogging
+		 * @param boolean $logging
+		 */
+		public function setUseCacheLogging($logging=false) {}
+
+		/**
+		 * getCacheLogs
+		 * @return array
+		 */
+		public function getCacheLogs() {
+			return array();
+		}
 
         /**
          * getShareProviderByName
@@ -502,10 +643,43 @@
          * @return array
          */
         static public function getShareProviderNames() {
-            // TODO
-            return array(
-                'syno' => 'Synology DSM 5.1'
-            );
+			$bdir = __DIR__ . '/plugins/shares/';
+
+            if( !($dirs=@dir($bdir)) ) {
+				return array();
+			}
+
+			$names = array();
+
+			while( ($entry=($dirs->read())) ) {
+				if( ($entry == '.') || ($entry == '..') ) {
+                	continue;
+            	}
+
+				if( (is_dir($bdir . $entry)) ) {
+					$file = $bdir . $entry .
+						'/class.elogin_' . $entry . '_shareprovider_bo.inc.php';
+
+					if( file_exists($file) ) {
+						require_once($file);
+
+						$class = 'elogin_' . $entry . '_shareprovider_bo';
+
+						if( class_exists($class, false) ) {
+							$instance = new $class();
+
+							if( $instance instanceof elogin_shareprovider_bo ) {
+								$names[$entry] = $instance->getInstanceProviderName();
+							}
+						}
+					}
+				}
+				else {
+					continue;
+				}
+			}
+
+			return $names;
         }
 
         /**
@@ -611,7 +785,6 @@
             return $list;
         }
     }
-
 
     /**
      * elogin_shareprovider_bo
