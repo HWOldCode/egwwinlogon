@@ -244,7 +244,7 @@
          * @param array $rows
          * @param array $readonlys
          */
-        public function get_rows_commands(&$query, &$rows, &$readonlys) {
+        static public function get_rows_commands(&$query, &$rows, &$readonlys) {
             if( !is_array($query) && !isset($query['unid']) ) {
                 return;
             }
