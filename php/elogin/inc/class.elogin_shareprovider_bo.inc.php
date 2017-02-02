@@ -5,7 +5,7 @@
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-17 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -99,7 +99,31 @@
 		 */
 		protected $_api_version = '';
 
-        /**
+		/**
+		 * collectiv share
+		 * @var string
+		 */
+		protected $_collectiv_share = '';
+
+		/**
+		 * last update
+		 * @var int
+		 */
+		protected $_last_update = 0;
+
+		/**
+		 * last task update
+		 * @var last task update
+		 */
+		protected $_last_task_update = 0;
+
+		/**
+		 * device info
+		 * @var array
+		 */
+		protected $_device_info = array();
+
+		/**
 		 * init_static
          * Init our static properties
          */
@@ -137,6 +161,10 @@
 				$this->_protocol			= $data['el_protocol'];
 				$this->_api_version			= $data['el_api_version'];
 				$this->_description			= $data['el_description'];
+				$this->_collectiv_share		= $data['el_collectiv_share'];
+				$this->_last_update			= $data['el_last_update'];
+				$this->_last_task_update	= $data['el_last_task_update'];
+				$this->_device_info			= json_decode($data['el_device_info'], true);
             }
         }
 
@@ -169,6 +197,10 @@
 				$provider->_protocol			= $this->_protocol;
 				$provider->_api_version			= $this->_api_version;
 				$provider->_description			= $this->_description;
+				$provider->_collectiv_share		= $this->_collectiv_share;
+				$provider->_last_update			= $this->_last_update;
+				$provider->_last_task_update	= $this->_last_task_update;
+				$provider->_device_info			= $this->_device_info;
 
                 $provider->_construct2();
 
@@ -342,6 +374,47 @@
 		 */
 		public function setApiVersion($version) {
 			$this->_api_version = $version;
+		}
+
+		/**
+		 * getCollectiveShare
+		 * @return string
+		 */
+		public function getCollectiveShare() {
+			return $this->_collectiv_share;
+		}
+
+		/**
+		 * setCollectiveShare
+		 * @param string $share
+		 */
+		public function setCollectiveShare($share) {
+			$this->_collectiv_share = $share;
+		}
+
+		/**
+		 * getLastUpdate
+		 * @return int
+		 */
+		public function getLastUpdate() {
+			return $this->_last_update;
+		}
+
+		/**
+		 * getLastTaskUpdate
+		 * @return int
+		 */
+		public function getLastTaskUpdate() {
+			return $this->_last_task_update;
+		}
+
+		/**
+		 * getDeviceInfo
+		 * @param boolean $update
+		 * @return array
+		 */
+		public function getDeviceInfo($update=false) {
+			return $this->_device_info;
 		}
 
         /**
@@ -571,6 +644,8 @@
                 $data['el_unid'] = $this->_id;
             }
 
+			$this->_last_update = time();
+
             $data['el_provider_name']       = $this->_provider_name;
             $data['el_account_server']      = $this->_account_server;
             $data['el_account_port']        = $this->_account_port;
@@ -581,6 +656,10 @@
 			$data['el_description']			= $this->_description;
 			$data['el_protocol']			= $this->_protocol;
 			$data['el_api_version']			= $this->_api_version;
+			$data['el_collectiv_share']		= $this->_collectiv_share;
+			$data['el_last_update']			= $this->_last_update;
+			$data['el_last_task_update']	= $this->_last_task_update;
+			$data['el_device_info']			= json_encode($this->_device_info);
 
             $return = self::_write($data);
 
@@ -590,6 +669,72 @@
                 }
             }
         }
+
+		/**
+		 * updateLastTaskDate
+		 * @return boolean
+		 */
+		public function updateLastTaskDate() {
+			if( $this->_id ) {
+                $data['el_unid']				= $this->_id;
+				$data['el_last_task_update']	= time();
+
+				$return = self::_write($data);
+
+				if( $return ) {
+					return true;
+				}
+            }
+
+			return false;
+		}
+
+		/**
+		 * updateDeviceInfo
+		 * @return boolean
+		 */
+		public function updateDeviceInfo() {
+			if( $this->_id ) {
+				if( $this->isLogin() ) {
+					$this->getDeviceInfo(true);
+
+					if( is_array($this->_device_info) && (count($this->_device_info) > 0) ) {
+						$this->_last_update = time();
+
+						$data['el_unid']				= $this->_id;
+						$data['el_last_update']			= $this->_last_update;
+						$data['el_device_info']			= json_encode($this->_device_info);
+
+
+						$return = self::_write($data);
+
+						if( $return ) {
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * getDeviceSizeTotal
+		 * @param boolean $update
+		 * @return boolean
+		 */
+		public function getDeviceSizeTotal($update=false) {
+			return false;
+		}
+
+		/**
+		 * getDeviceSizeUsed
+		 * @param boolean $update
+		 * @return boolean
+		 */
+		public function getDeviceSizeUsed($update=false) {
+			return false;
+		}
 
 		/**
 		 * setUseCacheLogging

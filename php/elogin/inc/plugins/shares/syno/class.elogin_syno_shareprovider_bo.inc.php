@@ -687,6 +687,80 @@
         }
 
 		/**
+		 * getDeviceInfo
+		 * @return array
+		 */
+		public function getDeviceInfo($update=false) {
+			if( ($this->_device_info == '') ||
+				(is_array($this->_device_info) && (count($this->_device_info) == 0)) )
+			{
+				$update = true;
+			}
+
+			if( $update ) {
+				if( $this->_syno ) {
+					$infos = $this->_syno->getStorageInfo();
+
+					if( is_array($infos) ) {
+						$this->_device_info = $infos;
+					}
+				}
+			}
+
+			return $this->_device_info;
+		}
+
+		/**
+		 * getDeviceSizeTotal
+		 * @param boolean $update
+		 * @return boolean
+		 */
+		public function getDeviceSizeTotal($update=false) {
+			$infos = $this->getDeviceInfo($update);
+
+			if( is_array($infos) && isset($infos['volumes']) ) {
+				if( is_array($infos['volumes']) ) {
+					$size = 0;
+
+					foreach( $infos['volumes'] as $volume ) {
+						if( isset($volume['size']) ) {
+							$size += $volume['size']['total'];
+						}
+					}
+
+					return $size;
+				}
+			}
+
+			return false;
+		}
+
+		/**
+		 * getDeviceSizeUsed
+		 * @param boolean $update
+		 * @return boolean
+		 */
+		public function getDeviceSizeUsed($update=false) {
+			$infos = $this->getDeviceInfo($update);
+
+			if( is_array($infos) && isset($infos['volumes']) ) {
+				if( is_array($infos['volumes']) ) {
+					$size = 0;
+
+					foreach( $infos['volumes'] as $volume ) {
+						if( isset($volume['size']) ) {
+							$size += $volume['size']['used'];
+						}
+					}
+
+					return $size;
+				}
+			}
+
+			return false;
+		}
+
+		/**
 		 * setUseCacheLogging
 		 * @param boolean $logging
 		 */

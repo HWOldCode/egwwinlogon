@@ -31,6 +31,7 @@
         const URL_FILESHARE			= 'webapi/FileStation/file_share.cgi';
         const URL_FILESHARE_CRT		= 'webapi/FileStation/file_crtfdr.cgi';
 		const URL_POLLING			= 'webman/modules/PollingTask/polling.cgi';
+		const URL_STORAGEHANDLER	= 'webman/modules/StorageManager/storagehandler.cgi';
 		const URL_BACKGROUND_TASK	= 'webapi/FileStation/background_task.cgi';
 
         const SYNO_SDS_SESSISON		= 'SYNO.SDS.Session';
@@ -435,6 +436,28 @@
         public function isLogin() {
             return $this->_isLogin;
         }
+
+		/**
+		 * getStorageInfo
+		 * @return null|array
+		 */
+		public function getStorageInfo() {
+			if( $this->_isLogin ) {
+				$response = $this->_request(self::URL_STORAGEHANDLER, array(
+					'action' => 'load_info',
+					));
+
+				if( isset($response['body']) && ($response['body'] != '') ) {
+					$data = json_decode($response['body'], true);
+
+					if( $data !== null ) {
+						return $data;
+					}
+				}
+			}
+
+			return null;
+		}
 
         /**
          * getUsers

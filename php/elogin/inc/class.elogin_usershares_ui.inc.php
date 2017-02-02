@@ -5,7 +5,7 @@
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-17 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -77,7 +77,7 @@
                 'edit' => array(
                     'caption'	=> 'Edit',
                     'group'		=> $group,
-                    'default'	=> false,
+                    'default'	=> true,
                     'icon'		=> 'edit',
                     'hint'		=> 'Edit Usershares',
                     'enabled'	=> true,
@@ -118,15 +118,17 @@
                     $provider = $t->getProvider(true);
 
                     if( $provider ) {
-                        $trow['provider_name']  = $provider->getProviderName() .
-							' - ' . $provider->getAccountServer();
+                        $trow['provider_name']  = $provider->getDescription() .
+							'(' . $provider->getProviderName() . ')';
+
+						$trow['provider_ip']	= $provider->getAccountServer();
                     }
 
-                    $trow['username']       = $t->getUsername();
-                    $trow['password']       = $t->getSharePassword();
+                    $trow['username'] = $t->getUsername();
+                    $trow['password'] = $t->getSharePassword();
                 }
 
-                $trow['icon']       = 'usershare.png';
+                $trow['icon'] = 'usershare.png';
             }
 
             return $count;
@@ -152,25 +154,75 @@
             $uid = ( isset($content['uid']) ? $content['uid'] : null);
 			$uid = ( $uid == null ? (isset($_GET['uid']) ? $_GET['uid'] : null) : $uid);
 
-            $t = new elogin_usershares_bo($uid);
+			$t = null;
 
-            if( $t->getId() != '' ) {
-                $content['provider']        = $t->getProvider(true)->getProviderName();
-                $content['user']            = $t->getUsername();
-                $content['sharepassword']   = $t->getSharePassword();
-                $content['mountlist']       = array(
-                    'unid' => $uid
-                    );
-            }
+			if( $uid !== null ) {
+				$t = new elogin_usershares_bo($uid);
+			}
+
+			// write -----------------------------------------------------------
+			if( isset($content['button']) && (isset($content['button']['save']) ||
+				isset($content['button']['apply'])) )
+			{
+				$isAdd = false;
+
+				if( $t == null ) {
+					$isAdd	= true;
+					$t		= new elogin_usershares_bo();
+				}
+
+				$t->setProviderId($content['providers']);
+				$t->setUser($content['user']);
+				$t->setSharePassword($content['sharepassword']);
+				$t->save();
+
+				egw_framework::refresh_opener(
+					lang('User share') . ' ' . ($isAdd ? 'add' : 'update'),
+					'elogin',
+					$t->getId(),
+					($isAdd ? 'add' : 'edit'),
+					null
+					);
+
+				// button action
+				// -------------------------------------------------------------
+				if( isset($content['button']['save']) ) {
+					egw_framework::window_close();
+					exit;
+				}
+			}
+
+			// delete ----------------------------------------------------------
+			//TODO
+
+			// read ------------------------------------------------------------
+			if( $t instanceof elogin_usershares_bo ) {
+				if( $t->getId() != '' ) {
+					$content['provider']		= $t->getProvider(true)->getDescription();
+					$content['providers']       = $t->getProviderId();
+					$content['user']            = $t->getUserId();
+					$content['sharepassword']   = $t->getSharePassword();
+
+					$preserv['uid'] = $t->getId();
+				}
+			}
+
+			$option_sel['providers'] = array();
+
+			foreach( elogin_shareprovider_bo::getShareProviders() as $provider ) {
+				$name =  $provider->getDescription() .
+						'(' . $provider->getProviderName() . ')';
+
+				$option_sel['providers'][$provider->getId()] = $name;
+			}
 
 			try {
-				$t->updateUserSharesMounts();
+				//$t->updateUserSharesMounts();
 			}
 			catch( Exception $e ) {
 				egw_framework::message(lang($e->getMessage()), 'warning');
 			}
 
-            $readonlys['user']      = true;
             $readonlys['provider']  = true;
 
             $etemplate = new etemplate_new('elogin.share_user.dialog');
@@ -255,7 +307,7 @@
 			if( isset($content['uid']) ) {
                 $machine = new elogin_machine_bo($content['uid']);
 
-				 if( $machine->getIsInDb() ) {
+				if( $machine->getIsInDb() ) {
                     $usersahres = $machine->getCurrentUserShares();
 
 					$list = array();
@@ -273,7 +325,7 @@
 					return egw_json_response::get()->data(array(
                         'status' => 'ok',
                         'ns' => $list));
-				 }
+				}
 			}
 
 			return egw_json_response::get()->data(array('status' => 'error'));
