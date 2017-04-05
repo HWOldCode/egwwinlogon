@@ -242,7 +242,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
         // userapp
         if( this._sessionId != -1 ) { 
             if( this._tr.getProcessId() == -1 ) {
-                logger.info("Start Updaterapp...");
+                //logger.info("Start Updaterapp...");
                 
                 String cmdUApp = EgwWinLogonUltis.getUpdaterAppCmd();
                 

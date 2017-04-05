@@ -14,6 +14,7 @@
      * elogin_action_share_provider_account
      */
     class elogin_action_share_provider_account extends eworkflow_entry_bo implements eworkflow_ientry_bo, eworkflow_iparam_bo, eworkflow_ilink_style_bo {
+		use eworkflow_parameter_register_base;
 
         // link action
 		const LINK_ACTION   = 'action';
@@ -27,13 +28,6 @@
          * @var CEcomanLogger
          */
         static protected $_logger = null;
-
-        /**
-         * param register
-         *
-         * @var eworkflow_param_register
-         */
-        static protected $_param_register = null;
 
         /**
          * type
@@ -141,6 +135,8 @@
         /**
 		 * uiEdit
 		 * @param array $content
+		 * @param array $option_sel
+		 * @param array $readonlys
 		 */
 		public function uiEdit(&$content, &$option_sel, &$readonlys) {
             if( isset($content['button']) && isset($content['button']['save']) ) {
@@ -158,13 +154,15 @@
                     $provider->getAccountServer() . ")";
             }
 
+			// -----------------------------------------------------------------
+
             parent::uiEdit($content, $option_sel, $readonlys);
         }
 
         /**
          * execute
-         * @param type $params
-         * @return type
+         * @param array $params
+         * @return array
          */
         public function execute($params) {
             if( !$this->_setStart($params) ) { return; };
@@ -220,12 +218,6 @@
          * @return eworkflow_param_register
          */
         public function getParameterRegister() {
-            if( static::$_param_register == null ) {
-                static::$_param_register = new eworkflow_param_register();
-            }
-
-            $reg = static::$_param_register;
-
-            return $reg;
+            return $this->_getParameterRegister();
         }
     }

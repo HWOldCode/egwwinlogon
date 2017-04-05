@@ -19,7 +19,7 @@
 			<rows>
 				<row class="th">
 					<description label=""/>
-					<nextmatch-sortheader label="Provider" id="provider_sort"/>
+					<nextmatch-sortheader label="Share-Provider" id="provider_sort"/>
 					<nextmatch-sortheader label="Username" id="username_sort"/>
 					<nextmatch-sortheader label="Password" id="password_sort"/>
 					<nextmatch-sortheader label="Shares" id="shares_sort"/>

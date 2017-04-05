@@ -3,17 +3,28 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonHttpHandlerFirstInstall.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/http/LogonHttpServer.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgroupwareDLLEmulator.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgroupwareDLL.java</file>
+=======
+            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/updater/WinLogonUpdaterDialog.java</file>
+            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/updater/WinLogonUpdater.java</file>
+            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgroupwareDLL.java</file>
+            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonUltis.java</file>
+>>>>>>> egroupware16
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogon.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonHttpHandlerConfig.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonConst.java</file>
+<<<<<<< HEAD
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonHttpHandlerLogger.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonHttpHandlerEWorkflow.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgroupwarePGina.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonRunDebug.java</file>
+=======
+            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonThread.java</file>
+>>>>>>> egroupware16
         </group>
     </open-files>
 </project-private>

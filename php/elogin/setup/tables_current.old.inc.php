@@ -20,11 +20,12 @@ $phpgw_baseline = array(
 			'el_account_port' => array('type' => 'int','precision' => '4'),
 			'el_account_user' => array('type' => 'varchar','precision' => '128'),
 			'el_account_password' => array('type' => 'varchar','precision' => '128'),
-			'el_mount_address' => array('type' => 'varchar','precision' => '128')
+			'el_mount_address' => array('type' => 'varchar','precision' => '128'),
+			'el_activ' => array('type' => 'bool')
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),
-		'ix' => array('el_unid','el_provider_name','el_account_server','el_account_user'),
+		'ix' => array('el_unid','el_account_server','el_account_user','el_activ'),
 		'uc' => array()
 	),
 	'egw_elogin_usershares' => array(
@@ -43,11 +44,13 @@ $phpgw_baseline = array(
 	'egw_elogin_machine' => array(
 		'fd' => array(
 			'el_unid' => array('type' => 'varchar','precision' => '64'),
-			'el_name' => array('type' => 'varchar','precision' => '256')
+			'el_name' => array('type' => 'varchar','precision' => '256'),
+			'el_last_user_login_id' => array('type' => 'int','precision' => '4'),
+			'el_last_user_login_time' => array('type' => 'timestamp')
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),
-		'ix' => array('el_unid','el_name'),
+		'ix' => array('el_unid','el_last_user_login_id','el_last_user_login_time'),
 		'uc' => array()
 	),
 	'egw_elogin_machine_logging' => array(
@@ -102,6 +105,19 @@ $phpgw_baseline = array(
 		'pk' => array('el_unid'),
 		'fk' => array(),
 		'ix' => array('el_unid','el_machine_id','el_account_id','el_system','el_order','el_type','el_event','el_catid','el_script_type','el_name'),
+		'uc' => array()
+	),
+	'egw_elogin_link' => array(
+		'fd' => array(
+			'el_unid' => array('type' => 'varchar','precision' => '64'),
+			'el_usershare_id' => array('type' => 'varchar','precision' => '64'),
+			'el_usershare_mount_id' => array('type' => 'varchar','precision' => '64'),
+			'el_filepath' => array('type' => 'varchar','precision' => '512'),
+			'el_options' => array('type' => 'text')
+		),
+		'pk' => array('el_unid'),
+		'fk' => array(),
+		'ix' => array('el_unid','el_usershare_id','el_usershare_mount_id','el_filepath'),
 		'uc' => array()
 	)
 );

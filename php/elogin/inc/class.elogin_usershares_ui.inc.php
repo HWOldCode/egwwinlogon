@@ -104,10 +104,10 @@
 
         /**
          * get_rows_shareuser
-         * @param type $query
-         * @param type $rows
-         * @param type $readonlys
-         * @return type
+         * @param array $query
+         * @param array $rows
+         * @param array $readonlys
+         * @return int
          */
         public function get_rows_shareuser(&$query, &$rows, &$readonlys) {
             Api\Cache::setSession('elogin_shareuser_list', 'elogin', $query);
@@ -121,7 +121,8 @@
                     $provider = $t->getProvider(true);
 
                     if( $provider ) {
-                        $trow['provider_name']  = $provider->getProviderName();
+                        $trow['provider_name']  = $provider->getProviderName() .
+							' - ' . $provider->getAccountServer();
                     }
 
                     $trow['username']       = $t->getUsername();
@@ -165,7 +166,12 @@
                     );
             }
 
-            $t->updateUserSharesMounts();
+			try {
+				$t->updateUserSharesMounts();
+			}
+			catch( Exception $e ) {
+				egw_framework::message(lang($e->getMessage()), 'warning');
+			}
 
             $readonlys['user']      = true;
             $readonlys['provider']  = true;

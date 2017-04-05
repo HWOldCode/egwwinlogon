@@ -77,6 +77,7 @@
         protected $_index = '';
 
         /**
+		 * init_static
          * Init our static properties
          */
         static public function init_static() {

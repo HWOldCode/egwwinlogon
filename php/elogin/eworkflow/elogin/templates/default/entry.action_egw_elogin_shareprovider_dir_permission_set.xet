@@ -23,6 +23,10 @@
                                     <menupopup type="select" id="usershare_entry"/>
                                 </menulist>
                             </row>
+							<row>
+								<description value="Provider Cache Logging"/>
+								<checkbox id="cache_logging" />
+							</row>
                             <row>
                                 <description value="Dirname"/>
                                 <eworkflow-ptextbox id="dirname" height="280px"/>

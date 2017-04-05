@@ -1,28 +1,27 @@
 <?php
 
-
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
 
+	require_once('class.elogin_action_share_provider_shares_base.inc.php');
+
     /**
      * elogin_action_share_provider_dir_permission_remove
      */
-    class elogin_action_share_provider_dir_permission_remove extends eworkflow_entry_bo implements eworkflow_ientry_bo, eworkflow_iparam_bo {
+    class elogin_action_share_provider_dir_permission_remove extends elogin_action_share_provider_shares_base implements eworkflow_ientry_bo, eworkflow_iparam_bo {
 
         // link action
 		const LINK_ACTION      = 'action';
 		const LINK_ERROR       = 'error';
 
         // Param
-        const PARAM_DPR_USERSHARE_ENTRY     = 'dpr_usershare_entry';
         const PARAM_DPR_DIRNAME             = 'dpr_dirname';
 
         /**
@@ -32,23 +31,10 @@
         static protected $_logger = null;
 
         /**
-         * param register
-         *
-         * @var eworkflow_param_register
-         */
-        static protected $_param_register = null;
-
-        /**
          * type
          * @var string
          */
         protected $_type = CEcomanWorkflowEntry::TYPE_ACTION;
-
-        /**
-         * usershare entry id
-         * @var string
-         */
-        protected $_usershare_entryid = "";
 
         /**
          * dirname
@@ -66,7 +52,6 @@
 
         /**
 		 * getEtemplate
-		 *
 		 * @return null|etemplate|string
 		 */
 		public function getEtemplate() {
@@ -76,7 +61,6 @@
         /**
          * acceptLinks
          * accept links
-         *
          * @return array
          */
         public function acceptLinks() {
@@ -88,7 +72,6 @@
 
         /**
 		 * getInfo
-		 *
 		 * @return array
 		 */
 		static public function getInfo() {
@@ -103,28 +86,7 @@
 		}
 
         /**
-         * getUserShareEntryid
-         *
-         * @return string
-         */
-        public function getUserShareEntryid() {
-			return $this->_params->getVariableByParam(
-				$this->_usershare_entryid, static::PARAM_DPR_USERSHARE_ENTRY);
-        }
-
-		/**
-		 * setUserShareEntryid
-		 *
-		 * @param string $id
-		 */
-		public function setUserShareEntryid($id) {
-			$this->_usershare_entryid = $this->_params->saveVariableToParam(
-				$id, static::PARAM_DPR_USERSHARE_ENTRY);
-		}
-
-        /**
          * getDirname
-         *
          * @return string
          */
         public function getDirname() {
@@ -134,7 +96,6 @@
 
 		/**
 		 * setDirname
-		 *
 		 * @param string $dirname
 		 */
 		public function setDirname($dirname) {
@@ -144,13 +105,13 @@
 
         /**
 		 * uiEdit
-		 *
 		 * @param array $content
 		 */
 		public function uiEdit(&$content, &$option_sel, &$readonlys) {
             if( isset($content['button']) && isset($content['button']['save']) ) {
                 $this->setUserShareEntryid($content['usershare_entry']);
                 $this->setDirname($content['dirname']);
+				$this->setProviderCacheLogging($content['cache_logging']);
             }
 
             $content['usershare_entry'] = $this->getUserShareEntryid();
@@ -192,12 +153,17 @@
                         )
                     );
 
+			// -----------------------------------------------------------------
+
+			$content['cache_logging'] = $this->getProviderCacheLogging();
+
+			// -----------------------------------------------------------------
+
             parent::uiEdit($content, $option_sel, $readonlys);
         }
 
         /**
          * execute
-         *
          * @param type $params
          * @return type
          */
@@ -218,6 +184,11 @@
 
             // -----------------------------------------------------------------
 
+			// provider cache logging
+			$pcl = $this->getProviderCacheLogging();
+
+            // -----------------------------------------------------------------
+
             $linkname = self::LINK_ERROR;
             $dirname   = eworkflow_vfs_bo::cleanUtf8PathName(
                 $pro->getParamValue(static::PARAM_DPR_DIRNAME));
@@ -228,6 +199,10 @@
             if( $entry instanceof elogin_action_share_provider_shares ) {
                 $provider = $entry->getProvider();
                 $sharename = $entry->getShareName();
+
+				if( $pcl == '1' ) {
+					$provider->setUseCacheLogging(true);
+				}
 
                 $this::$_logger->info('UserShare: ' . $sharename);
 
@@ -244,6 +219,11 @@
 				catch( Exception $ex ) {
 					$this::$_logger->severe('Error: ' . $ex->getMessage());
 				}
+
+				if( $pcl == '1' ) {
+					$this::$_logger->info('Cache Logging: ' . var_export($provider->getCacheLogs(), true));
+					$provider->setUseCacheLogging(false);
+				}
             }
 
             // get link for next action
@@ -252,15 +232,10 @@
 
         /**
          * getParameterRegister
-         *
          * @return eworkflow_param_register
          */
         public function getParameterRegister() {
-            if( static::$_param_register == null ) {
-                static::$_param_register = new eworkflow_param_register();
-            }
-
-            $reg = static::$_param_register;
+            $reg = parent::getParameterRegister();
 
             return $reg;
         }

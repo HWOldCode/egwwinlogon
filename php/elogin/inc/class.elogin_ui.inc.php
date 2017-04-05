@@ -101,8 +101,8 @@ exit;*/
 
             // return data for cache
             $cacheData = array(
-                'egw_accounts' => $accountlist,
-                'encryption_type' => $type
+                'egw_accounts'		=> $accountlist,
+                'encryption_type'	=> $type
                 );
 
             return Api\Json\Response::get()->data($cacheData);
