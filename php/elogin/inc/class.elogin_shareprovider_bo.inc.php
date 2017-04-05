@@ -124,6 +124,13 @@
 		protected $_device_info = array();
 
 		/**
+		 * connection time out
+		 * important to set for hang up effect
+		 * @var int
+		 */
+		protected $_cto = 300;
+
+		/**
 		 * init_static
          * Init our static properties
          */
@@ -165,6 +172,7 @@
 				$this->_last_update			= $data['el_last_update'];
 				$this->_last_task_update	= $data['el_last_task_update'];
 				$this->_device_info			= json_decode($data['el_device_info'], true);
+				$this->_cto					= intval($data['el_cto']);
             }
         }
 
@@ -201,6 +209,7 @@
 				$provider->_last_update			= $this->_last_update;
 				$provider->_last_task_update	= $this->_last_task_update;
 				$provider->_device_info			= $this->_device_info;
+				$provider->_cto					= $this->_cto;
 
                 $provider->_construct2();
 
@@ -209,6 +218,19 @@
 
             return null;
         }
+
+		/**
+		 * cast
+		 * @param elogin_shareprovider_bo $rawobject
+		 * @return elogin_shareprovider_bo
+		 */
+		static public function cast($rawobject) {
+			if( !($rawobject instanceof elogin_shareprovider_bo) ) {
+				return null;
+			}
+
+			return $rawobject->_cast();
+		}
 
 		/**
 		 * getInstanceProviderName
@@ -415,6 +437,22 @@
 		 */
 		public function getDeviceInfo($update=false) {
 			return $this->_device_info;
+		}
+
+		/**
+		 * setCto
+		 * @param int $cto
+		 */
+		public function setCto($cto=300) {
+			$this->_cto = $cto;
+		}
+
+		/**
+		 * getCto
+		 * @return int
+		 */
+		public function getCto() {
+			return $this->_cto;
 		}
 
         /**
@@ -660,6 +698,7 @@
 			$data['el_last_update']			= $this->_last_update;
 			$data['el_last_task_update']	= $this->_last_task_update;
 			$data['el_device_info']			= json_encode($this->_device_info);
+			$data['el_cto']					= $this->_cto;
 
             $return = self::_write($data);
 

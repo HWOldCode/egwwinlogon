@@ -3,11 +3,10 @@
 
     /**
 	 * ELogin - Egroupware
-	 *
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-17 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -66,6 +65,7 @@
         protected $_mount_name = '';
 
         /**
+		 * init_static
          * Init our static properties
          */
         static public function init_static() {
@@ -73,8 +73,7 @@
         }
 
         /**
-         * constructor
-         *
+         * __construct
          * @param string $id
          */
         public function __construct($id=null) {
@@ -95,7 +94,6 @@
 
         /**
          * getId
-         *
          * @return string
          */
         public function getId() {
@@ -104,7 +102,6 @@
 
         /**
          * isGlobal
-         *
          * @return boolean
          */
         public function isGlobal() {
@@ -117,7 +114,6 @@
 
         /**
          * getUsershareId
-         *
          * @return string
          */
         public function getUsershareId() {
@@ -126,7 +122,6 @@
 
         /**
          * setUsershareId
-         *
          * @param string $id
          */
         public function setUsershareId($id) {
@@ -135,7 +130,6 @@
 
         /**
          * getUsershare
-         *
          * @return elogin_usershares_bo
          */
         public function getUsershare() {
@@ -144,7 +138,6 @@
 
         /**
          * setMachineId
-         *
          * @param string $id
          */
         public function setMachineId($id) {
@@ -153,7 +146,6 @@
 
         /**
          * getMachineId
-         *
          * @return string
          */
         public function getMachineId() {
@@ -162,7 +154,6 @@
 
         /**
          * setShareSource
-         *
          * @param string $sharesource
          */
         public function setShareSource($sharesource) {
@@ -171,7 +162,6 @@
 
         /**
          * getShareSource
-         *
          * @return string
          */
         public function getShareSource() {
@@ -180,7 +170,6 @@
 
         /**
          * setMountname
-         *
          * @param string $name
          */
         public function setMountname($name) {
@@ -189,7 +178,6 @@
 
         /**
          * getMountname
-         *
          * @return string
          */
         public function getMountname() {
@@ -198,8 +186,7 @@
 
         /**
          * getCmds
-         *
-         * @param type $system
+         * @param string $system
          * @return elogin_cmd_bo|null
          */
         public function getCmd($system=null) {
@@ -296,7 +283,6 @@
 
         /**
          * read
-         *
          * @param string $id
          * @return boolean|array
          */
@@ -316,7 +302,6 @@
 
         /**
          * _write
-         *
          * @param array $data
          */
         static protected function _write(array $data) {
@@ -353,7 +338,6 @@
 
         /**
          * get_rows
-         *
          * @param type $query
          * @param type $rows
          * @param type $readonlys
@@ -392,7 +376,6 @@
 
         /**
          * getUserShareMountsBy
-         *
          * @param string $sharename
          * @param string $usershareid
          * @return array of elogin_usershares_mount_bo

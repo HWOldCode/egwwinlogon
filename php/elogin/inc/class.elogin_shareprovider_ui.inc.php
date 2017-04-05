@@ -113,19 +113,24 @@
 				}
 
 				if( $row['el_device_info'] != '' ) {
-					$cast_provider = elogin_shareprovider_bo::i($row['el_unid']);
+					try {
+						$cast_provider = elogin_shareprovider_bo::i($row['el_unid']);
 
-					$used = doubleval($cast_provider->getDeviceSizeUsed());
-					$total = doubleval($cast_provider->getDeviceSizeTotal());
+						$used = doubleval($cast_provider->getDeviceSizeUsed());
+						$total = doubleval($cast_provider->getDeviceSizeTotal());
 
-					$percent = 0;
+						$percent = 0;
 
-					if( ($used > 0) && ($total > 0) ) {
-						$percent = $used * 100 / $total;
+						if( ($used > 0) && ($total > 0) ) {
+							$percent = $used * 100 / $total;
+						}
+
+						$row['el_percent'] = $percent;
+						$row['el_percent2'] = $percent;
 					}
+					catch( Exception $ex ) {
 
-					$row['el_percent'] = $percent;
-					$row['el_percent2'] = $percent;
+					}
 				}
             }
 
@@ -173,6 +178,8 @@
                     $provider = new elogin_shareprovider_bo();
                 }
 
+				$provider->setCto(intval($content['cto']));
+				$provider->setCollectiveShare($content['collective_share']);
 				$provider->setDescription($content['description']);
                 $provider->setProviderName($content['provider']);
                 $provider->setAccount(
@@ -232,6 +239,7 @@
                 $content['account_password']    = $provider->getAccountPassword();
                 $content['mount_address']       = $provider->getMountAddress();
 				$content['activ']				= ($provider->isActiv() ? '1' : '0');
+				$content['cto']					= $provider->getCto();
 
 				$cast_provider = elogin_shareprovider_bo::i($provider->getId());
 

@@ -73,6 +73,10 @@
                                 <description value="Password"/>
                                 <passwd id="account_password" />
                             </row>
+							<row>
+                                <description value="Connection-time-out"/>
+                                <textbox id="cto" />
+                            </row>
                             <row>
                                 <description value="Mount Address"/>
                                 <textbox id="mount_address" />

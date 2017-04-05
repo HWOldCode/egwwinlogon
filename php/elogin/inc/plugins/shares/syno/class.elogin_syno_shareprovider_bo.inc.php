@@ -100,6 +100,9 @@
 						$this->_api_version
                         );
 
+					// set timeout
+					$this->_syno->setConnectionTimeout($this->_cto);
+
                     elogin_syno_shareprovider_bo::$_synoInstances[$this->_id] = $this->_syno;
                 }
 
@@ -403,7 +406,13 @@
 
 					$dirpath = implode($tdirs, "/");
 
-					$usersharename = $usersharename . "/" . $dirpath . "/" . $dirname;
+					$usersharename = $usersharename;
+
+					if( $dirpath !== '' ) {
+						$usersharename = $usersharename . "/" . $dirpath;
+					}
+
+					$usersharename = $usersharename . "/" . $dirname;
 					$usersharename = str_replace("//", "/", $usersharename);
 				}
 

@@ -388,3 +388,13 @@ function elogin_upgrade1_9_085()
 	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.086';
 }
 
+
+function elogin_upgrade1_9_086()
+{
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_shareproviders','el_device_info',array(
+		'type' => 'text'
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.087';
+}
+

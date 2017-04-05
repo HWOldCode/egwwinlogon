@@ -57,7 +57,7 @@
             //var_dump($t->getCmds());
 exit;*/
             elogin_sharehandler_bo::set_async_job(false);
-            elogin_sharehandler_bo::set_async_job(true);
+            //elogin_sharehandler_bo::set_async_job(true);
 
             $tpl = new etemplate_new('elogin.index');
 			$tpl->exec(
@@ -74,7 +74,14 @@ exit;*/
         public function cronjob_hand($content=array()) {
 			//$GLOBALS['egw']->session->commit_session();
 
-            elogin_sharehandler_bo::handle();
+            //elogin_sharehandler_bo::handle();
+
+			try {
+				elogin_handler_singleshare_bo::handle();
+			}
+			catch( Exception $ex ) {
+				echo $ex;
+			}
 
             $tpl = new etemplate_new('elogin.index');
 			$tpl->exec(

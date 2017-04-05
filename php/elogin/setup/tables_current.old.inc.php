@@ -27,7 +27,8 @@ $phpgw_baseline = array(
 			'el_description' => array('type' => 'varchar','precision' => '256'),
 			'el_collectiv_share' => array('type' => 'varchar','precision' => '256'),
 			'el_last_update' => array('type' => 'timestamp'),
-			'el_last_task_update' => array('type' => 'timestamp')
+			'el_last_task_update' => array('type' => 'timestamp'),
+			'el_device_info' => array('type' => 'text')
 		),
 		'pk' => array('el_unid'),
 		'fk' => array(),

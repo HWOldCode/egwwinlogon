@@ -5,7 +5,7 @@
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-17 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -83,7 +83,17 @@
          * @param string|array $data hook-data
          */
         public static function admin($data) {
+			$location = is_array($data) ? $data['location'] : $data;
 
+			if( $GLOBALS['egw_info']['user']['apps']['admin'] ) {
+				$file = array(
+					'Settings' => egw::link('/index.php', 'menuaction=elogin.settings_ui.index&ajax=true')
+					);
+
+				if( $location == 'admin' ) {
+                    display_section('elogin', $file);
+                }
+			}
         }
 
 		/**
