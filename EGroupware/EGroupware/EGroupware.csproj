@@ -95,6 +95,7 @@
   <ItemGroup>
     <Compile Include="ApplicationLoader.cs" />
     <Compile Include="DeviceHelper.cs" />
+    <Compile Include="pInvokesEgw.cs" />
     <Compile Include="SysFingerPrint.cs" />
     <Compile Include="Configuration.cs">
       <SubType>Form</SubType>

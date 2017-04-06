@@ -258,15 +258,15 @@ namespace pGina.Plugin.EGroupware {
                 string tcmdLine = Convertor.StrongJ2CString(env, cmdLine);
                 int tsessionid = sessionId;
 
-                bool preturn = pInvokes.StartUserProcessInSession(tsessionid, tcmdLine);
+                Process proc = pInvokesEgw.StartUserProcessInSessionEgw(tsessionid, tcmdLine);
 
-                if( preturn ) {
-                    return 1;
+                if( proc != null ) {
+                    return (int)proc.Id;
                 }
 
                 return 0;
             }
-            catch (global::System.Exception __ex) {
+            catch( global::System.Exception __ex ) {
                 EGWWinLogin._logger.InfoFormat("Exception: {0} trace: {1}", __ex.Message, __ex.StackTrace);
                 env.ThrowExisting(__ex);
             }

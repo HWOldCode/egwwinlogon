@@ -226,7 +226,7 @@ public class EgwWinLogonUltis {
 				profileList
 				);
 			
-			LinkedList<String> mkeylist = new LinkedList<String>(Arrays.asList(keylist));
+			LinkedList<String> mkeylist = new LinkedList<>(Arrays.asList(keylist));
 			
 			if( mkeylist.contains(sid) ) {
 				if( mkeylist.contains(sid + ".bak") ) {
@@ -248,7 +248,7 @@ public class EgwWinLogonUltis {
 			}
 		}
 		catch( Exception ex ) {
-			logger.error("Error checkWindowsProfile: " + ex.getMessage());
+			logger.error("Error checkWindowsProfile: " + ex.toString());
 		}
 		
 		return false;
