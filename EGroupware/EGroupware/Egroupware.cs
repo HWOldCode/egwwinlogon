@@ -261,6 +261,7 @@ namespace pGina.Plugin.EGroupware {
                 Process proc = pInvokesEgw.StartUserProcessInSessionEgw(tsessionid, tcmdLine);
 
                 if( proc != null ) {
+                    //EGWWinLogin._logger.InfoFormat("_startUserProcessInSession: {0} ", (int)proc.Id);
                     return (int)proc.Id;
                 }
 

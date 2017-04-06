@@ -208,7 +208,7 @@ public class EgroupwareCommand extends EgroupwareCacheList {
 			// -----------------------------------------------------------------
 			
 			if( (!"none".equals(script_type)) && (!"".equals(script_type)) ) {
-				logger.info("_executeCommand script-type: " + script_type);
+				//logger.info("_executeCommand script-type: " + script_type);
 				
 				String scriptFilename = EgroupwarePGina.getAppDirCache() + cmdid + ".";
 
@@ -223,21 +223,21 @@ public class EgroupwareCommand extends EgroupwareCacheList {
 					command = "\"" + scriptFilename + "\"";
 				}
 
-				logger.info("_executeCommand script-file: " + scriptFilename);
+				//logger.info("_executeCommand script-file: " + scriptFilename);
 				
 				scriptFile = new File(scriptFilename);
 				
 				// clean and write
 				if( scriptFile.isFile() && scriptFile.exists() ) {
-					logger.info("_executeCommand script-file delete old script");
+					//logger.info("_executeCommand script-file delete old script");
 					
 					Files.delete(scriptFile.toPath());
 				}
 				
 				Files.write(scriptFile.toPath(), script.getBytes());
 				
-				logger.info("_executeCommand script-file write new script size:" + 
-					String.valueOf(script.length()));
+				/*logger.info("_executeCommand script-file write new script size:" + 
+					String.valueOf(script.length()));*/
 			}
 
 			// exec
@@ -253,28 +253,28 @@ public class EgroupwareCommand extends EgroupwareCacheList {
 
 			exec_cmd += command;
 
-			logger.info("_executeCommand execute-Cmd: " + exec_cmd);
+			//logger.info("_executeCommand execute-Cmd: " + exec_cmd);
 			
 			if( type.equals(EgroupwareCommand.TYPE_SERVICE) ) {
 				pid = EgroupwarePGina.startProcessInWinsta0Winlogon(exec_cmd);
 				
-				logger.info("_executeCommand startProcessInWinsta0Winlogon pid: " + String.valueOf(pid));
+				//logger.info("_executeCommand startProcessInWinsta0Winlogon pid: " + String.valueOf(pid));
 			}
 			else if( type.equals(EgroupwareCommand.TYPE_SERVICE) ) {
 				pid = EgroupwarePGina.startProcessInWinsta0Winlogon(exec_cmd);
 				
-				logger.info("_executeCommand startProcessInWinsta0Winlogon pid: " + String.valueOf(pid));
+				//logger.info("_executeCommand startProcessInWinsta0Winlogon pid: " + String.valueOf(pid));
 			}
 			else {
 				pid = EgroupwarePGina.startUserProcessInSession(sessionId, exec_cmd);
 				
-				logger.info("_executeCommand startUserProcessInSession pid: " + String.valueOf(pid));
+				//logger.info("_executeCommand startUserProcessInSession pid: " + String.valueOf(pid));
 			}
 			
 			// process waiting
 			// -----------------------------------------------------------------
 			if( "1".equals(process_wait) ) {
-				logger.info("_executeCommand waiting of process pid: " + String.valueOf(pid));
+				//logger.info("_executeCommand waiting of process pid: " + String.valueOf(pid));
 				
 				while( ProcessList.existProcessById(pid) ) {
 					Thread.sleep(1000);
@@ -286,7 +286,7 @@ public class EgroupwareCommand extends EgroupwareCacheList {
 					}
 				}
 				
-				logger.info("_executeCommand process stop pid: " + String.valueOf(pid));
+				//logger.info("_executeCommand process stop pid: " + String.valueOf(pid));
 			}
 			
 			// check mount point
@@ -406,10 +406,10 @@ public class EgroupwareCommand extends EgroupwareCacheList {
 	 * @throws java.lang.Exception
      */
     public void executeEvent(int sessionId, String type, String event) throws Exception {
-		logger.info(
+		/*logger.info(
 			"execute run by type: " + type + 
 			" event: " + event + 
-			" sessionId: " + String.valueOf(sessionId));
+			" sessionId: " + String.valueOf(sessionId));*/
 		
 		LinkedList execmd = new LinkedList();
 		
@@ -460,7 +460,7 @@ public class EgroupwareCommand extends EgroupwareCacheList {
 					
 					LinkedList orderList = (LinkedList) execmd.get(orderInt);
 
-					logger.info("execute cmd add to order list name: " + cmdname);
+					//logger.info("execute cmd add to order list name: " + cmdname);
 					
 					orderList.add(cmddata);
 					

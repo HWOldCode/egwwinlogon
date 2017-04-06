@@ -337,13 +337,13 @@ public class EgwWinLogon {
                                 " <> " + ec.getLocalizedMessage());
                         }
 
-                        logger.info("Load new Cachelist by user: " + username);
+                        //logger.info("Load new Cachelist by user: " + username);
 
                         // request login cache list
                         _egw.request(EgroupwareELoginCache.instance);
 
                         if( EgroupwareELoginCache.instance.countAccounts() > 0 ) {
-                            logger.info("Save new Cachelist by user: " + username);
+                            //logger.info("Save new Cachelist by user: " + username);
 
                             EgroupwareELoginCache.saveToFile(
                                 EgroupwareELoginCache.instance, 
@@ -355,7 +355,7 @@ public class EgwWinLogon {
                         _egw.request(EgroupwareCommand.instance);
 
                         if( EgroupwareCommand.instance.getCmdCount() > 0 ) {
-                            logger.info("Save new Commandlist by user: " + username);
+                            //logger.info("Save new Commandlist by user: " + username);
 
                             EgroupwareCommand.saveToFile(
                                 EgroupwareCommand.instance, 

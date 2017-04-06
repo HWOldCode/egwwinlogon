@@ -396,7 +396,7 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
             if( !this._isSendError ) {
                 this._index++;
                 
-                EgroupwareMachineLoggingEvent tmp = 
+                /*EgroupwareMachineLoggingEvent tmp = 
                     new EgroupwareMachineLoggingEvent(new LoggingEvent(
                         ec.getClass().getName(), 
                         logger.getParent(), 
@@ -406,7 +406,7 @@ public class EgroupwareMachineLogging extends EgroupwareJson implements Appender
                         null
                         ), this._index);
                 
-                this._appender_eventsList.put(tmp.getUnid(), tmp);
+                this._appender_eventsList.put(tmp.getUnid(), tmp);*/
                 this._isSendError = true;
             }
         }

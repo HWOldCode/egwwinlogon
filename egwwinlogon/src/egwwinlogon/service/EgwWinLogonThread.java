@@ -155,7 +155,7 @@ public class EgwWinLogonThread implements Runnable, EgroupwareEventListener {
     public void setSessionStatus(int status) {
         this._sessionStatus = status;
         
-        logger.info("Session Status cahnge: " + String.valueOf(status));
+        logger.info("Session status change: " + String.valueOf(status));
         
         switch( this._sessionStatus ) {
             case 5:
