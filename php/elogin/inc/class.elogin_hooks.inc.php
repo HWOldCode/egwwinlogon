@@ -50,7 +50,7 @@
 
 				// for users link list
                 $file = array();
-				$file['Link List']	= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_link_ui.link_list&ajax=true');
+				$file['Link List']	= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_link_ui.link_list&ajax=true');
 
 				display_sidebox($appname, 'ELogin', $file);
 
@@ -58,22 +58,22 @@
                 if( $GLOBALS['egw_info']['user']['apps']['admin'] ) {
 					// machines
 					$file = array();
-                    $file['Machine List']			= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_machine_ui.machine_list&ajax=true');
-                    $file['Machine-logging List']	= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_machine_logging_ui.logging_list&ajax=true');
+                    $file['Machine List']			= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_machine_ui.machine_list&ajax=true');
+                    $file['Machine-logging List']	= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_machine_logging_ui.logging_list&ajax=true');
 
 					display_sidebox($appname, 'Machine', $file);
 
 					// sahres
 					$file = array();
-					$file['Share Provider']		= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_shareprovider_ui.share_provider_list&ajax=true');
-					$file['Share User']			= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_usershares_ui.share_user_list&ajax=true');
-					$file['Share Mount']		= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_sharemounts_ui.share_mount_list&ajax=true');
+					$file['Share Provider']		= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_shareprovider_ui.share_provider_list&ajax=true');
+					$file['Share User']			= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_usershares_ui.share_user_list&ajax=true');
+					$file['Share Mount']		= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_sharemounts_ui.share_mount_list&ajax=true');
 
 					display_sidebox($appname, 'Shares', $file);
 
 					// admin
 					$file = array();
-					$file['Cronjob by Hand'] = egw::link('/index.php', 'menuaction=' . $appname . '.elogin_ui.cronjob_hand&ajax=true');
+					$file['Cronjob by Hand'] = Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_ui.cronjob_hand&ajax=true');
 
 					display_sidebox($appname, 'Admin', $file);
                 }
@@ -89,7 +89,7 @@
 
 			if( $GLOBALS['egw_info']['user']['apps']['admin'] ) {
 				$file = array(
-					'Settings' => egw::link('/index.php', 'menuaction=elogin.settings_ui.index&ajax=true')
+					'Settings' => Api\Egw::link('/index.php', 'menuaction=elogin.settings_ui.index&ajax=true')
 					);
 
 				if( $location == 'admin' ) {

@@ -10,6 +10,8 @@
 	 * @version $Id$
 	 */
 
+	use EGroupware\Api;
+
     /**
      * elogin_bo
      */
@@ -95,7 +97,7 @@
 		 * @return array
 		 */
 		static public function getEgroupwareGroupAccounts($groupid) {
-			$accounts = accounts::getInstance();
+			$accounts = Api\Accounts::getInstance();
 			return $accounts->members($groupid);
 		}
 
