@@ -9,11 +9,11 @@
 		<grid width="100%">
 			<columns>
 				<column width="54"/>
-				<column width="100%"/>
+				<column width="300"/>
 				<column width="224"/>
 				<column width="288"/>
 				<column width="163"/>
-				<column width="163"/>
+				<column width="100%"/>
 			</columns>
 			<rows>
 				<row class="th">
@@ -37,7 +37,7 @@
 						<description id="${row}[el_loginuser]"/>
 					</vbox>
                     <vbox>
-                        <description id="${row}[el_logindate]" options="b"/>
+                        <date-time id="${row}[el_logindate]" readonly="true" options="b" class="noBreak"/>
                     </vbox>
 				</row>
 			</rows>

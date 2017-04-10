@@ -5,7 +5,7 @@
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-17 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -38,7 +38,6 @@
         /**
 		 * all_hooks
          * hooks to build eworkflow's sidebox-menu plus the admin and preferences sections
-		 *
          * @param string/array $args hook args
          */
         static public function all_hooks($args) {
@@ -49,22 +48,35 @@
 
 			if( $location == 'sidebox_menu' ) {
 
+				// for users link list
                 $file = array();
+				$file['Link List']	= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_link_ui.link_list&ajax=true');
 
-                /**
-                 * Admin
-                 */
+				display_sidebox($appname, 'ELogin', $file);
+
+				// only admins
                 if( $GLOBALS['egw_info']['user']['apps']['admin'] ) {
-                    $file['Machine List']			= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_machine_ui.machine_list&ajax=true');
-                    $file['Machine-logging List']	= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_machine_logging_ui.logging_list&ajax=true');
-                    $file['Share Provider']			= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_shareprovider_ui.share_provider_list&ajax=true');
-                    $file['Cronjob by Hand']		= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_ui.cronjob_hand&ajax=true');
-					$file['Link List']				= Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_link_ui.link_list&ajax=true');
+					// machines
+					$file = array();
+                    $file['Machine List']			= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_machine_ui.machine_list&ajax=true');
+                    $file['Machine-logging List']	= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_machine_logging_ui.logging_list&ajax=true');
+
+					display_sidebox($appname, 'Machine', $file);
+
+					// sahres
+					$file = array();
+					$file['Share Provider']		= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_shareprovider_ui.share_provider_list&ajax=true');
+					$file['Share User']			= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_usershares_ui.share_user_list&ajax=true');
+					$file['Share Mount']		= egw::link('/index.php', 'menuaction=' . $appname . '.elogin_sharemounts_ui.share_mount_list&ajax=true');
+
+					display_sidebox($appname, 'Shares', $file);
+
+					// admin
+					$file = array();
+					$file['Cronjob by Hand'] = egw::link('/index.php', 'menuaction=' . $appname . '.elogin_ui.cronjob_hand&ajax=true');
+
+					display_sidebox($appname, 'Admin', $file);
                 }
-
-                $file['Share User'] = Api\Egw::link('/index.php', 'menuaction=' . $appname . '.elogin_usershares_ui.share_user_list&ajax=true');
-
-				display_sidebox($appname, 'elogin', $file);
             }
         }
 
@@ -73,7 +85,17 @@
          * @param string|array $data hook-data
          */
         public static function admin($data) {
+			$location = is_array($data) ? $data['location'] : $data;
 
+			if( $GLOBALS['egw_info']['user']['apps']['admin'] ) {
+				$file = array(
+					'Settings' => egw::link('/index.php', 'menuaction=elogin.settings_ui.index&ajax=true')
+					);
+
+				if( $location == 'admin' ) {
+                    display_section('elogin', $file);
+                }
+			}
         }
 
 		/**

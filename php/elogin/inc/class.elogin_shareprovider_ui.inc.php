@@ -5,7 +5,7 @@
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-17 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -115,6 +115,27 @@
 				else {
 					$row['el_activ'] = lang('Disable');
 				}
+
+				if( $row['el_device_info'] != '' ) {
+					try {
+						$cast_provider = elogin_shareprovider_bo::i($row['el_unid']);
+
+						$used = doubleval($cast_provider->getDeviceSizeUsed());
+						$total = doubleval($cast_provider->getDeviceSizeTotal());
+
+						$percent = 0;
+
+						if( ($used > 0) && ($total > 0) ) {
+							$percent = $used * 100 / $total;
+						}
+
+						$row['el_percent'] = $percent;
+						$row['el_percent2'] = $percent;
+					}
+					catch( Exception $ex ) {
+
+					}
+				}
             }
 
             return $count;
@@ -161,6 +182,8 @@
                     $provider = new elogin_shareprovider_bo();
                 }
 
+				$provider->setCto(intval($content['cto']));
+				$provider->setCollectiveShare($content['collective_share']);
 				$provider->setDescription($content['description']);
                 $provider->setProviderName($content['provider']);
                 $provider->setAccount(
@@ -198,13 +221,15 @@
 							lang('Login faild by: ' . $provider->getProviderName()), 'warning');
 					}
 					else {
+						$cast_provider->updateDeviceInfo();
+
 						egw_framework::message(
 							lang('Login success by: ' . $provider->getProviderName()), 'info');
 					}
 				}
             }
             elseif( isset($content['button']) && isset($content['button']['delete']) ) {
-				
+
             }
 
 			// -----------------------------------------------------------------
@@ -218,6 +243,7 @@
                 $content['account_password']    = $provider->getAccountPassword();
                 $content['mount_address']       = $provider->getMountAddress();
 				$content['activ']				= ($provider->isActiv() ? '1' : '0');
+				$content['cto']					= $provider->getCto();
 
 				$cast_provider = elogin_shareprovider_bo::i($provider->getId());
 
@@ -236,6 +262,19 @@
 					if( $option_sel['apiversion'] !== null ) {
 						$content['apiversion'] = $cast_provider->getApiVersion();
 					}
+
+					if( $cast_provider->login() ) {
+						$shares		= $cast_provider->getShares();
+						$cshares	= array();
+
+						foreach( $shares as $ashare ) {
+							$cshares[$ashare['name']] = $ashare['name'];
+						}
+
+						$option_sel['collective_share'] = $cshares;
+					}
+
+					$content['collective_share'] = $cast_provider->getCollectiveShare();
 				}
 				else {
 					$readonlys['protocol']		= true;

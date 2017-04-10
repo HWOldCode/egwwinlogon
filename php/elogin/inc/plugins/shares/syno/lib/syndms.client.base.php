@@ -14,7 +14,8 @@
 	 * require once
 	 */
     require_once('syndms.request.php');
-
+	require_once('syndms.exception.php');
+	
     /**
      * SyndmsClientBase
      * @author Stefan Werfling
@@ -31,6 +32,7 @@
         const URL_FILESHARE			= 'webapi/FileStation/file_share.cgi';
         const URL_FILESHARE_CRT		= 'webapi/FileStation/file_crtfdr.cgi';
 		const URL_POLLING			= 'webman/modules/PollingTask/polling.cgi';
+		const URL_STORAGEHANDLER	= 'webman/modules/StorageManager/storagehandler.cgi';
 		const URL_BACKGROUND_TASK	= 'webapi/FileStation/background_task.cgi';
 
         const SYNO_SDS_SESSISON		= 'SYNO.SDS.Session';
@@ -106,7 +108,13 @@
          */
         protected $_services = array();
 
-        /**
+		/**
+		 * connection time out
+		 * @var int
+		 */
+		protected $_connection_time_out = 3000;
+
+		/**
          * __construct
          * @param string $ip
          * @param int $port
@@ -168,7 +176,13 @@
                 $header[] = 'X-Requested-With: XMLHttpRequest';
             }
 
-            $response = SyndmsRequest::curlRequest($url, $data, null, $header);
+            $response = SyndmsRequest::curlRequest(
+				$url,
+				$data,
+				null,
+				$header,
+				$this->_connection_time_out
+				);
 
             if( $response ) {
 
@@ -274,14 +288,21 @@
 									}
 								}
 								else {
-									throw new Exception(
-											"servicename: " . $serviceName .
-											" method: " . $query['method'] .
-											" code: " . $error['code'] .
-											' var_export_query: ' . var_export($query, true) .
-											' var_export_error: ' . var_export($error, true)
-											,
-										$error['code']);
+									throw new SyndmsException(
+										$serviceName,
+										$query['method'],
+										$query,
+										$data,
+										$error['code']
+										);
+									/*throw new Exception(
+										"servicename: " . $serviceName .
+										" method: " . $query['method'] .
+										" code: " . $error['code'] .
+										' var_export_query: ' . var_export($query, true) .
+										' var_export_error: ' . var_export($error, true),
+										$error['code']
+										);*/
 								}
                             }
                         }
@@ -378,6 +399,14 @@
 			}
         }
 
+		/**
+		 * setConnectionTimeout
+		 * @param int $time
+		 */
+		public function setConnectionTimeout($time) {
+			$this->_connection_time_out = $time;
+		}
+
         /**
          * login
          * @param string $username
@@ -435,6 +464,28 @@
         public function isLogin() {
             return $this->_isLogin;
         }
+
+		/**
+		 * getStorageInfo
+		 * @return null|array
+		 */
+		public function getStorageInfo() {
+			if( $this->_isLogin ) {
+				$response = $this->_request(self::URL_STORAGEHANDLER, array(
+					'action' => 'load_info',
+					));
+
+				if( isset($response['body']) && ($response['body'] != '') ) {
+					$data = json_decode($response['body'], true);
+
+					if( $data !== null ) {
+						return $data;
+					}
+				}
+			}
+
+			return null;
+		}
 
         /**
          * getUsers

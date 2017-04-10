@@ -19,7 +19,7 @@
                         </columns>
                         <rows>
                             <row class="dialogHeader">
-                                <appicon src="elogin"/>
+                                <image src="machine.png"/>
                                 <description value="Machine"/>
                                 <textbox id="machine_name" span="4" readonly="true" class="et2_fullWidth et2_required"/>
                             </row>
@@ -36,7 +36,7 @@
                                 <tabbox id="tabs" tab_height="390px">
                                     <tabs>
                                         <tab id="systeminfo" label="System Info"/>
-                                        <tab id="settings" label="Settings"/>
+                                        <!--<tab id="settings" label="Settings"/>-->
                                         <tab id="commands" label="Commands"/>
                                         <!--<tab id="usershares" label="Usershares"/>-->
                                     </tabs>
@@ -67,7 +67,7 @@
                                                 </row>
                                             </rows>
                                         </grid>
-                                        <grid width="100%">
+                                        <!--<grid width="100%">
                                             <columns>
                                                 <column/>
                                             </columns>
@@ -76,7 +76,7 @@
                                                     <elogin-machinesetting id="machinesetting" width="100%" height="300px" overflow="hidden" />
                                                 </row>
                                             </rows>
-                                        </grid>
+                                        </grid>-->
                                         <grid width="100%">
                                             <columns>
                                                 <column/>

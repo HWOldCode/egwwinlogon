@@ -11,19 +11,29 @@
 		<grid width="100%">
 			<columns>
 				<column width="54"/>
-				<column width="100%"/>
+				<column width="300"/>
+				<column width="100"/>
 				<column width="224"/>
 				<column width="288"/>
 				<column width="163"/>
-				<column width="163"/>
+				<column width="150"/>
+				<column width="100%"/>
 			</columns>
 			<rows>
 				<row class="th">
 					<description label=""/>
-					<nextmatch-sortheader label="Share-Provider" id="el_provider_name_sort"/>
+					<vbox>
+						<nextmatch-sortheader label="Share-Provider" id="el_provider_name_sort"/>
+						<nextmatch-sortheader label="Description" id="el_description_sort"/>
+					</vbox>
+					<nextmatch-sortheader label="Storage" id="el_storage_sort"/>
 					<nextmatch-sortheader label="Server" id="el_account_server_sort"/>
 					<nextmatch-sortheader label="User" id="el_account_user_sort"/>
 					<nextmatch-sortheader label="Activ" id="el_activ_sort"/>
+					<vbox>
+						<nextmatch-sortheader label="Last Update" id="el_last_update_sort"/>
+						<nextmatch-sortheader label="Last Task Update" id="el_last_task_update_sort"/>
+					</vbox>
 				</row>
 				<row class="$row_cont[cat_id] $row_cont[class]" valign="top">
                     <vbox align="center">
@@ -31,7 +41,9 @@
                     </vbox>
                     <vbox>
                         <description id="${row}[el_provider_name]" options="b"/>
+                        <description id="${row}[el_description]"/>
                     </vbox>
+					<progress label="$row_cont[el_percent]" id="{$row}[el_percent2]"/>
 					<vbox>
 						<description id="${row}[el_account_server]" readonly="true" font_style="b"/>
 						<description id="${row}[el_account_port]" readonly="true" font_style="b"/>
@@ -41,6 +53,10 @@
                     </vbox>
 					<vbox>
 						<description id="${row}[el_activ]"/>
+					</vbox>
+					<vbox>
+						<date-time id="${row}[el_last_update]" readonly="true" class="noBreak"/>
+						<date-time id="${row}[el_last_task_update]" readonly="true" class="noBreak"/>
 					</vbox>
 				</row>
 			</rows>

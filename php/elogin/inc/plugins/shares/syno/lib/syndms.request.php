@@ -37,9 +37,10 @@
          * @param array $postdata
          * @param string $content_type
          * @param array $custom_headers
+		 * @param int $connection_timeout
          * @return array
          */
-        static public function curlRequest($query_string, $postdata=null, $content_type=null, $custom_headers=null) {
+        static public function curlRequest($query_string, $postdata=null, $content_type=null, $custom_headers=null, $connection_timeout=3000) {
             $headers = (is_null($custom_headers)) ? array() : $custom_headers;
             $curl = curl_init();
 
@@ -63,7 +64,7 @@
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
             curl_setopt($curl, CURLOPT_ENCODING, "UTF-8");
 			curl_setopt($curl, CURLOPT_FORBID_REUSE, true);
-			curl_setopt($curl, CURLOPT_CONNECTTIMEOUT_MS, 30000);
+			curl_setopt($curl, CURLOPT_CONNECTTIMEOUT_MS, $connection_timeout);
 			curl_setopt($curl, CURLOPT_TIMEOUT, 60*2);
 
 			// -----------------------------------------------------------------

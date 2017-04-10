@@ -19,7 +19,7 @@
                         </columns>
                         <rows>
                             <row class="dialogHeader">
-                                <appicon src="elogin"/>
+                                <image src="usershare.png"/>
                                 <description value="Provider"/>
                                 <textbox id="provider" span="4" class="et2_fullWidth et2_required"/>
                             </row>
@@ -27,16 +27,15 @@
 					</grid>
                 </row>
 				<row height="400px">
-                    <grid width="100%" height="400px">
+                    <grid width="100%" height="300px">
                         <columns>
                             <column/>
                         </columns>
                         <rows>
                             <row>
-                                <tabbox id="tabs" tab_height="390px">
+                                <tabbox id="tabs" tab_height="290px">
                                     <tabs>
                                         <tab id="setting" label="Setting"/>
-                                        <tab id="mounts" label="Mounts"/>
                                     </tabs>
                                     <tabpanels>
                                         <grid width="100%">
@@ -45,23 +44,21 @@
                                                 <column/>
                                             </columns>
                                             <rows>
+												<row>
+													<description value="Providers"/>
+													<menulist>
+														<menupopup id="providers"/>
+													</menulist>
+												</row>
                                                 <row>
                                                     <description value="User"/>
-                                                    <textbox id="user" />
+													<menulist>
+														<menupopup type="select-account" id="user"/>
+													</menulist>
                                                 </row>
                                                 <row>
                                                     <description value="Sharepassword"/>
                                                     <textbox id="sharepassword" />
-                                                </row>
-                                            </rows>
-                                        </grid>
-                                        <grid width="100%">
-                                            <columns>
-                                                <column/>
-                                            </columns>
-                                            <rows>
-                                                <row>
-                                                    <elogin-mountlist id="mountlist" width="100%" height="300px" overflow="hidden" />
                                                 </row>
                                             </rows>
                                         </grid>
