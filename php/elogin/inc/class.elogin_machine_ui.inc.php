@@ -24,7 +24,7 @@
          */
         public $public_functions = array(
             'machine_list'          => true,
-            'settings'              => true,
+            'edit'					=> true,
             'get_rows_machine'      => true,
             'ajax_machine_info'     => true,
             );
@@ -122,8 +122,8 @@
 			$failed		= 0;
 
 			switch( $action ) {
-				case 'settinglist':
-					$action_msg = lang('open setting');
+				case 'edit':
+					$action_msg = lang('Edit machine');
 
 					if( is_array($checked) ) {
 						$checked = $checked[0];
@@ -132,9 +132,9 @@
 					$ma = new elogin_machine_bo($checked);
 
 					if( $ma->getIsInDb() ) {
-						Api\Framework::popup(
-							Api\Egw::link('/index.php', 'menuaction=' .
-                                'elogin.elogin_machine_ui.settings&machineid=' .
+						egw_framework::popup(
+							egw::link('/index.php', 'menuaction=' .
+                                'elogin.elogin_machine_ui.edit&machineid=' .
                                 $ma->getId()));
 
 						$success++;
@@ -177,9 +177,17 @@
             $group = 2;
 
             $action = array(
+				'edit' => array(
+                    'caption'	=> 'Edit',
+                    'group'		=> $group,
+                    'default'	=> true,
+                    'icon'		=> 'edit',
+                    'hint'		=> 'Edit machine',
+                    'enabled'	=> true,
+                    ),
                 'loglist' => array(
                     'caption'	=> 'to Machine-logging List',
-                    'group'		=> $group,
+                    'group'		=> ++$group,
                     'default'	=> false,
                     'icon'		=> 'list',
                     'hint'		=> 'to Machine-logging List by Machine',
@@ -193,14 +201,6 @@
                     'hint'		=> 'to User-Share List by Machine',
                     'enabled'	=> true,
                 ),
-                'settinglist' => array(
-                    'caption'	=> 'Setting',
-                    'group'		=> ++$group,
-                    'default'	=> false,
-                    'icon'		=> 'systemsettings',
-                    'hint'		=> 'Open Setting Dialog',
-                    'enabled'	=> true,
-                    ),
 				'delete' => array(
 					'caption'			=> 'Delete',
 					'confirm'			=> 'Delete this entry',
@@ -268,11 +268,10 @@
         }
 
         /**
-         * settings
-         * @param array $contentsettings
+         * edit
          * @param array $content
          */
-        public function settings($content=array()) {
+        public function edit($content=array()) {
             if( !$GLOBALS['egw_info']['user']['apps']['admin'] ) {
                 die("Only for Admins!");
             }

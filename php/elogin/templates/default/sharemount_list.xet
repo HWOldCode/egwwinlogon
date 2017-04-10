@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
 <overlay>
-    <template id="elogin.shareuser_list.header_right" template="" lang="" group="0" version="1.9.001">
+    <template id="elogin.sharemount_list.header_right" template="" lang="" group="0" version="1.9.001">
 		<hbox>
 			<description value="Add:" class="infolog_headertext"/>
-			<button statustext="Add a new Share User" label="Add" id="add" onclick="window.open(egw::link('/index.php','menuaction=elogin.elogin_usershares_ui.share_user_edit'),'_blank','dependent=yes,width=800,height=600,scrollbars=yes,status=yes'); return false;" image="task"/>
+			<button statustext="Add a new share mount" label="Add" id="add" onclick="window.open(egw::link('/index.php','menuaction=elogin.elogin_sharemounts_ui.share_mount_edit'),'_blank','dependent=yes,width=800,height=600,scrollbars=yes,status=yes'); return false;" image="task"/>
 		</hbox>
 	</template>
-    <template id="elogin.shareuser_list.rows" template="" lang="" group="0" version="1.9.005">
+    <template id="elogin.sharemount_list.rows" template="" lang="" group="0" version="1.9.005">
 		<grid width="100%">
 			<columns>
 				<column width="54"/>
@@ -52,7 +52,7 @@
 			</rows>
 		</grid>
 	</template>
-	<template id="elogin.shareuser_list" template="" lang="" group="0" version="1.9.001">
+	<template id="elogin.sharemount_list" template="" lang="" group="0" version="1.9.001">
 		<grid width="100%" border="0" spacing="0" padding="0">
 			<columns>
 				<column/>
@@ -62,7 +62,7 @@
 					<description align="center" id="msg" no_lang="1" span="all" class="message"/>
 				</row>
 				<row>
-					<nextmatch id="nm" template="elogin.shareuser_list.rows" />
+					<nextmatch id="nm" template="elogin.sharemount_list.rows" />
 				</row>
 			</rows>
 		</grid>

@@ -19,7 +19,7 @@
                         </columns>
                         <rows>
                             <row class="dialogHeader">
-                                <appicon src="elogin"/>
+                                <image src="provider.png"/>
                                 <description value="Description"/>
                                 <textbox id="description" span="4" class="et2_fullWidth et2_required"/>
                             </row>
@@ -73,10 +73,20 @@
                                 <description value="Password"/>
                                 <passwd id="account_password" />
                             </row>
+							<row>
+                                <description value="Connection-time-out"/>
+                                <textbox id="cto" />
+                            </row>
                             <row>
                                 <description value="Mount Address"/>
                                 <textbox id="mount_address" />
                             </row>
+							<row>
+								<description value="Collective-Share"/>
+								<menulist>
+									<menupopup type="select" id="collective_share"/>
+								</menulist>
+							</row>
                         </rows>
                     </grid>
                 </row>

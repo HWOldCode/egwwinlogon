@@ -377,7 +377,7 @@
             $data['el_provider_id']     = $this->_providerid;
             $data['el_egw_account']     = $this->_egwaccountid;
             $data['el_sharepassword']   = $this->_sharepassword;
-            $data['el_shareinfo']       = $this->_shareinfos;
+            $data['el_shareinfo']       = json_encode($this->_shareinfos);
 
             $return = self::_write($data);
 

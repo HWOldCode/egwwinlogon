@@ -146,7 +146,7 @@
                         </columns>
                         <rows>
                             <row class="dialogHeader">
-                                <appicon src="elogin"/>
+                                <image src="command.png"/>
                                 <description value="Name"/>
                                 <textbox id="commandname" span="4" class="et2_fullWidth et2_required"/>
                             </row>

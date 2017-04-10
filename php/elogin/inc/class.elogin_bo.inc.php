@@ -5,7 +5,7 @@
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-17 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
@@ -58,8 +58,28 @@
             return $accountlist;
         }
 
+		/**
+		 * getEgroupwareGroups
+		 * @return array
+		 */
+		static public function getEgroupwareGroups() {
+			$groups = array_values($GLOBALS['egw']->accounts->search(array(
+                'type'			=> 'groups',
+                'start'			=> null,
+                'order'			=> '',
+                'sort'			=> '',
+                'query'			=> '',
+                'offset'		=> null,
+                'query_type'	=> 'all',
+                'active'		=> false
+                )));
+
+			return $groups;
+		}
+
         /**
          * getEgroupwareAccountGroups
+		 * return by a account all groups
          * @param int $accountid
          * @return array
          */
@@ -67,6 +87,17 @@
             $list = $GLOBALS['egw']->accounts->memberships($accountid);
             return $list;
         }
+
+		/**
+		 * getEgroupwareGroupAccounts
+		 * return by a group all accounts
+		 * @param int $groupid
+		 * @return array
+		 */
+		static public function getEgroupwareGroupAccounts($groupid) {
+			$accounts = accounts::getInstance();
+			return $accounts->members($groupid);
+		}
 
         /**
 		 * getPHPUuid
