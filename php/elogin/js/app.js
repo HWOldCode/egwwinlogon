@@ -1,11 +1,9 @@
-
 /**
  * ELogin - Egroupware
- *
  * @link http://www.hw-softwareentwicklung.de
  * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
  * @package elogin
- * @copyright (c) 2012-14 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+ * @copyright (c) 2012-17 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
  * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
  * @version $Id:$
  */
@@ -19,17 +17,15 @@
     /elogin/js/et2_widget_elogin_mountlist.js;
     /elogin/js/et2_widget_elogin_commands.js;
     /elogin/js/et2_widget_elogin_code_editor.js;
+	/elogin/js/et2_widget_elogin_link_open.js;
 */
 
 /**
  * UI for ELogin
- *
  * @augments AppJS
  */
-
 if( typeof app != 'undefined' ) {
-    app.classes.elogin = AppJS.extend(
-    {
+    app.classes.elogin = AppJS.extend({
         /**
          * application name
          */
@@ -41,8 +37,7 @@ if( typeof app != 'undefined' ) {
         et2: null,
 
         /**
-         * Constructor
-         *
+         * init
          * @memberOf app.eworkflow
          */
         init: function() {
@@ -51,7 +46,7 @@ if( typeof app != 'undefined' ) {
         },
 
         /**
-         * Destructor
+         * destroy
          */
         destroy: function() {
             delete this.et2_obj;
@@ -61,10 +56,10 @@ if( typeof app != 'undefined' ) {
         },
 
         /**
+		 * et2_ready
          * This function is called when the etemplate2 object is loaded
          * and ready.  If you must store a reference to the et2 object,
          * make sure to clean it up in destroy().
-         *
          * @param et2 etemplate2 Newly ready object
          */
         et2_ready: function(et2, menuaction) {
@@ -73,7 +68,6 @@ if( typeof app != 'undefined' ) {
 
         /**
          * _openEgwWindow
-         *
          * @param string url
          * @param function onCloseFunction
          * @param string windowname
@@ -129,7 +123,7 @@ if( typeof app != 'undefined' ) {
             setTimeout(windowcheck, 50);
 
             return dialog;
-        },
+        }
     });
 }
 

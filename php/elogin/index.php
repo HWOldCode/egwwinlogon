@@ -26,4 +26,4 @@
 	include('../header.inc.php');
 
 	// Redirect
-	$GLOBALS['egw']->redirect_link('/index.php','menuaction=elogin.elogin_ui.index');
+	$GLOBALS['egw']->redirect_link('/index.php','menuaction=elogin.elogin_link_ui.link_list');

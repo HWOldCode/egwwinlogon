@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- $Id$ -->
+<overlay>
+	<template id="elogin.link.open" template="" lang="" group="0" version="">
+        <grid width="100%">
+			<columns>
+				<column/>
+			</columns>
+			<rows>
+                <row>
+                    <grid width="100%">
+                        <columns>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row class="dialogHeader">
+                                <appicon src="elogin"/>
+                                <description value="Link-Open" span="all"/>
+                            </row>
+                        </rows>
+					</grid>
+                </row>
+				<row>
+					<elogin-link-open id="linkopen"/>
+                </row>
+            </rows>
+        </grid>
+	</template>
+</overlay>

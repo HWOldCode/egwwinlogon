@@ -5,10 +5,12 @@
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-17 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
+
+	use EGroupware\Api;
 
 	/**
 	 * elogin_link_ui
@@ -46,7 +48,6 @@
 						//'never_hide'    => true,// I  never hide the nextmatch-line if less then maxmatch entrie
 						'row_id'        => 'el_unid',
 						'actions'       => self::index_get_actions(),
-                        'header_row'    => 'elogin.link_list.header_right',
                         'favorites'     => false
 						);
 				}
@@ -76,11 +77,21 @@
                     'group'		=> $group,
                     'default'	=> false,
                     'icon'		=> 'edit',
-                    'hint'		=> 'Edit Usershares',
+                    'hint'		=> 'Edit Link',
                     'enabled'	=> true,
                     'url'       => 'menuaction=elogin.elogin_link_ui.edit&uid=$id',
                     'popup'     => '600x425',//egw_link::get_registry('elogin', 'add_popup'),
                     ),
+				'open' => array(
+					'caption'	=> 'Open',
+                    'group'		=> $group,
+                    'default'	=> true,
+                    'icon'		=> 'view',
+                    'hint'		=> 'Open Link',
+                    'enabled'	=> true,
+                    'url'       => 'menuaction=elogin.elogin_link_ui.open&uid=$id',
+                    'popup'     => '1x1',
+					),
 				);
 
             return $actions;
@@ -110,15 +121,30 @@
 		 * @param array $content
 		 */
 		public function open($content=array()) {
-			$uid = ( isset($content['unid']) ? $content['unid'] : null);
-			$uid = ( $uid == null ? (isset($_GET['unid']) ? $_GET['unid'] : null) : $uid);
+			$readonlys = array();
+
+			$uid = ( isset($content['uid']) ? $content['uid'] : null);
+			$uid = ( $uid == null ? (isset($_GET['uid']) ? $_GET['uid'] : null) : $uid);
 
 			if( $uid == null ) {
 				// error
 			}
 
 			$link = new elogin_link_bo($uid);
-			var_dump($link->buildUri());
+			$content['linkopen'] = $link->buildUri();
+
+			Api\Header\ContentSecurityPolicy::add('frame-src', array(
+				"egwwinlogon://*"
+				));
+
+			$tpl = new etemplate_new('elogin.link.open');
+			$tpl->exec(
+                'elogin.elogin_link_ui.open',
+                $content,
+                array(),
+                $readonlys,
+                array(),
+                0);
 		}
 
 		/**
