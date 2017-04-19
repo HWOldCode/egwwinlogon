@@ -391,10 +391,7 @@
             }
 
             $query = array(
-                'col_filter' => $colfilter/*array(
-                    'el_share_source' => $sharename,
-                    'el_usershare_id' => $usershareid
-                    )*/
+                'col_filter' => $colfilter
                 );
 
             $rows = array();

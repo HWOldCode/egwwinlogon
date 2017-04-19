@@ -52,7 +52,6 @@
 						//'never_hide'    => true,// I  never hide the nextmatch-line if less then maxmatch entrie
 						'row_id'        => 'el_unid',
 						'actions'       => self::index_get_actions(),
-                        'header_row'    => 'elogin.shareuser_list.header_right',
                         'favorites'     => false
 						);
 				}
