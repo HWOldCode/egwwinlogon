@@ -5,10 +5,12 @@
 	 * @link http://www.hw-softwareentwicklung.de
 	 * @author Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @package elogin
-	 * @copyright (c) 2012-16 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
+	 * @copyright (c) 2012-17 by Stefan Werfling <stefan.werfling-AT-hw-softwareentwicklung.de>
 	 * @license by Huettner und Werfling Softwareentwicklung GbR <www.hw-softwareentwicklung.de>
 	 * @version $Id$
 	 */
+
+	use EGroupware\Eworkflow;
 
 	require_once('class.elogin_action_share_provider_shares_base.inc.php');
 
@@ -146,7 +148,7 @@
             // -----------------------------------------------------------------
             $content['dirname'] = $this->getDirname();
             $content['options-dirname'] =
-                eworkflow_ptextbox_etemplate_widget::createOptions(
+                Eworkflow\Widget\Ptextbox::createOptions(
                     $this->getGroupEntryId(),
                     $this->getId(),
                     array(
@@ -170,7 +172,7 @@
          * @return type
          */
         public function execute($params) {
-            if( !$this->_setStart($params) ) { return; };
+            if( !$this->_setStart($params) ) { return; }
 
             // params merge
             // -----------------------------------------------------------------

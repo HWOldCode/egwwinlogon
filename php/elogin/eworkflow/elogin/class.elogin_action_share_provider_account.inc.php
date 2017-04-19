@@ -165,7 +165,7 @@
          * @return array
          */
         public function execute($params) {
-            if( !$this->_setStart($params) ) { return; };
+            if( !$this->_setStart($params) ) { return; }
 
             // params merge
             // -----------------------------------------------------------------
