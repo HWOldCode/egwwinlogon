@@ -1,6 +1,98 @@
 <?xml version="1.0"?>
 <!-- $Id$ -->
 <overlay>
+	<template id="elogin.share_provider.dialog.server" template="" lang="" group="0" version="1.9.001">
+		<grid width="100%">
+			<columns>
+				<column/>
+				<column/>
+			</columns>
+			<rows>
+				<row>
+					<description value="Provider"/>
+					<menulist>
+						<menupopup id="provider"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Protocol"/>
+					<menulist>
+						<menupopup id="protocol"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="API Version"/>
+					<menulist>
+						<menupopup id="apiversion"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Activ"/>
+					<menulist>
+						<menupopup id="activ"/>
+					</menulist>
+				</row>
+				<row>
+					<description value="Server"/>
+					<textbox id="account_server" />
+				</row>
+				<row>
+					<description value="Port"/>
+					<textbox id="account_port" />
+				</row>
+				<row>
+					<description value="Username"/>
+					<textbox id="account_user" />
+				</row>
+				<row>
+					<description value="Password"/>
+					<passwd id="account_password" />
+				</row>
+				<row>
+					<description value="Connection-time-out"/>
+					<textbox id="cto" />
+				</row>
+			</rows>
+		</grid>
+	</template>
+	<template id="elogin.share_provider.dialog.auto" template="" lang="" group="0" version="1.9.001">
+		<grid width="100%">
+			<columns>
+				<column/>
+				<column/>
+			</columns>
+			<rows>
+				<row>
+					<description value="Client mount address"/>
+					<textbox id="mount_address" />
+				</row>
+				<row>
+					<description value="Collective-User servershare"/>
+					<hbox>
+						<menulist>
+							<menupopup type="select" id="collective_usershare"/>
+						</menulist>
+						<button class="elogin_button" statustext="Add a new Share Provider" id="add_cus" image="add" background_image="true" onclick="window.open(egw::link('/index.php','menuaction=elogin.elogin_shareprovider_ui.share_provider_edit'),'_blank','dependent=yes,width=800,height=600,scrollbars=yes,status=yes'); return false;"/>
+					</hbox>
+				</row>
+				<row>
+					<description value="Collective-Group servershare"/>
+					<hbox>
+						<menulist>
+							<menupopup type="select" id="collective_groupshare"/>
+						</menulist>
+						<button class="elogin_button" statustext="Add a new Share Provider" id="add_cgs" image="add" background_image="true" onclick="window.open(egw::link('/index.php','menuaction=elogin.elogin_shareprovider_ui.share_provider_edit'),'_blank','dependent=yes,width=800,height=600,scrollbars=yes,status=yes'); return false;"/>
+					</hbox>
+				</row>
+				<row>
+					<description value="Auto add user by group"/>
+					<menulist>
+						<menupopup type="select-account" id="auto_adduser_group" account_type="groups"/>
+					</menulist>
+				</row>
+			</rows>
+		</grid>
+	</template>
 	<template id="elogin.share_provider.dialog" template="" lang="" group="0" version="">
         <grid width="100%">
 			<columns>
@@ -26,76 +118,24 @@
                         </rows>
 					</grid>
                 </row>
-				<row>
-                    <grid width="100%">
-                        <columns>
-                            <column/>
-                            <column/>
-                        </columns>
-                        <rows>
-                            <row>
-                                <description value="Provider"/>
-                                <menulist>
-                                    <menupopup id="provider"/>
-                                </menulist>
-                            </row>
-							<row>
-								<description value="Protocol"/>
-                                <menulist>
-                                    <menupopup id="protocol"/>
-                                </menulist>
-							</row>
-							<row>
-								<description value="API Version"/>
-								<menulist>
-                                    <menupopup id="apiversion"/>
-                                </menulist>
-							</row>
-							<row>
-								<description value="Activ"/>
-								<menulist>
-                                    <menupopup id="activ"/>
-                                </menulist>
-							</row>
-							<row>
-                                <description value="Server"/>
-                                <textbox id="account_server" />
-                            </row>
-                            <row>
-                                <description value="Port"/>
-                                <textbox id="account_port" />
-                            </row>
-                            <row>
-                                <description value="Username"/>
-                                <textbox id="account_user" />
-                            </row>
-                            <row>
-                                <description value="Password"/>
-                                <passwd id="account_password" />
-                            </row>
-							<row>
-                                <description value="Connection-time-out"/>
-                                <textbox id="cto" />
-                            </row>
-                            <row>
-                                <description value="Mount Address"/>
-                                <textbox id="mount_address" />
-                            </row>
-							<row>
-								<description value="Collective-Share"/>
-								<menulist>
-									<menupopup type="select" id="collective_share"/>
-								</menulist>
-							</row>
-                        </rows>
-                    </grid>
-                </row>
+				<row width="100%">
+                    <tabbox id="tabs">
+                        <tabs>
+							<tab id="server" label="Server"/>
+							<tab id="auto" label="Automating"/>
+						</tabs>
+						<tabpanels>
+							<template id="elogin.share_provider.dialog.server" height="100%"/>
+							<template id="elogin.share_provider.dialog.auto" height="100%"/>
+						</tabpanels>
+					</tabbox>
+				</row>
                 <row class="dialogFooterToolbar">
                     <hbox span="all">
 						<button statustext="Saves the changes made" label="Save" id="button[save]" image="save" background_image="1"/>
                         <button statustext="Apply the changes" label="Apply" id="button[apply]" image="apply" background_image="1"/>
                         <button statustext="closes the window without saving the changes" label="Cancel" id="button[cancel]" onclick="window.close();" image="cancel" background_image="1"/>
-                        <button align="right" statustext="Delete this entry" label="Delete" id="button[delete]" onclick="return confirm('Delete this entry?');"/>
+                        <!--<button align="right" statustext="Delete this entry" label="Delete" id="button[delete]" onclick="return confirm('Delete this entry?');"/>-->
 					</hbox>
                 </row>
             </rows>

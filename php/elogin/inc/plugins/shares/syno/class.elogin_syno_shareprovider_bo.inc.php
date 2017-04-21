@@ -106,8 +106,12 @@
                     elogin_syno_shareprovider_bo::$_synoInstances[$this->_id] = $this->_syno;
                 }
 
+				try {
+					$this->login();
+				}
+				catch( Exception $ex ) {
 
-                $this->login();
+				}
             }
         }
 
@@ -136,7 +140,7 @@
 		 */
 		public function getApiVersions() {
 			return array(
-				SyndmsClient::VERSION_DSM_5 => 'DSM 5.* =< ',
+				//SyndmsClient::VERSION_DSM_5 => 'DSM 5.* =< ', // to old, not supported
 				SyndmsClient::VERSION_DSM_6 => 'DSM 6.* =< '
 				);
 		}

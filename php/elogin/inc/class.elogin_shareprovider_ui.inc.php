@@ -49,7 +49,6 @@
 						//'never_hide'    => true,// I  never hide the nextmatch-line if less then maxmatch entrie
 						'row_id'        => 'el_unid',
 						'actions'       => self::index_get_actions(),
-                        'header_row'    => 'elogin.shareprovider_list.header_right',
                         'favorites'     => false
 						);
 				}
@@ -183,7 +182,7 @@
                 }
 
 				$provider->setCto(intval($content['cto']));
-				$provider->setCollectiveShare($content['collective_share']);
+				//$provider->setCollectiveShare($content['collective_share']);
 				$provider->setDescription($content['description']);
                 $provider->setProviderName($content['provider']);
                 $provider->setAccount(
@@ -217,13 +216,13 @@
 
 				if( $cast_provider instanceof elogin_shareprovider_bo ) {
 					if( !$cast_provider->login() ) {
-						egw_framework::message(
+						Api\Framework::message(
 							lang('Login faild by: ' . $provider->getProviderName()), 'warning');
 					}
 					else {
 						$cast_provider->updateDeviceInfo();
 
-						egw_framework::message(
+						Api\Framework::message(
 							lang('Login success by: ' . $provider->getProviderName()), 'info');
 					}
 				}
@@ -245,40 +244,53 @@
 				$content['activ']				= ($provider->isActiv() ? '1' : '0');
 				$content['cto']					= $provider->getCto();
 
-				$cast_provider = elogin_shareprovider_bo::i($provider->getId());
+				try {
+					$cast_provider = elogin_shareprovider_bo::i($provider->getId());
 
-				if( $cast_provider instanceof elogin_shareprovider_bo ) {
-					$content['protocol']		= '';
-					$content['apiversion']		= '';
+					if( $cast_provider instanceof elogin_shareprovider_bo ) {
+						$content['protocol']		= '';
+						$content['apiversion']		= '';
 
-					$option_sel['protocol']	= $cast_provider->getProtocolNames();
+						$option_sel['protocol']	= $cast_provider->getProtocolNames();
 
-					if( $option_sel['protocol'] !== null ) {
-						$content['protocol'] = $cast_provider->getProtocol();
-					}
-
-					$option_sel['apiversion'] = $cast_provider->getApiVersions();
-
-					if( $option_sel['apiversion'] !== null ) {
-						$content['apiversion'] = $cast_provider->getApiVersion();
-					}
-
-					if( $cast_provider->login() ) {
-						$shares		= $cast_provider->getShares();
-						$cshares	= array();
-
-						foreach( $shares as $ashare ) {
-							$cshares[$ashare['name']] = $ashare['name'];
+						if( $option_sel['protocol'] !== null ) {
+							$content['protocol'] = $cast_provider->getProtocol();
 						}
 
-						$option_sel['collective_share'] = $cshares;
-					}
+						$option_sel['apiversion'] = $cast_provider->getApiVersions();
 
-					$content['collective_share'] = $cast_provider->getCollectiveShare();
+						if( $option_sel['apiversion'] !== null ) {
+							$content['apiversion'] = $cast_provider->getApiVersion();
+						}
+
+						$readonlys['add_cus'] = true;
+						$readonlys['add_cgs'] = true;
+
+						if( $cast_provider->login() ) {
+							$shares		= $cast_provider->getShares();
+							$cshares	= array();
+
+							foreach( $shares as $ashare ) {
+								$cshares[$ashare['name']] = $ashare['name'];
+							}
+
+							$option_sel['collective_usershare']		= $cshares;
+							$option_sel['collective_groupshare']	= $cshares;
+							$readonlys['add_cus'] = false;
+							$readonlys['add_cgs'] = false;
+						}
+
+						$content['collective_usershare'] = $cast_provider->getCollectiveUserShare();
+						$content['collective_groupshare'] = $cast_provider->getCollectiveGroupShare();
+					}
+					else {
+						$readonlys['protocol']		= true;
+						$readonlys['apiversion']	= true;
+					}
 				}
-				else {
-					$readonlys['protocol']		= true;
-					$readonlys['apiversion']	= true;
+				catch( Exception $ex ) {
+					Api\Framework::message(
+						lang('Error: ') . $ex->getMessage(), 'warning');
 				}
             }
 

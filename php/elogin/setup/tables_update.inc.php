@@ -409,3 +409,19 @@ function elogin_upgrade1_9_087()
 	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.088';
 }
 
+
+function elogin_upgrade1_9_088()
+{
+	$GLOBALS['egw_setup']->oProc->RenameColumn('egw_elogin_shareproviders','el_collectiv_share','el_collectiv_group_share');
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_shareproviders','el_collectiv_user_share',array(
+		'type' => 'varchar',
+		'precision' => '256'
+	));
+	$GLOBALS['egw_setup']->oProc->AddColumn('egw_elogin_shareproviders','el_autoadd_users_group',array(
+		'type' => 'varchar',
+		'precision' => '10'
+	));
+
+	return $GLOBALS['setup_info']['elogin']['currentver'] = '1.9.089';
+}
+

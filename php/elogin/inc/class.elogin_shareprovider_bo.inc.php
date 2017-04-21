@@ -100,10 +100,25 @@
 		protected $_api_version = '';
 
 		/**
-		 * collectiv share
+		 * collectiv user share
+		 * @DE Sammelbenutzerfreigabe
 		 * @var string
 		 */
-		protected $_collectiv_share = '';
+		protected $_collectiv_user_share = '';
+
+		/**
+		 * collectiv group share
+		 * @DE Sammelgruppenfreigabe
+		 * @var string
+		 */
+		protected $_collectiv_group_share = '';
+
+		/**
+		 * auto add users by group
+		 * @DE Automatische anlegen der Benutzer von der Gruppe x
+		 * @var string
+		 */
+		protected $_autoadd_users_group = '';
 
 		/**
 		 * last update
@@ -159,21 +174,23 @@
             $data = self::read($id);
 
             if( $data ) {
-                $this->_provider_name       = $data['el_provider_name'];
-                $this->_account_server      = $data['el_account_server'];
-                $this->_account_port        = intval($data['el_account_port']);
-                $this->_account_user        = $data['el_account_user'];
-                $this->_account_password    = $data['el_account_password'];
-                $this->_mount_address       = $data['el_mount_address'];
-				$this->_activ				= ($data['el_activ'] == '1' ? true : false);
-				$this->_protocol			= $data['el_protocol'];
-				$this->_api_version			= $data['el_api_version'];
-				$this->_description			= $data['el_description'];
-				$this->_collectiv_share		= $data['el_collectiv_share'];
-				$this->_last_update			= $data['el_last_update'];
-				$this->_last_task_update	= $data['el_last_task_update'];
-				$this->_device_info			= json_decode($data['el_device_info'], true);
-				$this->_cto					= intval($data['el_cto']);
+                $this->_provider_name			= $data['el_provider_name'];
+                $this->_account_server			= $data['el_account_server'];
+                $this->_account_port			= intval($data['el_account_port']);
+                $this->_account_user			= $data['el_account_user'];
+                $this->_account_password		= $data['el_account_password'];
+                $this->_mount_address			= $data['el_mount_address'];
+				$this->_activ					= ($data['el_activ'] == '1' ? true : false);
+				$this->_protocol				= $data['el_protocol'];
+				$this->_api_version				= $data['el_api_version'];
+				$this->_description				= $data['el_description'];
+				$this->_collectiv_user_share	= $data['el_collectiv_user_share'];
+				$this->_collectiv_group_share	= $data['el_collectiv_group_share'];
+				$this->_autoadd_users_group		= $data['el_autoadd_users_group'];
+				$this->_last_update				= $data['el_last_update'];
+				$this->_last_task_update		= $data['el_last_task_update'];
+				$this->_device_info				= json_decode($data['el_device_info'], true);
+				$this->_cto						= intval($data['el_cto']);
             }
         }
 
@@ -194,23 +211,25 @@
 				);
 
             if( $provider instanceof elogin_shareprovider_bo ) {
-                $provider->_id                  = $this->_id;
-                $provider->_provider_name       = $this->_provider_name;
-                $provider->_account_server      = $this->_account_server;
-                $provider->_account_port        = $this->_account_port;
-                $provider->_account_user        = $this->_account_user;
-                $provider->_account_password    = $this->_account_password;
-                $provider->_username            = $this->_username;
-                $provider->_mount_address       = $this->_mount_address;
-				$provider->_activ				= $this->_activ;
-				$provider->_protocol			= $this->_protocol;
-				$provider->_api_version			= $this->_api_version;
-				$provider->_description			= $this->_description;
-				$provider->_collectiv_share		= $this->_collectiv_share;
-				$provider->_last_update			= $this->_last_update;
-				$provider->_last_task_update	= $this->_last_task_update;
-				$provider->_device_info			= $this->_device_info;
-				$provider->_cto					= $this->_cto;
+                $provider->_id						= $this->_id;
+                $provider->_provider_name			= $this->_provider_name;
+                $provider->_account_server			= $this->_account_server;
+                $provider->_account_port			= $this->_account_port;
+                $provider->_account_user			= $this->_account_user;
+                $provider->_account_password		= $this->_account_password;
+                $provider->_username				= $this->_username;
+                $provider->_mount_address			= $this->_mount_address;
+				$provider->_activ					= $this->_activ;
+				$provider->_protocol				= $this->_protocol;
+				$provider->_api_version				= $this->_api_version;
+				$provider->_description				= $this->_description;
+				$provider->_collectiv_user_share	= $this->_collectiv_user_share;
+				$provider->_collectiv_group_share	= $this->_collectiv_group_share;
+				$provider->_autoadd_users_group		= $this->_autoadd_users_group;
+				$provider->_last_update				= $this->_last_update;
+				$provider->_last_task_update		= $this->_last_task_update;
+				$provider->_device_info				= $this->_device_info;
+				$provider->_cto						= $this->_cto;
 
                 $provider->_construct2();
 
@@ -400,19 +419,35 @@
 		}
 
 		/**
-		 * getCollectiveShare
+		 * getCollectiveUserShare
 		 * @return string
 		 */
-		public function getCollectiveShare() {
-			return $this->_collectiv_share;
+		public function getCollectiveUserShare() {
+			return $this->_collectiv_user_share;
 		}
 
 		/**
-		 * setCollectiveShare
+		 * setCollectiveUserShare
 		 * @param string $share
 		 */
-		public function setCollectiveShare($share) {
-			$this->_collectiv_share = $share;
+		public function setCollectiveUserShare($share) {
+			$this->_collectiv_user_share = $share;
+		}
+
+		/**
+		 * getCollectiveGroupShare
+		 * @return string
+		 */
+		public function getCollectiveGroupShare() {
+			return $this->_collectiv_group_share;
+		}
+
+		/**
+		 * setCollectiveGroupShare
+		 * @param string $share
+		 */
+		public function setCollectiveGroupShare($share) {
+			$this->_collectiv_group_share = $share;
 		}
 
 		/**

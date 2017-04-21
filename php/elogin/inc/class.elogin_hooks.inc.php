@@ -126,7 +126,7 @@
 							'view'			=> array(
 								'menuaction' => $appname . '.elogin_link_ui.open',
 							),
-							'view_id'		=> 'unid',
+							'view_id'		=> 'uid',
 							'view_popup'	=> '750x580',
 						),
 					)

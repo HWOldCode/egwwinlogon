@@ -1,0 +1,8 @@
+.elogin_button {
+	width: 24px;
+    background-position: center !important;
+    background-size: 16px 16px !important;
+    padding-left: 0 !important;
+    background-color: #fafafa !important;
+	border-radius: 3px !important;
+}
