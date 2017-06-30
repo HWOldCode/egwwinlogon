@@ -89,28 +89,34 @@
          */
         protected function _construct2() {
             if( $this->_account_server != null ) {
-                if( isset(elogin_syno_shareprovider_bo::$_synoInstances[$this->_id]) ) {
-                    $this->_syno = elogin_syno_shareprovider_bo::$_synoInstances[$this->_id];
-                }
-                else {
-                    $this->_syno = new SyndmsClient(
-                        $this->_account_server,
-                        $this->_account_port,
-						$this->_protocol,
-						$this->_api_version
-                        );
+				$destinations = explode(',', $this->_account_server);
 
-					// set timeout
-					$this->_syno->setConnectionTimeout($this->_cto);
+				foreach( $destinations as $destination ) {
+					if( isset(elogin_syno_shareprovider_bo::$_synoInstances[$this->_id]) ) {
+						$this->_syno = elogin_syno_shareprovider_bo::$_synoInstances[$this->_id];
+					}
+					else {
+						$this->_syno = new SyndmsClient(
+							$destination,
+							$this->_account_port,
+							$this->_protocol,
+							$this->_api_version
+							);
 
-                    elogin_syno_shareprovider_bo::$_synoInstances[$this->_id] = $this->_syno;
-                }
+						// set timeout
+						$this->_syno->setConnectionTimeout($this->_cto);
 
-				try {
-					$this->login();
-				}
-				catch( Exception $ex ) {
+						elogin_syno_shareprovider_bo::$_synoInstances[$this->_id] = $this->_syno;
+					}
 
+					try {
+						$this->login();
+					}
+					catch( Exception $ex ) {
+						continue;
+					}
+
+					break;
 				}
             }
         }

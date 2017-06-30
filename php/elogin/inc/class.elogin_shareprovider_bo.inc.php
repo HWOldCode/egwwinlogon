@@ -269,6 +269,22 @@
         }
 
 		/**
+		 * getLastUpdate
+		 * @return int
+		 */
+		public function getLastUpdate() {
+			return $this->_last_update;
+		}
+
+		/**
+		 * getLastTaskUpdate
+		 * @return int
+		 */
+		public function getLastTaskUpdate() {
+			return $this->_last_task_update;
+		}
+
+		/**
 		 * getDescription
 		 * @return string
 		 */
@@ -448,22 +464,6 @@
 		 */
 		public function setCollectiveGroupShare($share) {
 			$this->_collectiv_group_share = $share;
-		}
-
-		/**
-		 * getLastUpdate
-		 * @return int
-		 */
-		public function getLastUpdate() {
-			return $this->_last_update;
-		}
-
-		/**
-		 * getLastTaskUpdate
-		 * @return int
-		 */
-		public function getLastTaskUpdate() {
-			return $this->_last_task_update;
 		}
 
 		/**

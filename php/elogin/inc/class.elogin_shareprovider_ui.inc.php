@@ -226,6 +226,8 @@
 							lang('Login success by: ' . $provider->getProviderName()), 'info');
 					}
 				}
+
+				
             }
             elseif( isset($content['button']) && isset($content['button']['delete']) ) {
 

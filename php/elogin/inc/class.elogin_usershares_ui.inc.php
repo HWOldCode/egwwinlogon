@@ -195,7 +195,22 @@
 			}
 
 			// delete ----------------------------------------------------------
-			//TODO
+			if( isset($content['button']) && isset($content['button']['delete']) ) {
+				if( $t instanceof elogin_usershares_bo ) {
+					$t->delete();
+
+					egw_framework::refresh_opener(
+						lang('User share delete'),
+						'elogin',
+						$uid,
+						'delete',
+						null
+						);
+
+					egw_framework::window_close();
+					exit;
+				}
+			}
 
 			// read ------------------------------------------------------------
 			if( $t instanceof elogin_usershares_bo ) {

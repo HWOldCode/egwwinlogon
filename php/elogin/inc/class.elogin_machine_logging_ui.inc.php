@@ -40,6 +40,43 @@
             $readonlys		= array();
 			$sel_options	= array();
 
+			// -----------------------------------------------------------------
+
+			$msg = '';
+
+			if( $content['nm']['action'] ) {
+				if( !count($content['nm']['selected']) && !$content['nm']['select_all'] ) {
+					$msg = lang('You need to select some entries first!');
+				}
+				else {
+					$success	= null;
+					$failed		= null;
+					$action_msg = null;
+
+					if( $this->_action(
+						$content['nm']['action'],
+						$content['nm']['selected'],
+						$content['nm']['select_all'],
+						$success,
+						$failed,
+						$action_msg,
+						'index',
+						$msg) )
+					{
+						$msg .= lang('%1 Log(s) %2', $success, $action_msg);
+					}
+					elseif( empty($msg) ) {
+						$msg .= lang(
+							'%1 Log(s) %2, %3 failed because of insufficent rights !!!',
+							$success,
+							$action_msg,
+							$failed);
+					}
+				}
+			}
+
+			// -----------------------------------------------------------------
+
 			if( !isset($sel_options['el_machine_name_filter']) ) {
 				$sel_options['el_machine_name_filter'] = array();
 
@@ -47,7 +84,7 @@
 				$m_rows			= array();
 				$m_readonlys	= array();
 
-				$count = elogin_machine_bo::get_rows($m_query, $m_rows, $m_readonlys);
+				elogin_machine_bo::get_rows($m_query, $m_rows, $m_readonlys);
 
 				foreach( $m_rows as $m_row ) {
 					$sel_options['el_machine_name_filter'][$m_row['el_unid']] = $m_row['el_name'];
@@ -65,20 +102,22 @@
 				}
 			}
 
-            if( !is_array($content) ) {
-                if( !($content['nm'] = Api\Cache::getSession('elogin_machine_logging_list', 'elogin')) ) {
-					$content['nm'] = array(		// I = value set by the app, 0 = value on return / output
-						'get_rows'      =>	'elogin.elogin_machine_logging_ui.get_rows_logging',	// I  method/callback to request the data for the rows eg. 'notes.bo.get_rows'
-						'no_filter'     => true,// I  disable the 1. filter
-						'no_filter2'    => true,// I  disable the 2. filter (params are the same as for filter)
-						'no_cat'        => false,// I  disable the cat-selectbox
-						'never_hide'    => true,// I  never hide the nextmatch-line if less then maxmatch entrie
-						'row_id'        => 'el_unid',
-						'actions'       => static::index_get_actions(),
-                        'header_row'    => 'elogin.machine_logging_list.header_right',
-                        'favorites'     => false
-						);
-				}
+			// -----------------------------------------------------------------
+
+			$content['msg'] = $msg;
+
+			if( !($content['nm'] = Api\Cache::getSession('elogin_machine_logging_list', 'elogin')) ) {
+				$content['nm'] = array(		// I = value set by the app, 0 = value on return / output
+					'get_rows'      =>	'elogin.elogin_machine_logging_ui.get_rows_logging',	// I  method/callback to request the data for the rows eg. 'notes.bo.get_rows'
+					'no_filter'     => true,// I  disable the 1. filter
+					'no_filter2'    => true,// I  disable the 2. filter (params are the same as for filter)
+					'no_cat'        => false,// I  disable the cat-selectbox
+					'never_hide'    => true,// I  never hide the nextmatch-line if less then maxmatch entrie
+					'row_id'        => 'el_unid',
+					'actions'       => static::index_get_actions(),
+					'header_row'    => 'elogin.machine_logging_list.header_right',
+					'favorites'     => false
+					);
 			}
 
             $tpl = new Etemplate('elogin.machine_logging_list');
@@ -95,10 +134,55 @@
          * @return array
          */
         static public function index_get_actions($query=array()) {
-            $group = 1;
+            $group = 0;
 
-            return array();
+			$actions = array(
+				'delete' => array(
+					'caption'			=> 'Delete',
+                    'group'				=> ++$group,
+                    'default'			=> false,
+                    'icon'				=> 'delete',
+                    'hint'				=> 'Delete Log',
+					'confirm'			=> 'Delete this Log',
+					'confirm_multiple'	=> 'Delete these Logs',
+                    'enabled'			=> true,
+					),
+				);
+
+            return $actions;
         }
+
+		/**
+		 * _action
+		 * @param type $action
+		 * @param type $checked
+		 * @param type $use_all
+		 * @param int $success
+		 * @param int $failed
+		 * @param type $action_msg
+		 * @param type $session_name
+		 * @param type $msg
+		 * @return type
+		 */
+		protected function _action($action, $checked,
+			$use_all, &$success, &$failed, &$action_msg, $session_name, &$msg)
+		{
+			$success	= 0;
+			$failed		= 0;
+
+			switch( $action ) {
+				case 'delete':
+					if( is_array($checked) ) {
+						foreach( $checked as $checkid ) {
+							$log = new elogin_machine_logging_bo($checkid);
+							$log->delete();
+
+							$success++;
+						}
+					}
+					break;
+			}
+		}
 
 		/**
 		 * get_rows_logging

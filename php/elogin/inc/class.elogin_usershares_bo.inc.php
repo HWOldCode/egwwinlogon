@@ -29,7 +29,6 @@
 
         /**
          * Reference to global db object
-         *
          * @var egw_db
          */
         static protected $_db;
@@ -54,7 +53,6 @@
 
         /**
          * sharepassword
-         *
          * @var string
          */
         protected $_sharepassword = null;
@@ -388,6 +386,15 @@
             }
         }
 
+		/**
+		 * delete
+		 */
+		public function delete() {
+			if( $this->_id !== null ) {
+				self::_delete($this->_id);
+			}
+		}
+
         /**
          * read
          * @param string $id
@@ -442,6 +449,22 @@
 
             return $data['el_unid'];
         }
+
+		/**
+		 * _delete
+		 * @param string $id
+		 */
+		static protected function _delete($id) {
+			static::$_db->delete(
+				self::TABLE,
+				array(
+					'el_unid' => $id,
+					),
+				__LINE__,
+				__FILE__,
+				'elogin'
+				);
+		}
 
         /**
          * get_rows
