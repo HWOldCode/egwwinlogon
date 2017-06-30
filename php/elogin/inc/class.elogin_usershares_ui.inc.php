@@ -178,7 +178,7 @@
 				$t->setSharePassword($content['sharepassword']);
 				$t->save();
 
-				egw_framework::refresh_opener(
+				Api\Framework::refresh_opener(
 					lang('User share') . ' ' . ($isAdd ? 'add' : 'update'),
 					'elogin',
 					$t->getId(),
@@ -189,7 +189,7 @@
 				// button action
 				// -------------------------------------------------------------
 				if( isset($content['button']['save']) ) {
-					egw_framework::window_close();
+					Api\Framework::window_close();
 					exit;
 				}
 			}
@@ -199,7 +199,7 @@
 				if( $t instanceof elogin_usershares_bo ) {
 					$t->delete();
 
-					egw_framework::refresh_opener(
+					Api\Framework::refresh_opener(
 						lang('User share delete'),
 						'elogin',
 						$uid,
@@ -207,7 +207,7 @@
 						null
 						);
 
-					egw_framework::window_close();
+					Api\Framework::window_close();
 					exit;
 				}
 			}
@@ -237,7 +237,7 @@
 				//$t->updateUserSharesMounts();
 			}
 			catch( Exception $e ) {
-				egw_framework::message(lang($e->getMessage()), 'warning');
+				Api\Framework::message(lang($e->getMessage()), 'warning');
 			}
 
             $readonlys['provider']  = true;

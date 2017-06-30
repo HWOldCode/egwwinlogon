@@ -171,8 +171,11 @@
 
 			// -----------------------------------------------------------------
 
+			$isApply = false;
+
             if( isset($content['button']) && isset($content['button']['apply']) ) {
                 $content['button']['save'] = "pressed";
+				$isApply = true;
             }
 
              // save
@@ -227,7 +230,20 @@
 					}
 				}
 
-				
+				if( $isApply ) {
+					Api\Framework::refresh_opener(
+						lang('Share Provider Update'),
+						'elogin',
+						$provider->getId(),
+						'add',
+						null
+						);
+				}
+
+				if( !$isApply ) {
+					Api\Framework::window_close();
+					exit;
+				}
             }
             elseif( isset($content['button']) && isset($content['button']['delete']) ) {
 
