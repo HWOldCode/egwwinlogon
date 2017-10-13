@@ -85,10 +85,10 @@
 					</hbox>
 				</row>
 				<row>
-					<description value="Auto add user by group"/>
-					<menulist>
-						<menupopup type="select-account" id="auto_adduser_group" account_type="groups"/>
-					</menulist>
+					<vbox span="2">
+						<description value="Auto add user by group"/>
+						<taglist-account id="auto_adduser_group" multiple="true" no_lang="1" account_type="groups" empty_label="Groups"/>
+					</vbox>
 				</row>
 			</rows>
 		</grid>
