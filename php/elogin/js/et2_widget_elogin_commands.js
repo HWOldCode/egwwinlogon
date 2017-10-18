@@ -38,13 +38,13 @@ var elogin_commands = et2_valueWidget.extend([et2_IDataProvider], {
     },
 
     columns: [
-      {'id': 'machine', caption: 'Machine', 'width': '100px'},
-      {'id': 'account', caption: 'Account', 'width': '100px'},
-      {'id': 'name', caption: 'Name', 'width': '100px'},
-      {'id': 'system', caption: 'System', 'width': '100px'},
-      {'id': 'order', caption: 'Order', 'width': '100px'},
-      {'id': 'type', caption: 'Type', 'width': '100px'},
-      {'id': 'event', caption: 'Event', 'width': 'auto'},
+		{'id': 'name', caption: 'Name', 'width': '100px'},
+		{'id': 'machine', caption: 'Machine', 'width': '100px'},
+		{'id': 'account', caption: 'Account', 'width': '100px'},
+		{'id': 'system', caption: 'System', 'width': '100px'},
+		{'id': 'order', caption: 'Order', 'width': '100px'},
+		{'id': 'type', caption: 'Type', 'width': '100px'},
+		{'id': 'event', caption: 'Event', 'width': 'auto'},
     ],
 
     FIELD: 2,

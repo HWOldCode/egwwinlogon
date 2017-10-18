@@ -3,12 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/log/ZipFileAppender.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonTrayerRemote.java</file>
+            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonUltis.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogon.java</file>
             <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/egroupware/EgroupwareMachineLogging.java</file>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgwWinLogonThread.java</file>
-            <file>file:/X:/hw.git/egwwinlogon/egwwinlogon/src/egwwinlogon/service/EgroupwarePGina.java</file>
         </group>
     </open-files>
 </project-private>

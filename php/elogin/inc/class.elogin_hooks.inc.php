@@ -170,6 +170,14 @@ class elogin_hooks {
 
 		return $settings;
 	}
+
+	/**
+	 * widgets
+	 * @return array
+	 */
+	static public function widgets() {
+		return array('EGroupware\\Elogin\\Widget\\CodeEditor');
+	}
 }
 
 /**
