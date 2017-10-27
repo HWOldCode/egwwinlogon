@@ -219,6 +219,9 @@
 								lang('Login faild by: ' . $provider->getProviderName()), 'warning');
 						}
                     }
+					else {
+						egw_framework::message(lang('Provider not found'), 'warning');
+					}
                 }
             }
 
