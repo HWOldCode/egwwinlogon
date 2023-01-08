@@ -26,7 +26,7 @@ In Windows, a Windows share can be automatically mounted for the user.
 In addition to the EWorkflow EGroupware Module, the EGroupware Module offers control entry blocks for a workflow for automation.
 
 ## Installation
-[In Germany}(docu/egwwinlogon.html) 
+[In Germany](docu/egwwinlogon.html) 
 
 ## License
 
